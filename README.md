@@ -6,14 +6,13 @@
 ---
 
 ## 👥 ทีมพัฒนา
-
-| ชื่อ | รหัสนักศึกษา | หน้าที่ |
-|------|-------------|---------|
-| คนที่ 1 | | xxxxxxxxx | Authentication & User Management |
-| คนที่ 2 | | xxxxxxxxx | Product Management |
-| คนที่ 3 | | xxxxxxxxx | Category & Search |
-| คนที่ 4 | | xxxxxxxxx | Cart & Order |
-| คนที่ 5 | 67131555 | นายปัฐวัติ แสนคำเพิงใจ  | Admin & Reports + PM |
+| ลำดับ   | รหัสนักศึกษา                        | หน้าที่                          |
+| ------- | ----------------------------------- | ------------------------------- |
+| คนที่ 1 | xxxxxxxx / xxxxxxxx                 | Authentication & User Management |
+| คนที่ 2 | xxxxxxxx / xxxxxxxx                 | Product Management               |  
+| คนที่ 3 | xxxxxxxx / xxxxxxxx                 | Category & Search                |
+| คนที่ 4 | xxxxxxxx / xxxxxxxx                 | Cart & Order                     |
+| คนที่ 5 | 67131555 / นายปัฐวัติ แสนคำเพิงใจ | Admin & Reports + PM             |
 
 ---
 
