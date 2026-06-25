@@ -31,11 +31,11 @@
 
 | ลำดับ | รหัสนักศึกษา | ชื่อ-สกุล | หน้าที่รับผิดชอบ |
 |-------|--------------|-----------|-------------------|
-| 1 | xxxxxxxx | xxxxxxxx | Authentication & User Management |
-| 2 | xxxxxxxx | xxxxxxxx | Product Management |
-| 3 | xxxxxxxx | xxxxxxxx | Category & Search |
-| 4 | xxxxxxxx | xxxxxxxx | Cart & Order |
-| 5 | 67131555 | นายปัฐวัติ แสนคำเพิงใจ | Admin & Reports + Project Manager |
+| คนที่ 1 | 67094657 / วรินทร วรธรรม                 | Product List / Product Detail |
+| คนที่ 2 | 67101868 / ปวีณภัทร สินหมู่                 | Order / Payment / Tracking               |  
+| คนที่ 3 | 67124936 / พลอยไพลิน วัชระ                 | Shopping Cart / Checkout               |
+| คนที่ 4 | 67136194 / นายกรฤทธ์ คุมพวก                 | Login / Register / Profile                     |
+| คนที่ 5 | 67131555 / นายปัฐวัติ แสนคำเพิงใจ | Admin Dashboard / Report / Integration           |
 
 ---
 
