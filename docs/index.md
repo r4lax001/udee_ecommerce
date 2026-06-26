@@ -9,9 +9,10 @@
 ## 📋 สารบัญ (Table of Contents)
 
 1. [ภาพรวมโครงงาน](#ภาพรวมโครงงาน)
-2. [Analysis & Design](analysis-design.md)
-3. [System Architecture](architecture.md)
-4. [Repository](https://github.com/r4lax001/udee_ecommerce)
+2. [Project README](README.md)
+3. [Analysis & Design](analysis-design.md)
+4. [System Architecture](architecture.md)
+5. [Repository](https://github.com/r4lax001/udee_ecommerce)
 
 ---
 
