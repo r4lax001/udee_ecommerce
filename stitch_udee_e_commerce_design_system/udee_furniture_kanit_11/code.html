@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ตะกร้าสินค้า | UDEE</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .signature-heading::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 2px;
+            background-color: #A0724A;
+            margin-top: 8px;
+        }
+        .cart-item-shadow {
+            box-shadow: 0 2px 8px rgba(61,43,31,0.08);
+        }
+        .cart-item-shadow:hover {
+            box-shadow: 0 6px 16px rgba(61,43,31,0.14);
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#81756e",
+                        "surface-dim": "#dfd9d6",
+                        "surface-tint": "#705a4c",
+                        "inverse-surface": "#33302e",
+                        "background": "#fff8f5",
+                        "outline-variant": "#d2c4bc",
+                        "on-primary-fixed": "#28180d",
+                        "tertiary-container": "#3f2b0f",
+                        "tertiary": "#281600",
+                        "on-tertiary": "#ffffff",
+                        "inverse-primary": "#dec1af",
+                        "on-primary-fixed-variant": "#574335",
+                        "primary-fixed": "#fbddca",
+                        "on-error-container": "#93000a",
+                        "surface-container-highest": "#e8e1df",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#643e1b",
+                        "on-surface-variant": "#4f453f",
+                        "surface": "#fff8f5",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed": "#ffddb6",
+                        "secondary-fixed-dim": "#f3bc8e",
+                        "primary-container": "#3d2b1f",
+                        "on-tertiary-container": "#b0916d",
+                        "on-tertiary-fixed": "#291801",
+                        "surface-container-high": "#eee7e4",
+                        "on-tertiary-fixed-variant": "#5a4224",
+                        "surface-variant": "#e8e1df",
+                        "surface-bright": "#fff8f5",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#ffdcc1",
+                        "surface-container-low": "#f9f2f0",
+                        "on-secondary": "#ffffff",
+                        "surface-container": "#f3ecea",
+                        "on-primary-container": "#ac9181",
+                        "on-background": "#1d1b1a",
+                        "error": "#ba1a1a",
+                        "on-secondary-container": "#7a512c",
+                        "tertiary-fixed-dim": "#e3c199",
+                        "on-error": "#ffffff",
+                        "secondary": "#7f5530",
+                        "inverse-on-surface": "#f6efed",
+                        "on-surface": "#1d1b1a",
+                        "secondary-container": "#ffc698",
+                        "primary": "#26170c",
+                        "primary-fixed-dim": "#dec1af",
+                        "on-secondary-fixed": "#2e1500"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "xxl": "48px",
+                        "lg": "24px",
+                        "base": "16px",
+                        "xs": "4px",
+                        "huge": "64px",
+                        "md": "12px",
+                        "xl": "32px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Kanit"],
+                        "display-lg": ["Kanit"],
+                        "label-sm": ["Kanit"],
+                        "headline-md": ["Kanit"],
+                        "title-md": ["Kanit"],
+                        "headline-md-mobile": ["Kanit"],
+                        "body-lg": ["Kanit"],
+                        "title-lg": ["Kanit"],
+                        "display-lg-mobile": ["Kanit"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "title-md": ["20px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                        "headline-md-mobile": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "title-lg": ["24px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                        "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-[#F2EBE2] text-on-surface font-body-md selection:bg-secondary-container">
+<!-- Top Navigation Shell -->
+<header class="bg-surface sticky top-0 z-50 shadow-sm">
+<nav class="flex justify-between items-center w-full px-lg py-sm max-w-7xl mx-auto">
+<a class="font-display-lg text-display-lg font-bold text-primary" href="/">UDEE</a>
+<div class="hidden md:flex items-center space-x-xl">
+<a class="font-body-md text-on-surface-variant hover:text-secondary transition-colors duration-200" href="#">Home</a>
+<a class="font-body-md text-on-surface-variant hover:text-secondary transition-colors duration-200" href="#">Furniture</a>
+<a class="font-body-md text-on-surface-variant hover:text-secondary transition-colors duration-200" href="#">About</a>
+<a class="font-body-md text-on-surface-variant hover:text-secondary transition-colors duration-200" href="#">Contact</a>
+</div>
+<div class="flex items-center space-x-lg">
+<button class="material-symbols-outlined text-secondary scale-95 active:scale-90 transition-transform">search</button>
+<div class="relative">
+<button class="material-symbols-outlined text-primary scale-95 active:scale-90 transition-transform">shopping_cart</button>
+<span class="absolute -top-1 -right-1 bg-secondary text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">3</span>
+</div>
+<a class="hidden md:block font-body-md text-secondary hover:text-primary transition-colors" href="#">Login</a>
+</div>
+</nav>
+</header>
+<main class="max-w-7xl mx-auto px-base md:px-lg py-xxl">
+<!-- Cart Content Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-xl">
+<!-- Left Column: Cart Items -->
+<div class="lg:col-span-8">
+<h1 class="font-headline-md text-headline-md text-primary mb-xl signature-heading">ตะกร้าสินค้า (3 ชิ้น)</h1>
+<div class="space-y-lg">
+<!-- Item 1 -->
+<div class="bg-white rounded-lg p-base flex gap-lg cart-item-shadow transition-all group">
+<div class="w-24 h-24 md:w-32 md:h-32 flex-shrink-0 bg-surface-container rounded overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="High-end minimalist armchair with a deep walnut wood frame and textured ivory linen fabric, set against a warm parchment-toned studio background with soft cinematic lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZj3gcZrrok2sOUyoJmZ3cIaOXWfYOLEM4xe0vHpcV1fZLkKsKGR2-nCmCgFfjUBECS1B4bx8v07BKVOIjaUo8WmBZnODX6fzVgWc5Bz77QspeJZ7wtQqJbQFbEZNjjIjfGfa_b4uqvBY-jBVI-R9O37lAVTGDJdeSTjPBbN6pmNJ_r_wLYhXt1OUIBKd8br7im5cfs8cwf8muoQPe7adrUYd_3pdWgSh4E46uEy6sNTD_BH1KQElEPX1-b1S0ljZfR7Gz--CsvkSw"/>
+</div>
+<div class="flex-grow flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-title-md text-title-md text-[#2A1F14]">เก้าอี้พักผ่อน รุ่น Nordic Breeze</h3>
+<p class="text-on-surface-variant text-label-sm mt-xs">สี: ครีมวนิลา | วัสดุ: ไม้วอลนัท</p>
+</div>
+<button class="material-symbols-outlined text-outline hover:text-error transition-colors">delete</button>
+</div>
+<div class="flex justify-between items-center mt-base">
+<div class="flex items-center border border-outline-variant rounded-md">
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors" onclick="this.nextElementSibling.stepDown()">-</button>
+<input class="w-10 text-center border-none bg-transparent focus:ring-0 font-medium text-on-surface p-0" min="1" type="number" value="1"/>
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors" onclick="this.previousElementSibling.stepUp()">+</button>
+</div>
+<span class="font-title-md text-secondary">฿12,500</span>
+</div>
+</div>
+</div>
+<div class="h-px bg-outline-variant opacity-30"></div>
+<!-- Item 2 -->
+<div class="bg-white rounded-lg p-base flex gap-lg cart-item-shadow transition-all">
+<div class="w-24 h-24 md:w-32 md:h-32 flex-shrink-0 bg-surface-container rounded overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A modern ceramic vase with organic asymmetrical shapes, finished in a matte terracotta glaze, positioned on a polished dark oak table with soft ambient window light creating delicate shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuArLNC_qljZQTd1IlxbnDVo8W7XkVb4WgJYsz33RXTDOdcBoev3eKB_d_GSW6CSx2VPfhKHkxfgEcA3ATDSvd-hCyUjgFqW0kvxDrcm7nRHmIFxKBU4CTt-BhzJ0xMC3_7rbcqGpAIiG-xcN5jcGu6GKT4nvH2O1Noph17TsQQT5m5N-OokLYlUkI5-lDDMYfs3zkC_x_FbmZ2KZkgna3yUzkCsXGh0ujvMVr9PnHJ4PPVOwdDJuo7j5jy3bvxZkfqh23Xq3f2ySsIF"/>
+</div>
+<div class="flex-grow flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-title-md text-title-md text-[#2A1F14]">แจกันเซรามิก รุ่น Terra-O</h3>
+<p class="text-on-surface-variant text-label-sm mt-xs">ขนาด: Medium | ผิวสัมผัส: Matte</p>
+</div>
+<button class="material-symbols-outlined text-outline hover:text-error transition-colors">delete</button>
+</div>
+<div class="flex justify-between items-center mt-base">
+<div class="flex items-center border border-outline-variant rounded-md">
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors">-</button>
+<input class="w-10 text-center border-none bg-transparent focus:ring-0 font-medium text-on-surface p-0" min="1" type="number" value="2"/>
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors">+</button>
+</div>
+<div class="text-right">
+<span class="font-title-md text-secondary block">฿1,800</span>
+<span class="text-[10px] text-on-surface-variant">(฿900 ต่อชิ้น)</span>
+</div>
+</div>
+</div>
+</div>
+<div class="h-px bg-outline-variant opacity-30"></div>
+</div>
+<!-- Empty State (Hidden) -->
+<div class="hidden py-huge text-center flex flex-col items-center">
+<span class="material-symbols-outlined text-huge text-outline-variant mb-lg" style="font-size: 64px;">shopping_bag</span>
+<h2 class="font-title-lg text-title-lg text-on-surface-variant">ยังไม่มีสินค้าในตะกร้า</h2>
+<a class="mt-lg px-xl py-base bg-primary text-white rounded-lg hover:opacity-90 transition-all" href="#">ไปช้อปปิ้งเลย</a>
+</div>
+</div>
+<!-- Right Column: Order Summary -->
+<div class="lg:col-span-4">
+<div class="sticky top-xxl space-y-lg">
+<div class="bg-white rounded-lg p-lg cart-item-shadow">
+<h2 class="font-title-lg text-title-lg text-primary mb-base">สรุปรายการสั่งซื้อ</h2>
+<!-- Shipping Progress -->
+<div class="mb-xl">
+<div class="flex justify-between text-label-sm mb-xs">
+<span class="text-secondary font-medium">อีก ฿500 เพื่อส่งฟรี</span>
+<span class="text-on-surface-variant">เป้าหมาย: ฿3,000</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-[#C8A882] h-full rounded-full" style="width: 83.3%;"></div>
+</div>
+</div>
+<div class="space-y-sm mb-lg">
+<div class="flex justify-between text-body-md text-on-surface-variant">
+<span>ยอดรวมสินค้า</span>
+<span>฿2,500</span>
+</div>
+<div class="flex justify-between text-body-md text-on-surface-variant">
+<span>ค่าจัดส่ง</span>
+<span>฿80</span>
+</div>
+</div>
+<div class="h-px bg-outline-variant opacity-30 mb-lg"></div>
+<div class="flex justify-between items-baseline mb-xl">
+<span class="font-title-lg text-primary">ยอดสุทธิ</span>
+<span class="text-[32px] font-bold text-primary">฿2,580</span>
+</div>
+<button class="w-full py-base bg-[#3D2B1F] text-white rounded-xl font-bold hover:opacity-90 transition-all mb-base">ดำเนินการชำระเงิน</button>
+<button class="w-full py-base border border-[#3D2B1F] text-[#3D2B1F] rounded-xl font-medium hover:bg-surface-container-low transition-all">ช้อปต่อ</button>
+</div>
+<!-- Promo Code Input -->
+<div class="bg-white rounded-lg p-base cart-item-shadow">
+<label class="block text-label-sm text-on-surface-variant mb-xs">รหัสส่วนลด</label>
+<div class="flex gap-sm">
+<input class="flex-grow border-outline-variant rounded-lg focus:border-secondary focus:ring-secondary/10 px-base py-sm text-body-md" placeholder="ระบุโค้ด..." type="text"/>
+<button class="px-lg bg-surface-container-highest text-primary font-medium rounded-lg hover:bg-surface-variant transition-colors">ใช้</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Recommendations Section -->
+<section class="mt-huge">
+<h2 class="font-headline-md text-headline-md text-primary mb-xl signature-heading">สินค้าที่คุณอาจสนใจ</h2>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-lg">
+<!-- Product Card 1 -->
+<div class="group cursor-pointer">
+<div class="aspect-[4/5] bg-white rounded-lg overflow-hidden relative mb-base cart-item-shadow group-hover:-translate-y-1 transition-transform duration-300">
+<img class="w-full h-full object-cover" data-alt="Minimalist solid oak nightstand with a single drawer and a brass handle, styled in a contemporary light-filled bedroom with neutral tones and a soft morning glow." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUrdWlKDb6L7Peefbzh37l9avzNknP9Xmn0IiJDC8c4NsMcntXObQ6Z0_4KAmvomcJZ7hZkbhgk1mWaqrViwtnyRNdCTjzllJjZZ-rlbhaz71VhSRcrMMR_Dh1NUAHFvd3lduWI3S_qqb_Y-bfnLCN3X4OFxrvCDYtItR1Kd_p32f5zv_4Vk5VXKhawr0MVkDpoPCkDHm5EOaoVsA2UtRIlBvCshwAgluWykxoG9z-RT7bMeBuJ_EfAWbMMaSS5mz2NW5XcQMwe3vE"/>
+<span class="absolute top-sm right-sm bg-[#C8A882] text-[#2A1F14] text-label-sm px-base py-xs rounded-full font-bold uppercase">New</span>
+</div>
+<h3 class="text-body-lg font-medium text-[#2A1F14] group-hover:text-secondary transition-colors">โต๊ะข้างเตียง Oak Haven</h3>
+<p class="text-secondary font-medium mt-xs">฿4,200</p>
+</div>
+<!-- Product Card 2 -->
+<div class="group cursor-pointer">
+<div class="aspect-[4/5] bg-white rounded-lg overflow-hidden relative mb-base cart-item-shadow group-hover:-translate-y-1 transition-transform duration-300">
+<img class="w-full h-full object-cover" data-alt="A soft woven wool throw blanket in muted sage green draped over the edge of a high-end designer sofa, professional interior photography style with shallow depth of field." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5-f8wY6rSBhCjM2euyRgPz8Gt9ZYhcIeqIgPY2e_pv0cgYr-ANkonPHZ4Q1kPesKKFOiy6eJaXsRZ1GWLmSd_gyEm9vsGCtvc4uMlmJ1sL1xGZU9ahNP1KLRphnSJlDuylcL2TbnUGm-YAbmHig_xLUbnudER60NXSXmnVHljfTVvKz5J6u3nwwhMTvRhs5RQ_BKlAn6r1E1pPqViiLUx8YW1N236Fp7IYdSUPPe6D0tvjofLTZMB5Pnzj5bmIP_Rz8iovgh1O3uH"/>
+</div>
+<h3 class="text-body-lg font-medium text-[#2A1F14] group-hover:text-secondary transition-colors">ผ้าห่มทอขนแกะ Sage</h3>
+<p class="text-secondary font-medium mt-xs">฿1,950</p>
+</div>
+<!-- Product Card 3 -->
+<div class="group cursor-pointer">
+<div class="aspect-[4/5] bg-white rounded-lg overflow-hidden relative mb-base cart-item-shadow group-hover:-translate-y-1 transition-transform duration-300">
+<img class="w-full h-full object-cover" data-alt="Premium leather floor pouf in deep espresso brown, featuring exquisite hand-stitched detailing, sitting on a natural fiber rug in a luxury living space." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDP9hcLYw3NTfZDilwGwDm1tMXJJuBthwnMR1ayU8w6-q8VsyvoETeEIN41csT1SklD8PHq5Z8ZWPL90tUB_w5WiDYE4dk2xGGAZHWlIQMJRGBiyAcMc3hHbNGq0JgP2J6A3VCbUBQHNAA9jYFnUw3qUz6JAceZw8NsAEkLvyPuNvZwAPrbl_nyPpADnkbK-JvtmcfppHrypvho1ooaFaxMNvYDXaRTR6onQPJVUZMiIYcSAVaMEww_Uqd6EQm2zGtZb0ybam70I7My"/>
+<span class="absolute top-sm right-sm bg-[#C8A882] text-[#2A1F14] text-label-sm px-base py-xs rounded-full font-bold uppercase">-15%</span>
+</div>
+<h3 class="text-body-lg font-medium text-[#2A1F14] group-hover:text-secondary transition-colors">เบาะหนัง Espresso Pouf</h3>
+<p class="text-secondary font-medium mt-xs">฿3,800 <span class="text-on-surface-variant line-through text-label-sm ml-xs">฿4,500</span></p>
+</div>
+<!-- Product Card 4 -->
+<div class="group cursor-pointer">
+<div class="aspect-[4/5] bg-white rounded-lg overflow-hidden relative mb-base cart-item-shadow group-hover:-translate-y-1 transition-transform duration-300">
+<img class="w-full h-full object-cover" data-alt="An elegant black metal floor lamp with a slender arch and a pleated white paper shade, casting a warm soft pool of light in a minimalist reading corner." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgEk0KKTiwHMZA_YORwMDosf4s7W_uOs-0MkhGL8XF6rgrDKIZi37i0AlTqrfaMG28d-dOm9CKyGQNQ3tBAzGF4pWe4S9Dw6IC4Qhr7YIipIExS9SW2Qpeun96iaGh_Pbj497QOJ0i9sA1XcZ9SoBrxi0dySUWzFRp_rmeVhwgMFFUf0KAy3FZYMV3r2ZcnI7G2o7cMh3xxfw3Lxp0PfqlgvtCCfoJCr1nZ4Se2hJ-GJyqpixFFdUjwlThQRm7nmXzPi8wDW2klJ7W"/>
+</div>
+<h3 class="text-body-lg font-medium text-[#2A1F14] group-hover:text-secondary transition-colors">โคมไฟตั้งพื้น Silhouette</h3>
+<p class="text-secondary font-medium mt-xs">฿5,900</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Shell -->
+<footer class="bg-primary text-on-primary">
+<div class="w-full py-xxl px-lg grid grid-cols-1 md:grid-cols-4 gap-lg max-w-7xl mx-auto">
+<div class="space-y-lg">
+<span class="font-display-lg-mobile text-display-lg-mobile font-bold text-surface-container-lowest">UDEE</span>
+<p class="font-body-md text-surface-variant">© 2024 UDEE Furniture. Crafted for the quiet luxury of home.</p>
+</div>
+<div>
+<h4 class="font-title-lg text-title-lg mb-lg">Collections</h4>
+<ul class="space-y-sm">
+<li><a class="text-surface-variant hover:text-secondary-fixed transition-all" href="#">Living Room</a></li>
+<li><a class="text-surface-variant hover:text-secondary-fixed transition-all" href="#">Dining Tables</a></li>
+<li><a class="text-surface-variant hover:text-secondary-fixed transition-all" href="#">Workspaces</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-title-lg text-title-lg mb-lg">Policy</h4>
+<ul class="space-y-sm">
+<li><a class="text-surface-variant hover:text-secondary-fixed transition-all" href="#">Shipping Policy</a></li>
+<li><a class="text-surface-variant hover:text-secondary-fixed transition-all" href="#">Returns</a></li>
+<li><a class="text-surface-variant hover:text-secondary-fixed transition-all" href="#">Privacy</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-title-lg text-title-lg mb-lg">Contact Us</h4>
+<p class="text-surface-variant font-body-md">Bangkok, Thailand<br/>hello@udee-furniture.com<br/>+66 2 123 4567</p>
+<div class="flex space-x-base mt-lg">
+<span class="material-symbols-outlined text-surface-variant hover:text-secondary-fixed cursor-pointer">face_nod</span>
+<span class="material-symbols-outlined text-surface-variant hover:text-secondary-fixed cursor-pointer">photo_camera</span>
+</div>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interaction for buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.style.transform = 'scale(0.95)';
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+
+        // Simple qty toggle logic extension
+        const qtyInputs = document.querySelectorAll('input[type="number"]');
+        qtyInputs.forEach(input => {
+            input.addEventListener('change', (e) => {
+                if(e.target.value < 1) e.target.value = 1;
+            });
+        });
+    </script>
+</body></html>

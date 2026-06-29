@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UDEE - โต๊ะทั้งหมด</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#81756e",
+                    "surface-dim": "#dfd9d6",
+                    "surface-tint": "#705a4c",
+                    "inverse-surface": "#33302e",
+                    "background": "#fff8f5",
+                    "outline-variant": "#d2c4bc",
+                    "on-primary-fixed": "#28180d",
+                    "tertiary-container": "#3f2b0f",
+                    "tertiary": "#281600",
+                    "on-tertiary": "#ffffff",
+                    "inverse-primary": "#dec1af",
+                    "on-primary-fixed-variant": "#574335",
+                    "primary-fixed": "#fbddca",
+                    "on-error-container": "#93000a",
+                    "surface-container-highest": "#e8e1df",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed-variant": "#643e1b",
+                    "on-surface-variant": "#4f453f",
+                    "surface": "#fff8f5",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#ffddb6",
+                    "secondary-fixed-dim": "#f3bc8e",
+                    "primary-container": "#3d2b1f",
+                    "on-tertiary-container": "#b0916d",
+                    "on-tertiary-fixed": "#291801",
+                    "surface-container-high": "#eee7e4",
+                    "on-tertiary-fixed-variant": "#5a4224",
+                    "surface-variant": "#e8e1df",
+                    "surface-bright": "#fff8f5",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed": "#ffdcc1",
+                    "surface-container-low": "#f9f2f0",
+                    "on-secondary": "#ffffff",
+                    "surface-container": "#f3ecea",
+                    "on-primary-container": "#ac9181",
+                    "on-background": "#1d1b1a",
+                    "error": "#ba1a1a",
+                    "on-secondary-container": "#7a512c",
+                    "tertiary-fixed-dim": "#e3c199",
+                    "on-error": "#ffffff",
+                    "secondary": "#7f5530",
+                    "inverse-on-surface": "#f6efed",
+                    "on-surface": "#1d1b1a",
+                    "secondary-container": "#ffc698",
+                    "primary": "#26170c",
+                    "primary-fixed-dim": "#dec1af",
+                    "on-secondary-fixed": "#2e1500"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "8px",
+                    "xxl": "48px",
+                    "lg": "24px",
+                    "base": "16px",
+                    "xs": "4px",
+                    "huge": "64px",
+                    "md": "12px",
+                    "xl": "32px"
+            },
+            "fontFamily": {
+                    "body-md": ["Kanit", "sans-serif"],
+                    "display-lg": ["Kanit", "sans-serif"],
+                    "label-sm": ["Kanit", "sans-serif"],
+                    "headline-md": ["Kanit", "sans-serif"],
+                    "title-md": ["Kanit", "sans-serif"],
+                    "headline-md-mobile": ["Kanit", "sans-serif"],
+                    "body-lg": ["Kanit", "sans-serif"],
+                    "title-lg": ["Kanit", "sans-serif"],
+                    "display-lg-mobile": ["Kanit", "sans-serif"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "1.6", "fontWeight": "300"}],
+                    "display-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "400"}],
+                    "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "title-md": ["20px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                    "headline-md-mobile": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "300"}],
+                    "title-lg": ["24px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                    "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #F2EBE2; /* Surface Alt background as per style guide */
+            color: #1d1b1a;
+            font-family: 'Kanit', sans-serif;
+        }
+        .signature-heading::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 2px;
+            background-color: #A0724A;
+            margin-top: 8px;
+        }
+        .card-shadow {
+            box-shadow: 0 2px 8px rgba(61,43,31,0.08);
+        }
+        .card-shadow:hover {
+            box-shadow: 0 6px 16px rgba(61,43,31,0.14);
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #3D2B1F;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #d2c4bc;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md">
+<!-- TopNavBar -->
+<header class="bg-surface sticky top-0 z-50 shadow-sm border-none">
+<div class="flex justify-between items-center w-full px-lg py-sm max-w-7xl mx-auto z-50">
+<a class="font-display-lg text-display-lg font-bold text-primary" href="#">UDEE</a>
+<nav class="hidden md:flex items-center gap-xl">
+<a class="text-on-surface-variant font-body-md text-body-md hover:text-secondary transition-colors duration-200" href="#">Home</a>
+<a class="text-primary border-b-2 border-on-secondary-container pb-1 font-body-md text-body-md" href="#">Furniture</a>
+<a class="text-on-surface-variant font-body-md text-body-md hover:text-secondary transition-colors duration-200" href="#">About</a>
+<a class="text-on-surface-variant font-body-md text-body-md hover:text-secondary transition-colors duration-200" href="#">Contact</a>
+</nav>
+<div class="flex items-center gap-base">
+<div class="hidden lg:flex items-center bg-surface-container rounded-full px-base py-xs">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-48 font-body-md" placeholder="ค้นหาเฟอร์นิเจอร์..." type="text"/>
+</div>
+<div class="flex items-center gap-md">
+<button class="scale-95 active:scale-90 transition-transform text-on-surface-variant hover:text-secondary">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="relative scale-95 active:scale-90 transition-transform text-on-surface-variant hover:text-secondary">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="absolute -top-1 -right-1 bg-secondary text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">2</span>
+</button>
+<button class="bg-primary text-white px-lg py-sm rounded-xl font-body-md text-body-md hover:opacity-90 transition-all">Login</button>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-base md:px-lg py-xl">
+<!-- Breadcrumb -->
+<nav class="flex items-center gap-xs text-outline text-label-sm mb-lg">
+<a class="hover:text-primary transition-colors" href="#">หน้าแรก</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-primary font-medium">โต๊ะทั้งหมด</span>
+</nav>
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-xxl gap-lg">
+<div>
+<h1 class="font-headline-md text-headline-md text-primary signature-heading">โต๊ะทั้งหมด</h1>
+<p class="text-on-surface-variant mt-sm">ค้นพบโต๊ะไม้คุณภาพเยี่ยม ออกแบบเพื่อความอบอุ่นและฟังก์ชันการใช้งานในบ้านคุณ</p>
+</div>
+<div class="flex items-center gap-base">
+<span class="text-on-surface-variant text-label-sm">เรียงตาม:</span>
+<select class="bg-white border-outline-variant rounded-lg text-body-md focus:ring-secondary focus:border-secondary px-base py-sm font-body-md">
+<option>ยอดนิยม</option>
+<option>ใหม่ล่าสุด</option>
+<option>ราคาน้อย-มาก</option>
+<option>ราคามาก-น้อย</option>
+</select>
+</div>
+</div>
+<div class="flex flex-col lg:flex-row gap-xl">
+<!-- Sidebar Filters -->
+<aside class="w-full lg:w-64 flex-shrink-0">
+<div class="bg-white p-lg rounded-xl card-shadow sticky top-32">
+<div class="flex items-center justify-between mb-lg">
+<h3 class="font-title-md text-title-md text-primary">ตัวกรอง</h3>
+<button class="text-secondary font-label-sm hover:underline">ล้างตัวกรอง</button>
+</div>
+<!-- Categories -->
+<div class="mb-lg">
+<h4 class="font-label-sm text-primary mb-sm uppercase tracking-wider">หมวดหมู่</h4>
+<div class="space-y-sm">
+<label class="flex items-center gap-sm cursor-pointer group">
+<input checked="" class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+<span class="text-body-md group-hover:text-secondary transition-colors">โต๊ะทำงาน</span>
+</label>
+<label class="flex items-center gap-sm cursor-pointer group">
+<input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+<span class="text-body-md group-hover:text-secondary transition-colors">โต๊ะกินข้าว</span>
+</label>
+<label class="flex items-center gap-sm cursor-pointer group">
+<input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+<span class="text-body-md group-hover:text-secondary transition-colors">โต๊ะกลาง</span>
+</label>
+<label class="flex items-center gap-sm cursor-pointer group">
+<input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+<span class="text-body-md group-hover:text-secondary transition-colors">โต๊ะข้าง</span>
+</label>
+</div>
+</div>
+<hr class="border-outline-variant mb-lg opacity-50"/>
+<!-- Price Range -->
+<div class="mb-lg">
+<h4 class="font-label-sm text-primary mb-sm uppercase tracking-wider">ช่วงราคา</h4>
+<input class="w-full h-1 bg-surface-container-highest rounded-lg appearance-none cursor-pointer" max="20000" min="0" step="500" type="range"/>
+<div class="flex justify-between mt-sm text-label-sm text-on-surface-variant">
+<span>฿0</span>
+<span>฿20,000</span>
+</div>
+</div>
+<hr class="border-outline-variant mb-lg opacity-50"/>
+<!-- Sizes -->
+<div class="mb-lg">
+<h4 class="font-label-sm text-primary mb-sm uppercase tracking-wider">ขนาด</h4>
+<div class="space-y-sm">
+<label class="flex items-center gap-sm cursor-pointer group">
+<input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+<span class="text-body-md">120 x 60 ซม.</span>
+</label>
+<label class="flex items-center gap-sm cursor-pointer group">
+<input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+<span class="text-body-md">140 x 70 ซม.</span>
+</label>
+<label class="flex items-center gap-sm cursor-pointer group">
+<input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+<span class="text-body-md">160 x 80 ซม.</span>
+</label>
+</div>
+</div>
+<hr class="border-outline-variant mb-lg opacity-50"/>
+<!-- Colors -->
+<div class="mb-lg">
+<h4 class="font-label-sm text-primary mb-sm uppercase tracking-wider">สีไม้</h4>
+<div class="flex flex-wrap gap-sm">
+<button class="w-8 h-8 rounded-full border-2 border-secondary ring-2 ring-transparent ring-offset-2" style="background-color: #3D2B1F;" title="Walnut"></button>
+<button class="w-8 h-8 rounded-full border-2 border-white bg-[#C8A882]" title="Oak"></button>
+<button class="w-8 h-8 rounded-full border-2 border-white bg-[#E5D5C6]" title="Maple"></button>
+<button class="w-8 h-8 rounded-full border-2 border-white bg-[#2A1F14]" title="Ebony"></button>
+</div>
+</div>
+<hr class="border-outline-variant mb-lg opacity-50"/>
+<!-- Materials -->
+<div>
+<h4 class="font-label-sm text-primary mb-sm uppercase tracking-wider">วัสดุ</h4>
+<div class="space-y-sm">
+<label class="flex items-center gap-sm cursor-pointer group">
+<input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+<span class="text-body-md">ไม้โอ๊คแท้</span>
+</label>
+<label class="flex items-center gap-sm cursor-pointer group">
+<input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+<span class="text-body-md">ไม้วอลนัท</span>
+</label>
+<label class="flex items-center gap-sm cursor-pointer group">
+<input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+<span class="text-body-md">โครงเหล็กพ่นสี</span>
+</label>
+</div>
+</div>
+</div>
+</aside>
+<!-- Product Grid -->
+<section class="flex-1">
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-lg">
+<!-- Product Card 1 -->
+<div class="bg-white rounded-lg overflow-hidden card-shadow group transition-all">
+<div class="relative aspect-[4/3] overflow-hidden">
+<div class="w-full h-full bg-surface-container-low transition-transform duration-500 group-hover:scale-105" data-alt="A minimalist solid walnut wood desk with clean lines and tapered legs. The desk is set in a sun-drenched, ivory-walled room with soft shadows. High-end professional photography style emphasizing the tactile wood grain. Warm, quiet luxury aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBbdNsx3qmbUNWPJNcNQXeHUH7dmGqwYhrOtl0cbu3RLzjI9Fhuh-etUa8DxkPc1xJIJz8MfAggWalqvoaxVYGPjATRbk41dttzBANRd6XCYq0mIglBexcVtplVAM06naM44-KTWMkxse02laXxVV2SJrKroYKA1SHtFsdNeAD5ecaRWD2jqGMvXIAEqu2M6-AOo6ffwUsNNaghACOdwd45Vi0nJDVPInYobML8xihvQs3PwG0IM3l9X1mYI_AXZT-1gA6BhFFsWWkj')"></div>
+<div class="absolute top-base left-base flex flex-col gap-xs">
+<span class="bg-[#C8A882] text-[#2A1F14] text-[10px] font-bold px-base py-xs rounded-full uppercase">NEW</span>
+</div>
+<button class="absolute bottom-base right-base w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg text-primary hover:text-secondary opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+<div class="p-lg">
+<h3 class="font-title-md text-primary mb-xs group-hover:text-secondary transition-colors">โต๊ะทำงานไม้โอ๊ค รุ่น Minimalist</h3>
+<div class="flex items-center gap-sm mb-lg">
+<span class="text-secondary font-medium">฿12,900</span>
+<span class="text-outline-variant text-label-sm line-through">฿15,500</span>
+</div>
+<button class="w-full py-sm bg-primary text-white rounded-xl font-medium flex items-center justify-center gap-sm hover:bg-secondary transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[18px]">add_shopping_cart</span>
+                            เพิ่มในตะกร้า
+                        </button>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="bg-white rounded-lg overflow-hidden card-shadow group transition-all">
+<div class="relative aspect-[4/3] overflow-hidden">
+<div class="w-full h-full bg-surface-container-low transition-transform duration-500 group-hover:scale-105" data-alt="A large rectangular dining table made of light oak wood, capable of seating six people. The setting is a modern dining area with beige curtains and soft ambient lighting. The table surface is polished and reflects a nearby floor lamp. Elegant, professional interior design catalogue style." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA8u4_SDOA_Rhy_tCxOwLnK2ORZIFxaORUWLFZKXJ5cI4HLLnkcNcTIx2PMG_lumRzXTOT8rCrTEVNuIQ6FnJtZ9R8Rij1uS09X4g5_KYZhEsRcoYmqSOBWvCC_c2McCY8PbdpRJ6mfJK7QNmeudNZiq7H7-b5QEU6g4CnY-sZnYtqW0HRDi74dg8u8lcGF-mQHdHgN44sAPXDV_9KyqODhSrUwMVfWuTek2cEQ8m8mRRVL93QuFZ0OpdHhQdaUg3o6CKIv2EHEX5rL')"></div>
+<div class="absolute top-base left-base flex flex-col gap-xs">
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-base py-xs rounded-full uppercase">-15% OFF</span>
+</div>
+</div>
+<div class="p-lg">
+<h3 class="font-title-md text-primary mb-xs group-hover:text-secondary transition-colors">โต๊ะกินข้าว Oak Gather 6 ที่นั่ง</h3>
+<div class="flex items-center gap-sm mb-lg">
+<span class="text-secondary font-medium">฿18,500</span>
+</div>
+<button class="w-full py-sm bg-primary text-white rounded-xl font-medium flex items-center justify-center gap-sm hover:bg-secondary transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[18px]">add_shopping_cart</span>
+                            เพิ่มในตะกร้า
+                        </button>
+</div>
+</div>
+<!-- Product Card 3 (Out of stock) -->
+<div class="bg-white rounded-lg overflow-hidden card-shadow group opacity-80 transition-all">
+<div class="relative aspect-[4/3] overflow-hidden grayscale-[50%]">
+<div class="w-full h-full bg-surface-container-low" data-alt="A round coffee table with a dark walnut top and slim black metal legs. The table sits on a textured cream rug in a cozy living room. The lighting is warm and directional, highlighting the rich brown tones of the wood. Calm, modern corporate home office vibe." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA5ei0tZ8OCkSSrd-x4g2tEUpJbg2VEAAFbS_VdXtGaBBTaDDONDk5f2EWgejcTUlDp6Tz3bPaw_Igrp0TjaFSg6bo2CHbW4No0PJWI4V_xZIFWIWCNYvKqqPBQXFI49ZGeRRMRSPX34reM4MaYkWVSxYK_27mpkAjM3jyj78suvuUdLKsl6PAw5cYilQMACp_-YIuM6hTV_bxh9cXflR9fyZeHj4_D5tt_KGizvd4lj3GtwmNhHa7wwZR0RK1DLhxS9SRydReHnzn9')"></div>
+<div class="absolute inset-0 bg-black/20 flex items-center justify-center">
+<span class="bg-white text-primary px-lg py-sm rounded-lg font-bold text-label-sm shadow-xl">สินค้าหมด</span>
+</div>
+</div>
+<div class="p-lg">
+<h3 class="font-title-md text-primary mb-xs">โต๊ะกลางทรงกลม Dark Walnut</h3>
+<div class="flex items-center gap-sm mb-lg">
+<span class="text-secondary font-medium">฿4,200</span>
+</div>
+<button class="w-full py-sm bg-outline-variant text-white rounded-xl font-medium cursor-not-allowed" disabled="">
+                            สินค้าหมด
+                        </button>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="bg-white rounded-lg overflow-hidden card-shadow group transition-all">
+<div class="relative aspect-[4/3] overflow-hidden">
+<div class="w-full h-full bg-surface-container-low transition-transform duration-500 group-hover:scale-105" data-alt="An ergonomic standing desk with a light wood grain top and a white motorized frame. Located in a bright workspace with greenery in the background. The design is clean and professional, suited for a high-end home office. High-key, airy lighting style." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA-wW8Nhv1clbjMT6NtaXlqNUbYNKMnCb-iNM0yx_unArK4LOwBVkg8PBV36nFj9ZrQjAssl16FHjLwHj0Of7G3zZuaorW_lMGdQo5hPbvCajN-2JVRAXJQvlKJryYYMygssUzMxA2QpHd8UEy8adBEWlVlSsvjYmBxpCYtqb0m6-V03o3h-nyxU4riTYjm-wEznHtDH-HKxwOq34iuCUMD-DxdqF-6Tw0CBV1gAACQCnLQzWYwWrssF6E-rYgjozF_uymFOrhx3XP0')"></div>
+</div>
+<div class="p-lg">
+<h3 class="font-title-md text-primary mb-xs group-hover:text-secondary transition-colors">โต๊ะทำงานปรับระดับไฟฟ้า รุ่น Pro</h3>
+<div class="flex items-center gap-sm mb-lg">
+<span class="text-secondary font-medium">฿14,900</span>
+</div>
+<button class="w-full py-sm bg-primary text-white rounded-xl font-medium flex items-center justify-center gap-sm hover:bg-secondary transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[18px]">add_shopping_cart</span>
+                            เพิ่มในตะกร้า
+                        </button>
+</div>
+</div>
+<!-- Product Card 5 -->
+<div class="bg-white rounded-lg overflow-hidden card-shadow group transition-all">
+<div class="relative aspect-[4/3] overflow-hidden">
+<div class="w-full h-full bg-surface-container-low transition-transform duration-500 group-hover:scale-105" data-alt="Small bedside table with a drawer, made of solid maple wood. It features a warm underline accent and high-quality joinery details. Set next to a neatly made bed with neutral-toned linens. Soft morning light coming through a window. Editorial interior photography." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAPrwuIlOgy5iHdKyjhMguE9hpCShjRr3SPslaF-rx6u6n6VwR-hcgk7xkWoEt7GimNVPW3cFI53Q_PZ9VutK4wD9N3d8NGURl1mFPqrxkFN6ZX_YUN3PbUHIFLpjneqiqqgUWMukKA-UH2zwQt07tsFkkwYJtxFqf0omik0DnQDD8bSwNqVcOteJcQ58pd_4U4k_1qQVHlTRoGdwkak0i3Ns_4SXqVEMwZA9JnlxCFH9KscgbJRMClABIK4Hj3Elhqbb9y0JFLmPlM')"></div>
+</div>
+<div class="p-lg">
+<h3 class="font-title-md text-primary mb-xs group-hover:text-secondary transition-colors">โต๊ะข้างเตียง Maple Soft</h3>
+<div class="flex items-center gap-sm mb-lg">
+<span class="text-secondary font-medium">฿3,500</span>
+</div>
+<button class="w-full py-sm bg-primary text-white rounded-xl font-medium flex items-center justify-center gap-sm hover:bg-secondary transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[18px]">add_shopping_cart</span>
+                            เพิ่มในตะกร้า
+                        </button>
+</div>
+</div>
+<!-- Product Card 6 -->
+<div class="bg-white rounded-lg overflow-hidden card-shadow group transition-all">
+<div class="relative aspect-[4/3] overflow-hidden">
+<div class="w-full h-full bg-surface-container-low transition-transform duration-500 group-hover:scale-105" data-alt="A vintage-style writing desk with dark finish and built-in organizers. The desktop features an open journal and a high-end brass pen. The setting is a library with bookshelves in a soft-focus background. Deep walnut tones and ivory highlights." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB5v_BuM5qQgtb4DoQWcqSqVt6rweFxW3qJjkaaaV2HybiyFebbccwcrH1PZ7iXEVV2jbO5zrpIS4S2vSPj5Rw-XZZ3i0zNOrOzpSuaz2Fox33KywSWP8kNiR1R1y6NqjnoEZuURWPCeJ5S-w7I6W0TxHLz7oOx5MUTmn45wUIiBGfaRbSbRs1gxmWWlZ8g5QInmmzOKewwtGsQlkLqijIo5iD8oENgTTTWh_w98f84jPZRF7epbab9VYTTsIh0scqPUSztGPcpSZmQ')"></div>
+<div class="absolute top-base left-base flex flex-col gap-xs">
+<span class="bg-secondary text-white text-[10px] font-bold px-base py-xs rounded-full uppercase">BEST SELLER</span>
+</div>
+</div>
+<div class="p-lg">
+<h3 class="font-title-md text-primary mb-xs group-hover:text-secondary transition-colors">โต๊ะเขียนหนังสือ Classic Walnut</h3>
+<div class="flex items-center gap-sm mb-lg">
+<span class="text-secondary font-medium">฿9,800</span>
+</div>
+<button class="w-full py-sm bg-primary text-white rounded-xl font-medium flex items-center justify-center gap-sm hover:bg-secondary transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[18px]">add_shopping_cart</span>
+                            เพิ่มในตะกร้า
+                        </button>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-huge flex items-center justify-center gap-base">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-primary hover:bg-surface-container transition-colors disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<div class="flex items-center gap-sm">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-white font-medium">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg text-primary hover:bg-surface-container transition-colors">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg text-primary hover:bg-surface-container transition-colors">3</button>
+<span class="text-outline-variant">...</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg text-primary hover:bg-surface-container transition-colors">12</button>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-primary hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-primary mt-huge">
+<div class="w-full py-xxl px-lg grid grid-cols-1 md:grid-cols-4 gap-lg max-w-7xl mx-auto">
+<div class="col-span-1 md:col-span-1">
+<span class="font-display-lg-mobile text-display-lg-mobile font-bold text-surface-container-lowest mb-lg block">UDEE</span>
+<p class="text-surface-variant text-body-md max-w-xs">
+                เฟอร์นิเจอร์ไม้ที่ถูกคัดสรรมาอย่างประณีต เพื่อมอบความอบอุ่นและความหรูหราที่เรียบง่ายให้กับบ้านของคุณ
+            </p>
+</div>
+<div>
+<h4 class="font-title-lg text-title-lg text-on-primary mb-lg">สินค้าของเรา</h4>
+<ul class="space-y-sm">
+<li><a class="text-surface-variant hover:text-secondary-fixed-dim transition-all text-body-md" href="#">Living Room</a></li>
+<li><a class="text-surface-variant hover:text-secondary-fixed-dim transition-all text-body-md" href="#">Dining Tables</a></li>
+<li><a class="text-surface-variant hover:text-secondary-fixed-dim transition-all text-body-md" href="#">Workspaces</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-title-lg text-title-lg text-on-primary mb-lg">การบริการ</h4>
+<ul class="space-y-sm">
+<li><a class="text-surface-variant hover:text-secondary-fixed-dim transition-all text-body-md" href="#">Shipping Policy</a></li>
+<li><a class="text-surface-variant hover:text-secondary-fixed-dim transition-all text-body-md" href="#">Returns</a></li>
+<li><a class="text-surface-variant hover:text-secondary-fixed-dim transition-all text-body-md" href="#">Privacy</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-title-lg text-title-lg text-on-primary mb-lg">ติดต่อเรา</h4>
+<p class="text-surface-variant text-body-md mb-base">
+                123 ถนนสุขุมวิท, กรุงเทพมหานคร<br/>
+                อีเมล: hello@udee.com<br/>
+                โทร: 02-123-4567
+            </p>
+<div class="flex gap-base">
+<a class="text-on-primary hover:text-secondary-fixed-dim transition-all" href="#"><span class="material-symbols-outlined">public</span></a>
+<a class="text-on-primary hover:text-secondary-fixed-dim transition-all" href="#"><span class="material-symbols-outlined">mail</span></a>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-lg py-lg border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-base">
+<p class="text-surface-variant text-label-sm">
+            © 2024 UDEE Furniture. Crafted for the quiet luxury of home.
+        </p>
+<div class="flex gap-lg">
+<span class="material-symbols-outlined text-surface-variant">credit_card</span>
+<span class="material-symbols-outlined text-surface-variant">payments</span>
+<span class="material-symbols-outlined text-surface-variant">account_balance_wallet</span>
+</div>
+</div>
+</footer>
+<script>
+    // Micro-interaction for filter range update (Visual only)
+    const range = document.querySelector('input[type="range"]');
+    const priceLabel = document.querySelectorAll('.text-on-surface-variant span');
+    if (range) {
+        range.addEventListener('input', (e) => {
+            const val = parseInt(e.target.value).toLocaleString();
+            priceLabel[1].textContent = `฿${val}`;
+        });
+    }
+
+    // Add to cart animation
+    document.querySelectorAll('button').forEach(btn => {
+        if (btn.textContent.includes('เพิ่มในตะกร้า')) {
+            btn.addEventListener('click', function() {
+                const originalContent = this.innerHTML;
+                this.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> กำลังเพิ่ม...';
+                this.classList.replace('bg-primary', 'bg-secondary');
+                
+                setTimeout(() => {
+                    this.innerHTML = '<span class="material-symbols-outlined">check_circle</span> เพิ่มแล้ว';
+                    setTimeout(() => {
+                        this.innerHTML = originalContent;
+                        this.classList.replace('bg-secondary', 'bg-primary');
+                    }, 2000);
+                }, 800);
+            });
+        }
+    });
+</script>
+</body></html>

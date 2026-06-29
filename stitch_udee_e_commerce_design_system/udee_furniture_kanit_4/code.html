@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UDEE - โต๊ะกินข้าวไม้แท้ รุ่น Walnut Classic</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#81756e",
+                    "surface-dim": "#dfd9d6",
+                    "surface-tint": "#705a4c",
+                    "inverse-surface": "#33302e",
+                    "background": "#fff8f5",
+                    "outline-variant": "#d2c4bc",
+                    "on-primary-fixed": "#28180d",
+                    "tertiary-container": "#3f2b0f",
+                    "tertiary": "#281600",
+                    "on-tertiary": "#ffffff",
+                    "inverse-primary": "#dec1af",
+                    "on-primary-fixed-variant": "#574335",
+                    "primary-fixed": "#fbddca",
+                    "on-error-container": "#93000a",
+                    "surface-container-highest": "#e8e1df",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed-variant": "#643e1b",
+                    "on-surface-variant": "#4f453f",
+                    "surface": "#fff8f5",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#ffddb6",
+                    "secondary-fixed-dim": "#f3bc8e",
+                    "primary-container": "#3d2b1f",
+                    "on-tertiary-container": "#b0916d",
+                    "on-tertiary-fixed": "#291801",
+                    "surface-container-high": "#eee7e4",
+                    "on-tertiary-fixed-variant": "#5a4224",
+                    "surface-variant": "#e8e1df",
+                    "surface-bright": "#fff8f5",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed": "#ffdcc1",
+                    "surface-container-low": "#f9f2f0",
+                    "on-secondary": "#ffffff",
+                    "surface-container": "#f3ecea",
+                    "on-primary-container": "#ac9181",
+                    "on-background": "#1d1b1a",
+                    "error": "#ba1a1a",
+                    "on-secondary-container": "#7a512c",
+                    "tertiary-fixed-dim": "#e3c199",
+                    "on-error": "#ffffff",
+                    "secondary": "#7f5530",
+                    "inverse-on-surface": "#f6efed",
+                    "on-surface": "#1d1b1a",
+                    "secondary-container": "#ffc698",
+                    "primary": "#26170c",
+                    "primary-fixed-dim": "#dec1af",
+                    "on-secondary-fixed": "#2e1500"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "8px",
+                    "xxl": "48px",
+                    "lg": "24px",
+                    "base": "16px",
+                    "xs": "4px",
+                    "huge": "64px",
+                    "md": "12px",
+                    "xl": "32px"
+            },
+            "fontFamily": {
+                    "body-md": ["Kanit", "sans-serif"],
+                    "display-lg": ["Kanit", "sans-serif"],
+                    "label-sm": ["Kanit", "sans-serif"],
+                    "headline-md": ["Kanit", "sans-serif"],
+                    "title-md": ["Kanit", "sans-serif"],
+                    "headline-md-mobile": ["Kanit", "sans-serif"],
+                    "body-lg": ["Kanit", "sans-serif"],
+                    "title-lg": ["Kanit", "sans-serif"],
+                    "display-lg-mobile": ["Kanit", "sans-serif"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "title-md": ["20px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                    "headline-md-mobile": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "title-lg": ["24px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                    "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .signature-heading::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 2px;
+            background-color: #A0724A;
+            margin-top: 8px;
+        }
+        .custom-shadow {
+            box-shadow: 0 2px 8px rgba(61,43,31,0.08);
+        }
+        .custom-shadow:hover {
+            box-shadow: 0 6px 16px rgba(61,43,31,0.14);
+        }
+        .scroll-hide::-webkit-scrollbar {
+            display: none;
+        }
+        body {
+            font-family: 'Kanit', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased">
+<!-- Top Navigation Bar -->
+<nav class="bg-surface sticky top-0 z-50 shadow-sm">
+<div class="flex justify-between items-center w-full px-lg py-sm max-w-7xl mx-auto">
+<a class="font-display-lg text-display-lg font-bold text-primary" href="#">UDEE</a>
+<div class="hidden md:flex items-center space-x-xl">
+<a class="text-on-surface-variant hover:text-secondary transition-colors duration-200" href="#">หน้าหลัก</a>
+<a class="text-primary border-b-2 border-on-secondary-container pb-1" href="#">เฟอร์นิเจอร์</a>
+<a class="text-on-surface-variant hover:text-secondary transition-colors duration-200" href="#">เกี่ยวกับเรา</a>
+<a class="text-on-surface-variant hover:text-secondary transition-colors duration-200" href="#">ติดต่อเรา</a>
+</div>
+<div class="flex items-center space-x-base">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">search</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">shopping_cart</button>
+<a class="hidden md:block font-label-sm text-primary font-medium" href="#">เข้าสู่ระบบ</a>
+<button class="md:hidden material-symbols-outlined">menu</button>
+</div>
+</div>
+</nav>
+<main class="max-w-7xl mx-auto px-base md:px-lg py-xl">
+<!-- Breadcrumbs -->
+<nav class="flex mb-lg text-on-surface-variant font-label-sm space-x-xs items-center">
+<a class="hover:text-primary transition-colors" href="#">หน้าหลัก</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">เฟอร์นิเจอร์</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">โต๊ะกินข้าว</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-secondary font-medium">Walnut Classic</span>
+</nav>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-huge">
+<!-- Left: Image Gallery -->
+<section class="space-y-base">
+<div class="relative aspect-square rounded-lg overflow-hidden bg-surface-container-low custom-shadow group">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCl_HRz-w_jmVWyvGJmcaaFRNlF5aGfJQhrQhJvfkmxk9dZ6hkQIrUFKgAWZc1vPBc6Vcy_OR0uLWw91qEQAIAM-Y2a1ia93LosHU6GsOaA37aaetYB3sPK0TwuDL3qMJgsLEhtG26hLy9SdmALP-LCUGWCqu5BgBG0MN8Zj-qG7jRSbDyliuQAcZIPjJ16gbVPcir-ofQjrDkCNag9pwJGQO0maInRlrNAa8IupzPxlyUwrGg33Z0F1vpKqw-wamSGRHg69LK55Ydf"/>
+<div class="absolute top-lg left-lg bg-[#C8A882] text-[#2A1F14] px-base py-xs rounded-full font-label-sm font-bold uppercase tracking-wider">
+                        ลด 15%
+                    </div>
+</div>
+<div class="grid grid-cols-4 gap-base">
+<button class="aspect-square rounded-lg border-2 border-primary overflow-hidden">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5XR56dP73-J287f-v4Z73pJ1PSQjdl9qLHUSNQeFdaoHTh1MLk7EDzTaMgI5VHxGUskUf_sBGj59YoXFdxijtvujNppByd8Z5bzgYT3Ag9H9FZqZk-0W0rxajsVIlBHQk9o2qxLxMR5iD01OfVIoZO2LkimYgdNZrtHQXbenwCU6DrBrWNNz3GBB_-IGrEVkFKLyalsKli09O9-4wNHnpSsZ9mLvnJENA5djEEf5MqAFsJjVmoJIuzYKYk4r9Ls5alDLkB6ZzAsgN"/>
+</button>
+<button class="aspect-square rounded-lg border border-outline-variant overflow-hidden hover:border-secondary transition-colors">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKHTI014LqhLGuDBandIAVXuxb7F6eU7QbPd99hMS90-dwwguj3DzqJpUz2FSt8N7_MQnXplcFwleKWrpz5Vr4rUgVUgN7ln4DDN-MSefJkXSzkkJ1Lh_HIJk6PrcEaX3rVqelPhRoUPAMgVCtWFubrJduKNNENJeXD0ZulPpAkTbIcTInAlEuVx3smr1UMeyMci1AYu7tNZWefDMVjCRNhocdFCX-qgjbFMF6MQ12uHKFWnAgyW6bRtJW_zIdg7uf0_FLO4paB5DP"/>
+</button>
+<button class="aspect-square rounded-lg border border-outline-variant overflow-hidden hover:border-secondary transition-colors">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_gxH68i2ZxZ-H2CluWiO3F9yrbkX9SOLXrs6HnoYxRkQtOjj-ispZ89VP8D07OiWX5JcfNMFu69qSrpTXOuQjmAcoMmw-LbfswcbqzVVZ27nMVc-5h2dulIRuJ9WBBE3MVzCLOlBH2RX6EU6jVrx9ukePTgc_9RpNy6rrRDNKIg0Uav06hk7icKnqBGUfdZw6dnUdTigtdApHzyCIbWf0Sy4b2qt_tK4Gfi9u73nz0wOs7oLv-g6TrpTMIKi-zJqCbd84pP_j4Mz5"/>
+</button>
+<button class="aspect-square rounded-lg border border-outline-variant overflow-hidden hover:border-secondary transition-colors">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHp1PwiHpJ-f4gTc9ub5Al_-O9rkvJIpEycJ-FHF5AFgItfkjNfEHJvSqYDXu75HN0HqCWEHx4rck7mNglJriAhBtOQU4lBkABq7Ih6GH0C2AdVnHjoR2i0xwvDfJkyeGPYZLT7QqO_SNsaLMre3v9kDbNrE8-5bDQPPHL7fKZUVkxybjHbR4_cF6IyJk2YjCRXYo-FK9mK1M_fwSEr4WEeF6zR0MpYCSA2_r33Vzwh5OUNoRYtrVhBYZwU6-yIzg1SQeAVrdfAQ3y"/>
+</button>
+</div>
+</section>
+<!-- Right: Product Info -->
+<section class="space-y-xl">
+<header class="space-y-sm">
+<h1 class="font-headline-md text-headline-md text-on-surface">โต๊ะกินข้าวไม้แท้ รุ่น Walnut Classic</h1>
+<div class="flex items-end space-x-base">
+<span class="text-display-lg-mobile font-bold text-secondary">฿12,900</span>
+<span class="text-on-surface-variant line-through text-title-md mb-1">฿15,200</span>
+</div>
+</header>
+<div class="space-y-lg">
+<!-- Size Toggle -->
+<div class="space-y-sm">
+<p class="font-title-md text-on-surface">ขนาดความยาว</p>
+<div class="flex flex-wrap gap-sm">
+<button class="px-lg py-sm border border-primary bg-primary text-on-primary rounded-lg font-medium transition-all">60cm</button>
+<button class="px-lg py-sm border border-outline-variant hover:border-secondary rounded-lg font-medium transition-all">80cm</button>
+<button class="px-lg py-sm border border-outline-variant hover:border-secondary rounded-lg font-medium transition-all">100cm</button>
+<button class="px-lg py-sm border border-outline-variant hover:border-secondary rounded-lg font-medium transition-all">120cm</button>
+</div>
+</div>
+<!-- Color Swatches -->
+<div class="space-y-sm">
+<p class="font-title-md text-on-surface">เฉดสีไม้</p>
+<div class="flex gap-base">
+<button class="w-10 h-10 rounded-full bg-[#3D2B1F] ring-2 ring-offset-2 ring-primary border border-outline-variant transition-transform hover:scale-110" title="Dark Walnut"></button>
+<button class="w-10 h-10 rounded-full bg-[#8B5E3C] ring-0 border border-outline-variant transition-transform hover:scale-110" title="Natural Oak"></button>
+<button class="w-10 h-10 rounded-full bg-[#5D4037] ring-0 border border-outline-variant transition-transform hover:scale-110" title="Teak"></button>
+</div>
+</div>
+<!-- Material Dropdown -->
+<div class="space-y-sm">
+<label class="font-title-md block text-on-surface" for="material">วัสดุหน้าท็อป</label>
+<select class="w-full md:max-w-xs border-outline-variant rounded-lg bg-white p-base focus:ring-secondary focus:border-secondary" id="material">
+<option>ไม้ความหนาแน่นสูง (Solid Walnut)</option>
+<option>ไม้โอ๊คแท้ (Solid Oak)</option>
+<option>ไม้แอชขัดเงา (Polished Ash)</option>
+</select>
+</div>
+<!-- Quantity and Actions -->
+<div class="flex flex-col space-y-base sm:space-y-0 sm:flex-row sm:space-x-base items-center">
+<div class="flex items-center border border-outline-variant rounded-lg h-[56px] w-full sm:w-auto">
+<button class="px-base h-full hover:bg-surface-container-high transition-colors text-on-surface-variant" onclick="updateQty(-1)">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<input class="w-16 text-center border-none focus:ring-0 font-bold bg-transparent" id="qty" type="number" value="1"/>
+<button class="px-base h-full hover:bg-surface-container-high transition-colors text-on-surface-variant" onclick="updateQty(1)">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+<button class="w-full bg-primary text-on-primary h-[56px] px-huge rounded-xl font-bold hover:opacity-90 active:scale-95 transition-all">
+                            เพิ่มลงตะกร้า
+                        </button>
+</div>
+<button class="w-full border-2 border-primary text-primary h-[56px] rounded-xl font-bold hover:bg-primary-fixed-dim transition-all">
+                        สั่งซื้อเลย
+                    </button>
+</div>
+<!-- Trust Badges -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg pt-base border-t border-outline-variant">
+<div class="flex items-center space-x-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary">local_shipping</span>
+<span class="font-label-sm">จัดส่งฟรีทั่วประเทศ</span>
+</div>
+<div class="flex items-center space-x-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary">verified</span>
+<span class="font-label-sm">รับประกัน 5 ปีเต็ม</span>
+</div>
+<div class="flex items-center space-x-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary">published_with_changes</span>
+<span class="font-label-sm">คืนสินค้าใน 30 วัน</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Details Tabs -->
+<section class="mt-huge">
+<div class="flex border-b border-outline-variant mb-xl overflow-x-auto scroll-hide">
+<button class="px-lg py-base text-title-md font-bold text-primary border-b-4 border-secondary whitespace-nowrap">รายละเอียดสินค้า</button>
+<button class="px-lg py-base text-title-md font-medium text-on-surface-variant hover:text-primary whitespace-nowrap transition-colors">ข้อมูลจำเพาะ</button>
+<button class="px-lg py-base text-title-md font-medium text-on-surface-variant hover:text-primary whitespace-nowrap transition-colors">การจัดส่งและติดตั้ง</button>
+</div>
+<div class="max-w-3xl space-y-base text-on-surface-variant leading-relaxed">
+<p>โต๊ะกินข้าวรุ่น Walnut Classic ผลิตจากไม้จริงคัดเกรดพิเศษ นำเข้าจากอเมริกาเหนือ ผ่านกระบวนการอบไม้ (Kiln Dry) ที่ได้มาตรฐานสากล เพื่อป้องกันการบิดงอและการขยายตัวของไม้ในสภาพอากาศเมืองไทย</p>
+<p>ดีไซน์เน้นความเรียบหรูสไตล์ Minimal Modern ที่เข้าได้กับทุกการตกแต่งบ้าน ขอบโต๊ะผ่านการขัดแต่งอย่างประณีต มอบผิวสัมผัสที่เรียบเนียนและอบอุ่น พร้อมการเคลือบสีแบบ Food Grade ที่ปลอดภัยสำหรับการใช้งานในครัวเรือน</p>
+<ul class="list-disc pl-base space-y-xs py-base">
+<li>ผลิตจากไม้ Walnut แท้ 100%</li>
+<li>รองรับน้ำหนักได้สูงสุด 150 กก.</li>
+<li>เคลือบกันน้ำและคราบฝังลึกด้วยเทคโนโลยี NANO SHIELD</li>
+<li>ประกอบง่าย พร้อมคู่มือภาษาไทย</li>
+</ul>
+</div>
+</section>
+<!-- Related Products -->
+<section class="mt-huge mb-huge">
+<h2 class="font-headline-md text-headline-md text-primary signature-heading mb-xl">สินค้าที่คล้ายกัน</h2>
+<div class="flex space-x-lg overflow-x-auto scroll-hide pb-lg">
+<!-- Product Card 1 -->
+<div class="min-w-[280px] group">
+<div class="relative aspect-[4/5] rounded-lg overflow-hidden custom-shadow mb-base">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD69ATW6e5OLYfPauYhm6y5ro2r4CPGU-nZPcbYoxroGGkzbGF61GXjLqR0krZ6135M-rZ4L06rDPoHnzK-SCdev8TyZwEz3e1R0mrNiTvSCk5h_z7dGf7J2dO-hZWwhfiO7sZTouaGV5tNtVo7RLP3EuThcWO-L-1yz1XuN0kAlUsye0dQANjfdqJoCOMQm8dRvUcMVdJXbUSGGEokv3zXCEk3o4m7KOYJKwM1t2BfvzVE2N3PnRejkocGmLUnpXz1lUgLs5yTVxav"/>
+<button class="absolute bottom-base right-base bg-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+<h3 class="font-title-md text-on-surface">เก้าอี้ทานข้าว รุ่น Minimal Oak</h3>
+<p class="text-secondary font-medium">฿2,490</p>
+</div>
+<!-- Product Card 2 -->
+<div class="min-w-[280px] group">
+<div class="relative aspect-[4/5] rounded-lg overflow-hidden custom-shadow mb-base">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhWIa0nCFXgSCGv8WoF7SAt_K7FkL7Y8eQF4YJmpF0Q6CVM5DAHXEFeeO5i9eUjur8Fq1pKwJDJFJ87DCbPxV6SOZSJnXDHlnnofcvkJo-HNxwqBa94i-iZoDPpgmlEUPtEV4dorTnL_u4E803dtlPzMbqGn_hpLsDhDIoJWRHJkCRPHP2LaRZTPBHkhMDFa3yVKD2wi--afwPOIiYHhatj6KPcyVCNP0ClhGphHfXYKeKnuhRPdZkRnOxtAipYKC47CzqK50G5mTn"/>
+</div>
+<h3 class="font-title-md text-on-surface">ตู้เก็บของข้างเตียง Walnut Elite</h3>
+<p class="text-secondary font-medium">฿8,900</p>
+</div>
+<!-- Product Card 3 -->
+<div class="min-w-[280px] group">
+<div class="relative aspect-[4/5] rounded-lg overflow-hidden custom-shadow mb-base">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRB1JbG_S3t44-mArE8Czc6nJwRGbCyzVs9Nvgx85ttVw46vOeyHupHtr2gZdHOxbLHwgSfeRpt6VMOIvfzCtoD3NqthVPHxFoO5MZN4QyVRPwsb0euJx5r69bIeFwg5rNQ0ZPf-dJZfpYJ_XgytDXN7s3XS32DueB2_z1OrYKqLCI1gROhvL-qFUJaj6Gnpv7cyXQ-r9m5hS7zN-o__abTxcU_8xTM_L-27AsAza7YKJlUmzlos9FcrSGlPGdAV9kNS3lqXVI38ck"/>
+</div>
+<h3 class="font-title-md text-on-surface">โต๊ะอาหารหินอ่อน รุ่น Marble Ash</h3>
+<p class="text-secondary font-medium">฿18,500</p>
+</div>
+<!-- Product Card 4 -->
+<div class="min-w-[280px] group">
+<div class="relative aspect-[4/5] rounded-lg overflow-hidden custom-shadow mb-base">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAw130fET621qZNJUJIAq_3LBoMCCtK3o8p868e6H1Vl-2Kn1kBDm51g3zHF4He4sswbBvkCqgCKJtOUnw4TRd_M1W-5_1Swez3Dw9GPpMODRk-SgQq_KEdScU90MwQRATUkR8j7Nev8F2Ytr7T7OE_aermsGxe5CVKGoTOM-_7TAZnbyFzGcqpTCQMgrAuCrg2ZxVbYLnlEPZXAE-Etlk8Z5wcmhyD2ntXl0Xb8o9RX4d_Yd3n24AwmLZLBGLFFDovG18UjD3PtZAH"/>
+</div>
+<h3 class="font-title-md text-on-surface">เก้าอี้ทำงานไม้ รุ่น Executive</h3>
+<p class="text-secondary font-medium">฿5,200</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-primary text-on-primary py-xxl">
+<div class="max-w-7xl mx-auto px-lg grid grid-cols-1 md:grid-cols-4 gap-lg">
+<div class="col-span-1 md:col-span-1">
+<h2 class="font-display-lg-mobile text-display-lg-mobile font-bold text-surface-container-lowest mb-base">UDEE</h2>
+<p class="text-surface-variant font-body-md opacity-80">นิยามใหม่ของความเงียบสงบในบ้านคุณ ด้วยเฟอร์นิเจอร์ไม้แท้คุณภาพพรีเมียม</p>
+</div>
+<div>
+<h4 class="font-title-lg text-title-lg mb-base">ช้อปกับเรา</h4>
+<ul class="space-y-sm text-surface-variant">
+<li><a class="hover:text-secondary-fixed transition-all" href="#">ห้องนั่งเล่น</a></li>
+<li><a class="hover:text-secondary-fixed transition-all" href="#">โต๊ะอาหาร</a></li>
+<li><a class="hover:text-secondary-fixed transition-all" href="#">ห้องทำงาน</a></li>
+<li><a class="hover:text-secondary-fixed transition-all" href="#">สินค้าใหม่</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-title-lg text-title-lg mb-base">ช่วยเหลือ</h4>
+<ul class="space-y-sm text-surface-variant">
+<li><a class="hover:text-secondary-fixed transition-all" href="#">นโยบายการจัดส่ง</a></li>
+<li><a class="hover:text-secondary-fixed transition-all" href="#">การคืนสินค้า</a></li>
+<li><a class="hover:text-secondary-fixed transition-all" href="#">คำถามที่พบบ่อย</a></li>
+<li><a class="hover:text-secondary-fixed transition-all" href="#">ติดต่อเรา</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-title-lg text-title-lg mb-base">ติดตามเรา</h4>
+<div class="flex space-x-base mb-base">
+<a class="opacity-80 hover:opacity-100 transition-opacity" href="#">
+<svg class="w-6 h-6 fill-current" viewbox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path></svg>
+</a>
+<a class="opacity-80 hover:opacity-100 transition-opacity" href="#">
+<svg class="w-6 h-6 fill-current" viewbox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"></path></svg>
+</a>
+</div>
+<div class="text-surface-variant font-label-sm">สมัครรับข่าวสารและสิทธิพิเศษ</div>
+<div class="mt-base flex">
+<input class="bg-surface-container-highest border-none rounded-l-lg p-sm w-full text-primary focus:ring-secondary" placeholder="อีเมลของคุณ" type="email"/>
+<button class="bg-secondary px-base rounded-r-lg hover:bg-secondary-container transition-colors">
+<span class="material-symbols-outlined text-on-secondary">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-lg mt-xxl pt-base border-t border-surface-variant border-opacity-20 text-center text-surface-variant opacity-60 font-label-sm">
+            © 2024 UDEE Furniture. Crafted for the quiet luxury of home.
+        </div>
+</footer>
+<script>
+        function updateQty(val) {
+            const input = document.getElementById('qty');
+            let current = parseInt(input.value);
+            if (current + val >= 1) {
+                input.value = current + val;
+            }
+        }
+
+        const mainImage = document.querySelector('section img');
+        mainImage.addEventListener('mousemove', (e) => {
+            const { left, top, width, height } = mainImage.getBoundingClientRect();
+            const x = (e.clientX - left) / width;
+            const y = (e.clientY - top) / height;
+            mainImage.style.transformOrigin = `${x * 100}% ${y * 100}%`;
+        });
+        mainImage.addEventListener('mouseleave', () => {
+            mainImage.style.transformOrigin = 'center';
+        });
+
+        const tabs = document.querySelectorAll('button.whitespace-nowrap');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => {
+                    t.classList.remove('text-primary', 'border-b-4', 'border-secondary', 'font-bold');
+                    t.classList.add('text-on-surface-variant', 'font-medium');
+                });
+                tab.classList.remove('text-on-surface-variant', 'font-medium');
+                tab.classList.add('text-primary', 'border-b-4', 'border-secondary', 'font-bold');
+            });
+        });
+    </script>
+</body></html>
