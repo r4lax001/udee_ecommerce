@@ -1,8 +1,8 @@
 export const homePageData = {
   navLinks: [
-    { label: 'หน้าแรก', href: '#', active: true },
-    { label: 'หมวดหมู่สินค้า', href: '#' },
-    { label: 'ติดต่อเรา', href: '#' },
+    { label: 'หน้าแรก', href: '/', icon: 'home', active: true },
+    { label: 'สินค้า', href: '/products', icon: 'inventory_2' },
+    { label: 'ติดต่อเรา', href: '#', icon: 'contact_support' },
   ],
   stats: [
     { value: '500+', label: 'รายการสินค้า' },

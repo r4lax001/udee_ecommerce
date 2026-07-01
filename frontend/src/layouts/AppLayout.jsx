@@ -2,6 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import ClickSparkOverlay from '../components/ClickSparkOverlay'
 
 const AppLayout = () => {
   const location = useLocation()
@@ -10,6 +11,7 @@ const AppLayout = () => {
 
   return (
     <div className="min-h-screen w-[100%] bg-[#FAF6F1] text-[#1D1B1A]">
+      <ClickSparkOverlay />
       <Navbar />
 
       <div className="flex min-h-[calc(100vh-180px)] flex-col">
