@@ -73,6 +73,25 @@
   }
 }
 
+@keyframes click-spark {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) translate(0, 0) rotate(var(--rot));
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) rotate(var(--rot));
+  }
+}
+
+.spark {
+  position: absolute;
+  transform-origin: center;
+  opacity: 1;
+  animation: click-spark 0.55s ease-out forwards;
+  pointer-events: none;
+}
+
 /* ── Custom scrollbar for sale section ── */
 .custom-scrollbar::-webkit-scrollbar {
   height: 4px;

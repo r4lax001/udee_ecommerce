@@ -1,18 +1,16 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { motion, useReducedMotion, AnimatePresence } from 'framer-motion'
+import { Link, useLocation } from 'react-router-dom'
+import { motion, useReducedMotion } from 'framer-motion'
+import ClickSparkButton from './ClickSparkButton'
 import { homePageData } from '../data/homePageData'
+
+const MotionLink = motion(Link)
 
 const Navbar = () => {
   const reduceMotion = useReducedMotion()
+  const location = useLocation()
   const transition = { duration: reduceMotion ? 0 : 0.22, ease: [0.22, 1, 0.36, 1] }
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
-  const categories = [
-    { name: 'โต๊ะกินข้าว', href: '#' },
-    { name: 'โต๊ะทำงาน', href: '#' },
-    { name: 'โต๊ะตกแต่ง', href: '#' },
-  ]
+  const isActive = (href) => href === location.pathname
 
   return (
     <motion.nav
@@ -39,43 +37,28 @@ const Navbar = () => {
 
         <div className="hidden md:flex gap-8">
           {homePageData.navLinks.map((link) => (
-            <div
-              key={link.label}
-              className="relative"
-              onMouseEnter={() => link.label === 'หมวดหมู่สินค้า' && setIsDropdownOpen(true)}
-              onMouseLeave={() => setIsDropdownOpen(false)}
-            >
-              <motion.a
-                href={link.href}
-                whileHover={{ y: -2, scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
-                className={`font-medium ${link.active ? 'border-b-2 border-[#A0724A] pb-1 text-[#3D2B1F]' : 'text-[#5a4e46] hover:text-[#A0724A]'}`}
-              >
-                {link.label}
-              </motion.a>
-              <AnimatePresence>
-                {link.label === 'หมวดหมู่สินค้า' && isDropdownOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute top-full left-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-[#E8E1DF] overflow-hidden z-50"
-                  >
-                    {categories.map((category) => (
-                      <motion.a
-                        key={category.name}
-                        href={category.href}
-                        whileHover={{ x: 4, backgroundColor: '#F2EBE2' }}
-                        whileTap={{ scale: 0.98 }}
-                        className="block px-4 py-3 text-sm text-[#5a4e46] hover:text-[#3D2B1F] transition-colors"
-                      >
-                        {category.name}
-                      </motion.a>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+            <div key={link.label}>
+              {link.href.startsWith('/') ? (
+                <MotionLink
+                  to={link.href}
+                  whileHover={{ y: -2, scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  className={`inline-flex items-center gap-2 font-medium ${isActive(link.href) ? 'border-b-2 border-[#A0724A] pb-1 text-[#3D2B1F]' : 'text-[#5a4e46] hover:text-[#A0724A]'}`}
+                >
+                  {link.icon && <span className="material-symbols-outlined text-base text-[#A0724A]">{link.icon}</span>}
+                  {link.label}
+                </MotionLink>
+              ) : (
+                <motion.a
+                  href={link.href}
+                  whileHover={{ y: -2, scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  className={`inline-flex items-center gap-2 font-medium ${isActive(link.href) ? 'border-b-2 border-[#A0724A] pb-1 text-[#3D2B1F]' : 'text-[#5a4e46] hover:text-[#A0724A]'}`}
+                >
+                  {link.icon && <span className="material-symbols-outlined text-base text-[#A0724A]">{link.icon}</span>}
+                  {link.label}
+                </motion.a>
+              )}
             </div>
           ))}
         </div>
@@ -97,12 +80,13 @@ const Navbar = () => {
             </Link>
           </motion.div>
           <motion.div whileHover={{ y: -2, scale: 1.04 }} whileTap={{ scale: 0.96 }}>
-            <Link
+            <ClickSparkButton
+              as="link"
               to="/auth"
               className="hidden md:inline-flex items-center justify-center rounded-lg border border-[#3D2B1F] bg-white px-5 py-2 text-sm font-medium text-[#3D2B1F] hover:bg-[#3D2B1F] hover:text-white transition-all"
             >
               Login
-            </Link>
+            </ClickSparkButton>
           </motion.div>
           <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="md:hidden p-2 text-[#3D2B1F]">
             <span className="material-symbols-outlined">menu</span>
