@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import Tilt from 'react-parallax-tilt'
 import ClickSparkButton from '../components/ClickSparkButton'
 import { homePageData } from '../data/homePageData'
@@ -10,6 +11,7 @@ const HomePage = ({
   categories = homePageData.categories,
   recommendedProducts = homePageData.recommendedProducts,
 }) => {
+  const navigate = useNavigate()
   const reduceMotion = useReducedMotion()
   const [loadedImages, setLoadedImages] = useState({})
   const transition = { duration: reduceMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] }
@@ -254,6 +256,11 @@ const HomePage = ({
             {recommendedProducts.map((product, index) => (
               <motion.article
                 key={product.id}
+                onClick={(e) => {
+                  if (!e.target.closest('button') && !e.target.closest('a')) {
+                    navigate('/product-detail')
+                  }
+                }}
                 className="group overflow-hidden rounded-3xl bg-white cursor-pointer perspective shadow-sm transition-all duration-500 hover:shadow-xl hover:border hover:border-[#A0724A]"
                 role="article"
                 aria-label={`${product.name}, ราคา ${product.price}, คะแนน ${product.rating} จาก ${product.reviews} รีวิว`}

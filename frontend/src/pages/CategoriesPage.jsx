@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { homePageData } from '../data/homePageData'
 import ClickSparkButton from '../components/ClickSparkButton'
 
@@ -62,6 +62,7 @@ const productCards = [
 ]
 
 const CategoriesPage = () => {
+  const navigate = useNavigate()
   const reduceMotion = useReducedMotion()
   const [sortBy, setSortBy] = useState('ยอดนิยม')
   const [priceValue, setPriceValue] = useState(20000)
@@ -235,6 +236,11 @@ const CategoriesPage = () => {
                 {productCards.map((product, index) => (
                   <motion.article
                     key={product.id}
+                    onClick={(e) => {
+                      if (!e.target.closest('button') && !e.target.closest('a')) {
+                        navigate('/product-detail')
+                      }
+                    }}
                     className="group overflow-hidden rounded-[2rem] bg-white shadow-[0_12px_30px_rgba(61,43,31,0.08)] transition-all duration-500 hover:-translate-y-1"
                     initial={reduceMotion ? false : { opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
