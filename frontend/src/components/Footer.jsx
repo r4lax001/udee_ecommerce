@@ -117,7 +117,7 @@ const Footer = () => {
         </div>
 
         {/* Newsletter */}
-        <div className="mt-12 pt-8 border-t border-[#5a4e46]/30">
+        {/* <div className="mt-12 pt-8 border-t border-[#5a4e46]/30">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
               <h3 className="text-lg font-semibold text-[#A0724A] mb-2">รับข่าวสารและโปรโมชั่น</h3>
@@ -138,7 +138,7 @@ const Footer = () => {
               </motion.button>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Copyright */}
         <div className="mt-8 pt-8 border-t border-[#5a4e46]/30 text-center text-sm text-[#C8A882]">

@@ -19,7 +19,7 @@ const Navbar = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={transition}
     >
-      <div className="mx-auto flex max-w-[1700px] items-center justify-between px-6 py-4">
+      <div className="mx-auto flex max-w-[1700px] items-center justify-between px-12 py-4">
         <Link to="/" className="flex items-center gap-1 cursor-pointer shrink-0 group relative">
           <div className="relative w-12 h-12 xl:w-14 xl:h-14 bg-[#A0724A] rounded-xl flex items-center justify-center shadow-lg shadow-[#A0724A]/30 overflow-hidden transition-all duration-700 group-hover:scale-110 group-hover:rotate-[10deg] group-hover:shadow-[#A0724A]/50">
             <div className="absolute inset-0 animate-shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -69,7 +69,7 @@ const Navbar = () => {
             whileTap={{ scale: 0.96 }}
             className="p-2 text-[#5a4e46] hover:text-[#3D2B1F] transition-transform"
           >
-            
+            <span className="material-symbols-outlined">search</span>
           </motion.button>
           <motion.div whileHover={{ y: -2, scale: 1.04 }} whileTap={{ scale: 0.96 }}>
             <Link to="/cart" className="relative p-2 text-[#5a4e46] hover:text-[#3D2B1F] transition-transform active:scale-95">

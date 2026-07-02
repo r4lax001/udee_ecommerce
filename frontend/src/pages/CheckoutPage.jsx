@@ -1,9 +1,12 @@
 import { useMemo, useState } from 'react'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { checkoutPageData } from '../data/checkoutPageData'
 
 const formatPrice = (value) => `฿${value.toLocaleString('th-TH')}`
 
 const CheckoutPage = ({ checkout = checkoutPageData }) => {
+  const reduceMotion = useReducedMotion()
+  const transition = { duration: reduceMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] }
   const [currentStep, setCurrentStep] = useState(1)
   const [shippingInfo, setShippingInfo] = useState({ name: '', phone: '', address: '', city: '', district: '', zip: '' })
   const [paymentInfo, setPaymentInfo] = useState({ transferDate: '', amount: '', slip: null })
@@ -15,11 +18,21 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
   )
 
   return (
-    <main className="min-h-screen bg-[#F2EBE2] text-[#1D1B1A]">
+    <motion.main
+      className="min-h-screen bg-[#F2EBE2] text-[#1D1B1A]"
+      initial={reduceMotion ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={transition}
+    >
       <section className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-8 space-y-8">
-            <div className="rounded-3xl bg-white p-10 shadow-[0_2px_8px_rgba(61,43,31,0.08)]">
+            <motion.div
+              className="rounded-3xl bg-white p-10 shadow-[0_2px_8px_rgba(61,43,31,0.08)]"
+              initial={reduceMotion ? false : { y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={transition}
+            >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <h1 className="text-3xl font-semibold text-[#3D2B1F]">{checkout.title}</h1>
@@ -40,7 +53,7 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
                   ))}
                 </div>
               </div>
-            </div>
+            </motion.div>
             {success ? (
               <div className="rounded-3xl bg-white p-10 shadow-[0_2px_8px_rgba(61,43,31,0.08)] text-center">
                 <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-[#C8A882] text-white">
@@ -195,7 +208,7 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
           </aside>
         </div>
       </section>
-    </main>
+    </motion.main>
   )
 }
 

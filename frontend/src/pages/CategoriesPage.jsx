@@ -68,6 +68,7 @@ const CategoriesPage = () => {
   const [selectedSizes, setSelectedSizes] = useState(['120 x 60 ซม.'])
   const [selectedColors, setSelectedColors] = useState(['#3D2B1F'])
   const [selectedMaterials, setSelectedMaterials] = useState(['ไม้โอ๊ค'])
+  const [selectedCategories, setSelectedCategories] = useState([])
   const transition = { duration: reduceMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] }
 
   const toggleItem = (item, current, setCurrent) => {
@@ -126,14 +127,31 @@ const CategoriesPage = () => {
             >
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-[#3D2B1F]">ตัวกรอง</h2>
-                <button className="text-sm font-medium text-[#A0724A]">ล้างตัวกรอง</button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedSizes(['120 x 60 ซม.'])
+                    setSelectedColors(['#3D2B1F'])
+                    setSelectedMaterials(['ไม้โอ๊ค'])
+                    setSelectedCategories([])
+                    setPriceValue(20000)
+                  }}
+                  className="text-sm font-medium text-[#A0724A] hover:text-[#3D2B1F] transition"
+                >
+                  ล้างตัวกรอง
+                </button>
               </div>
 
               <div className="space-y-3 rounded-[1.5rem] border border-[#E8E1DF] bg-[#FAF6F1] p-4">
-                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#A0724A]">หมวดหมู่</p>
-                {['โต๊ะทำงาน', 'โต๊ะกินข้าว', 'โต๊ะกลาง', 'โต๊ะข้าง'].map((item) => (
+                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#A0724A]">ประเภทโต๊ะ</p>
+                {['โต๊ะทำงาน', 'โต๊ะกินข้าว', 'โต๊ะตกแต่ง',].map((item) => (
                   <label key={item} className="flex cursor-pointer items-center gap-3 rounded-2xl border border-transparent px-3 py-3 transition hover:border-[#A0724A]/30">
-                    <input type="checkbox" className="h-4 w-4 accent-[#A0724A]" />
+                    <input
+                      type="checkbox"
+                      checked={selectedCategories.includes(item)}
+                      onChange={() => toggleItem(item, selectedCategories, setSelectedCategories)}
+                      className="h-4 w-4 accent-[#A0724A]"
+                    />
                     <span className="text-sm text-[#3D2B1F]">{item}</span>
                   </label>
                 ))}

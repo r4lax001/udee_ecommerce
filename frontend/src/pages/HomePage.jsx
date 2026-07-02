@@ -95,7 +95,7 @@ const HomePage = ({
           transition={{ ...transition, delay: 0.08 }}
         >
           <motion.div
-            className="absolute -left-4 -top-4 z-10 rounded-3xl mx-16 bg-[#FFF1E7] px-4 py-4 text-sm font-bold text-[#3D2B1F]"
+            className="absolute -left-4 -top-4 z-10 rounded-3xl mx-16 bg-[#A0724A] px-4 py-4 text-sm font-bold text-[#ffffff]"
             initial={reduceMotion ? false : { opacity: 0, scale: 0.8, y: -20 }}
             animate={reduceMotion ? {} : { y: [0, -3, 0], opacity: 1, scale: 1 }}
             whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}

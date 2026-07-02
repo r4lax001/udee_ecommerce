@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { authPageData } from '../data/authPageData'
 
 
@@ -19,10 +20,13 @@ const getStrengthText = (score) => {
 }
 
 const AuthPage = ({ authData = authPageData }) => {
+  const reduceMotion = useReducedMotion()
+  const transition = { duration: reduceMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] }
   const [activeTab, setActiveTab] = useState('login')
   const [loginEmail, setLoginEmail] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
   const [showLoginPassword, setShowLoginPassword] = useState(false)
+  const [showRegisterPassword, setShowRegisterPassword] = useState(false)
   const [registerName, setRegisterName] = useState('')
   const [registerPhone, setRegisterPhone] = useState('')
   const [registerEmail, setRegisterEmail] = useState('')
@@ -68,9 +72,24 @@ const AuthPage = ({ authData = authPageData }) => {
   const strengthText = getStrengthText(passwordStrength)
 
   return (
-    <main className="min-h-screen bg-[#FAF6F1] text-[#1D1B1A] flex items-center justify-center p-0 md:p-6">
-      <div className="w-full max-w-[1280px] min-h-[800px] flex flex-col overflow-hidden bg-white md:flex-row md:rounded-[1.5rem] shadow-[0_2px_8px_rgba(61,43,31,0.08)]">
-        <section className="relative flex w-full flex-col justify-between bg-[#3D2B1F] px-8 py-10 text-[#F3ECEA] md:w-[40%] md:px-12 md:py-16">
+    <motion.main
+      className="min-h-screen bg-[#FAF6F1] text-[#1D1B1A] flex items-center justify-center p-0 md:p-6"
+      initial={reduceMotion ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={transition}
+    >
+      <motion.div
+        className="w-full max-w-[1280px] min-h-[800px] flex flex-col overflow-hidden bg-white md:flex-row md:rounded-[1.5rem] shadow-[0_2px_8px_rgba(61,43,31,0.08)]"
+        initial={reduceMotion ? false : { scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={transition}
+      >
+        <motion.section
+          className="relative flex w-full flex-col justify-between bg-[#3D2B1F] px-8 py-10 text-[#F3ECEA] md:w-[40%] md:px-12 md:py-16"
+          initial={reduceMotion ? false : { x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ ...transition, delay: 0.1 }}
+        >
           <div className="absolute top-[-10%] right-[-10%] h-64 w-64 rounded-full bg-[#FFC698] opacity-10 blur-3xl" />
           <div className="absolute bottom-[-5%] left-[-5%] h-48 w-48 rounded-full bg-[#3F2B0F] opacity-20 blur-2xl" />
           <div className="relative z-10">
@@ -95,9 +114,14 @@ const AuthPage = ({ authData = authPageData }) => {
           </div>
 
           <div className="pointer-events-none absolute bottom-0 right-0 h-32 w-full opacity-20 bg-no-repeat bg-bottom bg-contain" style={{ backgroundImage: `url('${authData.backgroundImage}')` }} />
-        </section>
+        </motion.section>
 
-        <section className="flex w-full flex-col bg-[#FAF6F1] px-6 py-8 md:w-[60%] md:px-12 md:py-12">
+        <motion.section
+          className="flex w-full flex-col bg-[#FAF6F1] px-6 py-8 md:w-[60%] md:px-12 md:py-12"
+          initial={reduceMotion ? false : { x: 20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ ...transition, delay: 0.15 }}
+        >
           <div className="md:hidden mb-8">
             <h2 className="text-4xl font-semibold text-[#3D2B1F]">{authData.brand}</h2>
           </div>
@@ -242,7 +266,7 @@ const AuthPage = ({ authData = authPageData }) => {
                 <label className="mb-2 block text-sm font-medium text-[#4F453F]">รหัสผ่าน</label>
                 <div className="relative">
                   <input
-                    type={showLoginPassword ? 'text' : 'password'}
+                    type={showRegisterPassword ? 'text' : 'password'}
                     value={registerPassword}
                     onChange={(event) => setRegisterPassword(event.target.value)}
                     placeholder="••••••••"
@@ -250,11 +274,11 @@ const AuthPage = ({ authData = authPageData }) => {
                   />
                   <button
                     type="button"
-                    onClick={() => setShowLoginPassword((current) => !current)}
+                    onClick={() => setShowRegisterPassword((current) => !current)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-[#81756E] hover:text-[#3D2B1F]"
                   >
                     <span className="material-symbols-outlined">
-                      {showLoginPassword ? 'visibility_off' : 'visibility'}
+                      {showRegisterPassword ? 'visibility_off' : 'visibility'}
                     </span>
                   </button>
                 </div>
@@ -305,9 +329,9 @@ const AuthPage = ({ authData = authPageData }) => {
           <div className="mt-auto pt-10 text-center text-sm text-[#81756E] md:pt-16">
             © 2024 UDEE Furniture. Crafted for the quiet luxury of home.
           </div>
-        </section>
-      </div>
-    </main>
+        </motion.section>
+      </motion.div>
+    </motion.main>
   )
 }
 
