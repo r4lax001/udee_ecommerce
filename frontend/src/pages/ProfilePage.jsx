@@ -8,9 +8,10 @@ const purchases = profilePageData.history
 const ProfilePage = ({ user = defaultUser, history = purchases }) => {
   const reduceMotion = useReducedMotion()
   const transition = { duration: reduceMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] }
-  const [activeTab, setActiveTab] = useState('profile')
+  const [activeTab, setActiveTab] = useState('dashboard')
 
   const tabs = [
+    { id: 'dashboard', label: 'ภาพรวมบัญชี', icon: 'dashboard' },
     { id: 'profile', label: 'ข้อมูลส่วนตัว', icon: 'person' },
     { id: 'orders', label: 'ประวัติการสั่งซื้อ', icon: 'shopping_bag' },
     { id: 'settings', label: 'การตั้งค่า', icon: 'settings' },
@@ -144,6 +145,89 @@ const ProfilePage = ({ user = defaultUser, history = purchases }) => {
             transition={{ ...transition, delay: 0.25 }}
           >
             <AnimatePresence mode="wait">
+              {activeTab === 'dashboard' && (
+                <motion.div
+                  key="dashboard"
+                  initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={transition}
+                  className="space-y-8"
+                >
+                  <div className="rounded-[2rem] bg-white p-10 shadow-[0_12px_30px_rgba(61,43,31,0.08)]">
+                    <div className="flex items-center justify-between mb-8">
+                      <h2 className="text-2xl font-semibold text-[#3D2B1F]">ออเดอร์ล่าสุด</h2>
+                      <button onClick={() => setActiveTab('orders')} className="text-sm font-medium text-[#A0724A] hover:text-[#3D2B1F] transition">ดูทั้งหมด</button>
+                    </div>
+                    <div className="space-y-4">
+                      {history.slice(0, 2).map((purchase, index) => (
+                        <motion.div
+                          key={purchase.id}
+                          className="rounded-3xl border border-[#E8E1DF] p-6 transition hover:border-[#A0724A] hover:shadow-md"
+                          whileHover={{ scale: 1.01 }}
+                        >
+                          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                            <div className="flex items-center gap-4">
+                              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#F3ECEA]">
+                                <span className="material-symbols-outlined text-[#A0724A]">receipt_long</span>
+                              </div>
+                              <div>
+                                <p className="font-semibold text-[#3D2B1F]">{purchase.id}</p>
+                                <p className="text-sm text-[#81756e]">{purchase.date}</p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-sm text-[#81756e]">ยอดรวม</p>
+                              <p className="text-lg font-semibold text-[#A0724A]">{purchase.total}</p>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="grid gap-8 md:grid-cols-2">
+                    <div className="rounded-[2rem] bg-white p-8 shadow-[0_12px_30px_rgba(61,43,31,0.08)]">
+                      <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-lg font-semibold text-[#3D2B1F]">ที่อยู่จัดส่งเริ่มต้น</h3>
+                        <button onClick={() => setActiveTab('profile')} className="text-sm text-[#A0724A] hover:text-[#3D2B1F]">แก้ไข</button>
+                      </div>
+                      <div className="rounded-2xl bg-[#F8F3EB] p-5">
+                        <p className="font-medium text-[#3D2B1F] mb-1">{user.name}</p>
+                        <p className="text-sm text-[#81756e] leading-relaxed">{user.address}</p>
+                        <p className="text-sm text-[#81756e] mt-2 flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[16px]">call</span> {user.phone}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="rounded-[2rem] bg-white p-8 shadow-[0_12px_30px_rgba(61,43,31,0.08)]">
+                      <h3 className="text-lg font-semibold text-[#3D2B1F] mb-6">การแจ้งเตือนล่าสุด</h3>
+                      <div className="space-y-4">
+                        <div className="flex gap-3 items-start">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F3ECEA] flex-shrink-0">
+                            <span className="material-symbols-outlined text-[16px] text-[#A0724A]">local_shipping</span>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-[#3D2B1F]">ออเดอร์ #ORD-001 จัดส่งแล้ว</p>
+                            <p className="text-xs text-[#81756e] mt-0.5">2 ชั่วโมงที่แล้ว</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-3 items-start">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#EAF3DE] flex-shrink-0">
+                            <span className="material-symbols-outlined text-[16px] text-[#4A7C59]">redeem</span>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-[#3D2B1F]">คุณได้รับโค้ดส่วนลด 10%</p>
+                            <p className="text-xs text-[#81756e] mt-0.5">เมื่อวานนี้</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
               {activeTab === 'profile' && (
                 <motion.div
                   key="profile"
