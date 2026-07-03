@@ -1,4 +1,5 @@
 export const productDetailPageData = {
+  id: 1,
   name: 'โต๊ะกินข้าวไม้แท้ รุ่น Walnut Classic',
   price: '฿12,900',
   oldPrice: '฿15,200',

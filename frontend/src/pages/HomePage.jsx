@@ -258,7 +258,7 @@ const HomePage = ({
                 key={product.id}
                 onClick={(e) => {
                   if (!e.target.closest('button') && !e.target.closest('a')) {
-                    navigate('/product-detail')
+                    navigate(`/product-detail/${product.id}`)
                   }
                 }}
                 className="group overflow-hidden rounded-3xl bg-white cursor-pointer perspective shadow-sm transition-all duration-500 hover:shadow-xl hover:border hover:border-[#A0724A]"

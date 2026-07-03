@@ -2,64 +2,8 @@ import { useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import { homePageData } from '../data/homePageData'
+import { productCards } from '../data/productListPageData'
 import ClickSparkButton from '../components/ClickSparkButton'
-
-const productCards = [
-  {
-    id: 1,
-    title: 'โต๊ะกินข้าวไม้โอ๊ค รุ่น Minimalist',
-    subtitle: 'โต๊ะกินข้าว',
-    price: '฿12,900',
-    originalPrice: '฿15,500',
-    badge: 'NEW',
-    image:
-      'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=900&q=80',
-  },
-  {
-    id: 2,
-    title: 'โต๊ะกินข้าว Oak Gatherer 6 ที่นั่ง',
-    subtitle: 'โต๊ะกินข้าว',
-    price: '฿18,500',
-    originalPrice: '฿22,500',
-    badge: '-15% OFF',
-    image:
-      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=900&q=80',
-  },
-  {
-    id: 3,
-    title: 'โต๊ะกลางทรงกลม Dark Walnut',
-    subtitle: 'โต๊ะตกแต่ง',
-    price: '฿4,200',
-    soldOut: true,
-    image:
-      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?crop=entropy&w=900&q=80',
-  },
-  {
-    id: 4,
-    title: 'โต๊ะทำงานปรับระดับไฟฟ้า รุ่น Pro',
-    subtitle: 'โต๊ะทำงาน',
-    price: '฿14,900',
-    image:
-      'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?crop=entropy&w=900&q=80',
-  },
-  {
-    id: 5,
-    title: 'โต๊ะข้างเตียง Maple Soft',
-    subtitle: 'โต๊ะข้าง',
-    price: '฿3,500',
-    image:
-      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?crop=entropy&w=900&q=80',
-  },
-  {
-    id: 6,
-    title: 'โต๊ะเขียนหนังสือ Classic Walnut',
-    subtitle: 'โต๊ะทำงาน',
-    price: '฿9,800',
-    badge: 'BEST SELLER',
-    image:
-      'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?crop=entropy&w=900&q=80',
-  },
-]
 
 const CategoriesPage = () => {
   const navigate = useNavigate()
@@ -238,7 +182,7 @@ const CategoriesPage = () => {
                     key={product.id}
                     onClick={(e) => {
                       if (!e.target.closest('button') && !e.target.closest('a')) {
-                        navigate('/product-detail')
+                        navigate(`/product-detail/${product.id}`)
                       }
                     }}
                     className="group overflow-hidden rounded-[2rem] bg-white shadow-[0_12px_30px_rgba(61,43,31,0.08)] transition-all duration-500 hover:-translate-y-1"

@@ -1,18 +1,21 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { productDetailPageData } from '../data/productDetailPageData'
+import { getProductById } from '../services/products'
 import ClickSparkButton from '../components/ClickSparkButton'
 
-export default function ProductDetailPage({ product = productDetailPageData }) {
-  const [selectedVariant, setSelectedVariant] = useState(product.variants[0])
-  const [selectedColor, setSelectedColor] = useState(product.colors[0])
-  const [selectedMaterial, setSelectedMaterial] = useState(product.materialOptions[0])
+export default function ProductDetailPage() {
+  const { id } = useParams()
+  const [product, setProduct] = useState(null)
+  const [selectedVariant, setSelectedVariant] = useState(null)
+  const [selectedColor, setSelectedColor] = useState(null)
+  const [selectedMaterial, setSelectedMaterial] = useState(null)
   const [quantity, setQuantity] = useState(1)
-  const [mainImage, setMainImage] = useState(product.gallery[0])
+  const [mainImage, setMainImage] = useState('')
   const [loading, setLoading] = useState(true)
   const [isFavorite, setIsFavorite] = useState(false)
-  
+
   const reduceMotion = useReducedMotion()
   const scrollRef = useRef(null)
 
@@ -26,11 +29,49 @@ export default function ProductDetailPage({ product = productDetailPageData }) {
   }
 
   useEffect(() => {
+    if (!id) return
     setLoading(true)
-    // Simulate loading
-    const timer = setTimeout(() => setLoading(false), 500)
-    return () => clearTimeout(timer)
-  }, [])
+
+    getProductById(id)
+      .then((data) => {
+        if (data) {
+          setProduct(data)
+          setSelectedVariant(data.variants?.[0] || null)
+          setSelectedColor(data.colors?.[0] || null)
+          setSelectedMaterial(data.materialOptions?.[0] || null)
+          setMainImage(data.gallery?.[0] || '')
+        } else {
+          setProduct(null)
+        }
+      })
+      .finally(() => setLoading(false))
+  }, [id])
+
+  if (loading) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[#FAF6F1]">
+        <motion.div 
+          className="flex flex-col items-center gap-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <div className="h-16 w-16 animate-spin rounded-full border-4 border-[#E8E1DF] border-t-[#A0724A]" />
+          <p className="text-sm font-medium text-[#5a4e46]">กำลังโหลดข้อมูลสินค้า...</p>
+        </motion.div>
+      </main>
+    )
+  }
+
+  if (!product) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[#FAF6F1] px-6">
+        <div className="rounded-[2rem] bg-white p-10 text-center shadow-[0_24px_70px_rgba(61,43,31,0.08)]">
+          <p className="text-xl font-semibold text-[#3D2B1F]">ไม่พบสินค้าที่ร้องขอ</p>
+          <p className="mt-3 text-sm text-[#5a4e46]">กรุณาลองกลับไปยังหน้าสินค้าหรือเลือกสินค้าที่ใช้งานได้อีกครั้ง</p>
+        </div>
+      </main>
+    )
+  }
 
   const scrollRelated = (dir) => {
     if (scrollRef.current) {
