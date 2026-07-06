@@ -3,6 +3,7 @@ import { lazy, Suspense } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import AppLayout from './layouts/AppLayout'
+
 const HomePage = lazy(() => import('./pages/HomePage'))
 const AuthPage = lazy(() => import('./pages/AuthPage'))
 const OrderTrackingPage = lazy(() => import('./pages/OrderTrackingPage'))
@@ -46,13 +47,17 @@ function App() {
           <Route path="/" element={<AppLayout />}>
             <Route index element={<HomePage />} />
             <Route path="auth" element={<AuthPage />} />
+
             <Route path="order-tracking" element={<OrderTrackingPage />} />
+            <Route path="order-tracking/:orderNumber" element={<OrderTrackingPage />} />
+
             <Route path="checkout" element={<CheckoutPage />} />
             <Route path="product-detail/:id" element={<ProductDetailPage />} />
             <Route path="products" element={<CategoriesPage />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="cart" element={<CartPage />} />
           </Route>
+
           <Route path="admin-dashboard" element={<AdminDashboardPage />} />
           <Route path="admin-products" element={<AdminProductsPage />} />
           <Route path="admin-orders" element={<AdminOrdersPage />} />
