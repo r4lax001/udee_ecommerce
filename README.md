@@ -67,7 +67,7 @@
 | 1 | 67094657 | วรินทร วรธรรม | Product List / Product Detail |
 | 2 | 67101868 | ปวีณภัทร สินหมู | Order / Payment / Tracking |
 | 3 | 67124936 | พลอยไพลิน วัชระ | Shopping Cart / Checkout |
-| 4 | 67136194 | กรฤทธคุมพวก | Login / Register / Profile |
+| 4 | 67136194 | กรฤทธ คุมพวก | Login / Register / Profile |
 | 5 | 67131555 | ปัฐวัติ แสนคำเพิงใจ | Admin Dashboard / Report / Integration (PM) |
 
 ---
