@@ -4,8 +4,29 @@ export const productDetailPageData = {
   price: '฿12,900',
   oldPrice: '฿15,200',
   badge: 'ลด 15%',
+  code: 'UDE-TBL-001',
   description:
     'โต๊ะกินข้าวรุ่น Walnut Classic ผลิตจากไม้ Walnut แท้ 100% ดีไซน์เรียบหรูและรองรับการใช้งานได้จริง ติดตั้งง่ายด้วยคู่มือภาษาไทย',
+  model: 'Walnut Classic A-02',
+  size: '120 x 80 x 75 ซม.',
+  color: 'ดาร์ควอลนัต',
+  status: 'มีสินค้า',
+  stock: 18,
+  highlights: [
+    { icon: 'bolt', text: 'โครงสร้างไม้แท้สำหรับการใช้งานระยะยาว' },
+    { icon: 'star', text: 'ดีไซน์มินิมอล เข้ากับทุกสไตล์บ้าน' },
+    { icon: 'water_drop', text: 'เคลือบป้องกันรอยขีดข่วนและคราบน้ำ' },
+    { icon: 'build', text: 'ติดตั้งง่าย พร้อมคู่มือภาษาไทย' },
+    { icon: 'straighten', text: 'ขนาดกำลังดีสำหรับห้องทานอาหาร' },
+  ],
+  generalProperties: [
+    'ไม้ Walnut แท้ 100% พร้อมความคงทน',
+    'รองรับน้ำหนักสูงสุด 150 กก.',
+    'ออกแบบสำหรับใช้ในบ้านและออฟฟิศ',
+    'ดูแลรักษาง่าย เพียงเช็ดทำความสะอาดเบา ๆ',
+    'ผิวสัมผัสนุ่มนวล สวยงามตามธรรมชาติ',
+  ],
+  warranty: 'รับประกันโครงสร้าง 5 ปี เงื่อนไขเป็นไปตามที่บริษัทกำหนด',
   specs: [
     'น้ำหนักสูงสุด 150 กก.',
     'ไม้ Walnut แท้ 100%',
@@ -13,11 +34,11 @@ export const productDetailPageData = {
     'ประกอบได้ง่ายใน 10 นาที',
   ],
   gallery: [
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuCl_HRz-w_jmVWyvGJmcaaFRNlF5aGfJQhrQhJvfkmxk9dZ6hkQIrUFKgAWZc1vPBc6Vcy_OR0uLWw91qEQAIAM-Y2a1ia93LosHU6GsOaA37aaetYB3sPK0TwuDL3qMJgsLEhtG26hLy9SdmALP-LCUGWCqu5BgBG0MN8Zj-qG7jRSbDyliuQAcZIPjJ16gbVPcir-ofQjrDkCNag9pwJGQO0maInRlrNAa8IupzPxlyUwrGg33Z0F1vpKqw-wamSGRHg69LK55Ydf',
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuC5XR56dP73-J287f-v4Z73pJ1PSQjdl9qLHUSNQeFdaoHTh1MLk7EDzTaMgI5VHxGUskUf_sBGj59YoXFdxijtvujNppByd8Z5bzgYT3Ag9H9FZqZk-0W0rxajsVIlBHQk9o2qxLxMR5iD01OfVIoZO2LkimYgdNZrtHQXbenwCU6DrBrWNNz3GBB_-IGrEVkFKLyalsKli09O9-4wNHnpSsZ9mLvnJENA5djEEf5MqAFsJjVmoJIuzYKYk4r9Ls5alDLkB6ZzAsgN',
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuC_gxH68i2ZxZ-H2CluWiO3F9yrbkX9SOLXrs6HnoYxRkQtOjj-ispZ89VP8D07OiWX5JcfNMFu69qSrpTXOuQjmAcoMmw-LbfswcbqzVVZ27nMVc-5h2dulIRuJ9WBBE3MVzCLOlBH2RX6EU6Vrx9ukePTgc_9RpNy6rrRDNKIg0Uav06hk7icKnqBGUfdZw6dnUdTigtdApHzyCIbWf0Sy4b2qt_tK4Gfi9u73nz0wOs7oLv-g6TrpTMIKi-zJqCbd84pP_j4Mz5',
+    '/images/details/detail-1.svg',
+    '/images/details/detail-2.svg',
+    '/images/details/detail-3.svg',
   ],
-  variants: ['60cm', '80cm', '100cm', '120cm'],
+  variants: ['120cm'], // ขนาดเดียว ถ้าต้องหลายขนาดให้เพิ่ม: ['60cm', '80cm', '100cm', '120cm']
   colors: ['#3D2B1F', '#8B5E3C', '#5D4037'],
   materialOptions: ['Solid Walnut', 'Solid Oak', 'Polished Ash'],
 }

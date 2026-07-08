@@ -1,13 +1,14 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { Link, useNavigate } from 'react-router-dom'
-import { homePageData } from '../data/homePageData'
-import { productCards } from '../data/productListPageData'
+import { useNavigate } from 'react-router-dom'
 import ClickSparkButton from '../components/ClickSparkButton'
+import { getProducts } from '../services/products'
 
 const CategoriesPage = () => {
   const navigate = useNavigate()
   const reduceMotion = useReducedMotion()
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
   const [sortBy, setSortBy] = useState('ยอดนิยม')
   const [priceValue, setPriceValue] = useState(20000)
   const [selectedSizes, setSelectedSizes] = useState(['120 x 60 ซม.'])
@@ -15,6 +16,26 @@ const CategoriesPage = () => {
   const [selectedMaterials, setSelectedMaterials] = useState(['ไม้โอ๊ค'])
   const [selectedCategories, setSelectedCategories] = useState([])
   const transition = { duration: reduceMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] }
+
+  useEffect(() => {
+    let isMounted = true
+
+    const loadProducts = async () => {
+      setLoading(true)
+      try {
+        const data = await getProducts()
+        if (isMounted) setProducts(data || [])
+      } finally {
+        if (isMounted) setLoading(false)
+      }
+    }
+
+    loadProducts()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   const toggleItem = (item, current, setCurrent) => {
     setCurrent((prev) =>
@@ -177,7 +198,20 @@ const CategoriesPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...transition, delay: 0.14 }}
               >
-                {productCards.map((product, index) => (
+                {loading && (
+                  Array.from({ length: 6 }).map((_, index) => (
+                    <div key={index} className="animate-pulse overflow-hidden rounded-[2rem] bg-white shadow-[0_12px_30px_rgba(61,43,31,0.08)]">
+                      <div className="h-72 bg-[#F2EBE2]" />
+                      <div className="space-y-3 p-6">
+                        <div className="h-4 w-24 rounded bg-[#F2EBE2]" />
+                        <div className="h-6 w-2/3 rounded bg-[#F2EBE2]" />
+                        <div className="h-10 w-full rounded-full bg-[#F2EBE2]" />
+                      </div>
+                    </div>
+                  ))
+                )}
+
+                {!loading && products.map((product, index) => (
                   <motion.article
                     key={product.id}
                     onClick={(e) => {

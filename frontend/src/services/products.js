@@ -4,6 +4,51 @@ import { productDetailPageData } from '../data/productDetailPageData'
 
 const USE_MOCK = true
 
+function buildMockProductDetail(product) {
+  return {
+    ...product,
+    name: product.name || product.title || 'สินค้าใหม่',
+    description:
+      product.description ||
+      `โต๊ะ ${product.title} ดีไซน์เรียบหรู พร้อมวัสดุคุณภาพสูง เหมาะกับทั้งพื้นที่ทานอาหารและมุมทำงานในบ้าน`,
+    gallery:
+      product.gallery?.length > 0
+        ? product.gallery
+        : [
+            product.image,
+            product.image,
+            product.image,
+          ],
+    variants: product.variants || ['60cm', '80cm', '100cm', '120cm'],
+    colors: product.colors || ['#3D2B1F', '#A0764B', '#E7D6C6'],
+    materialOptions:
+      product.materialOptions ||
+      [product.material || 'Solid Oak', 'Solid Walnut', 'Polished Ash'],
+    specs:
+      product.specs || product.generalProperties ||
+      [
+        'โครงสร้างแข็งแรง รองรับการใช้งานทุกวัน',
+        'ผิวไม้เคลือบป้องกันรอยและคราบน้ำ',
+        'ประกอบง่าย พร้อมคู่มือภาษาไทย',
+        'ออกแบบมาเพื่อความคงทนและความสวยงาม',
+      ],
+    code: product.code || `UDE-TBL-${String(product.id).padStart(3, '0')}`,
+    model: product.model || product.title,
+    size: product.size || '120 x 80 ซม.',
+    color: product.color || product.colors?.[0] || 'ดาร์ควอลนัต',
+    status: product.status || (product.stock > 0 ? 'มีสินค้า' : 'สินค้าหมด'),
+    stock: product.stock ?? 0,
+    highlights:
+      product.highlights ||
+      [
+        { icon: 'bolt', text: 'โครงสร้างแข็งแรง' },
+        { icon: 'star', text: 'ดีไซน์ทันสมัย' },
+        { icon: 'water_drop', text: 'ป้องกันคราบและรอยขีดข่วน' },
+      ],
+    warranty: product.warranty || 'รับประกัน 1 ปี ตามเงื่อนไขของบริษัท',
+  }
+}
+
 export async function getProducts() {
   if (!USE_MOCK) {
     const response = await api.get('/products')
@@ -22,7 +67,7 @@ export async function getProductById(id) {
   const numericId = Number(id)
   const product = productCards.find((item) => item.id === numericId)
   if (product) {
-    return product
+    return buildMockProductDetail(product)
   }
 
   return productDetailPageData.id === numericId ? productDetailPageData : null
