@@ -10,7 +10,7 @@ function buildMockProductDetail(product) {
     name: product.name || product.title || 'สินค้าใหม่',
     description:
       product.description ||
-      `โต๊ะ ${product.title} ดีไซน์เรียบหรู พร้อมวัสดุคุณภาพสูง เหมาะกับทั้งพื้นที่ทานอาหารและมุมทำงานในบ้าน`,
+      `โต๊ะ ${product.title} เพิ่มความเป็นระเบียบให้กับพื้นที่ของคุณ! ตู้ล็อกเกอร์ D4021 ขนาด 40 ซม. เปิดซ้าย สีดาร์คโอ๊ค ถูกออกแบบมาให้เหมาะกับทุกสไตล์การตกแต่ง ทั้งที่บ้านและสำนักงาน ด้วยวัสดุไม้ปาติเกิ้ลบอร์ดที่ทนทานและให้ความรู้สึกอบอุ่น รองรับทุกความต้องการในการจัดเก็บของคุณ มีชั้นวางภายในที่สามารถปรับเปลี่ยนได้ตามต้องการ สร้างบรรยากาศใหม่ให้กับการทำงานหรือการใช้ชีวิตประจำวันที่ดีกว่า!`,
     gallery:
       product.gallery?.length > 0
         ? product.gallery
@@ -19,11 +19,11 @@ function buildMockProductDetail(product) {
             product.image,
             product.image,
           ],
-    variants: product.variants || ['60cm', '80cm', '100cm', '120cm'],
+    variants: product.variants || ['80cm'],
     colors: product.colors || ['#3D2B1F', '#A0764B', '#E7D6C6'],
     materialOptions:
       product.materialOptions ||
-      [product.material || 'Solid Oak', 'Solid Walnut', 'Polished Ash'],
+      [product.material || 'สีดาร์คโอ๊ค', 'สีพรีเมียร์โอ๊ค'],
     specs:
       product.specs || product.generalProperties ||
       [
