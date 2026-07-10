@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Customers, Analytics } from './admin/AdminPages'
@@ -407,40 +407,117 @@ export default function AdminDashboardPage() {
   )
 }
 
-// ─── Dashboard main view (improved premium design) ────────────────────────────
+// ─── Dashboard main view — ดึงข้อมูลจาก API จริง ──────────────────────────────
 function DashboardView({ reduceMotion, transition }) {
-  const BAR_DATA = [42, 58, 35, 67, 89, 74, 95, 82, 61, 78, 55, 90]
-  const MONTHS  = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.']
-  const maxVal  = Math.max(...BAR_DATA)
+  const MONTHS = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.']
+
+  const [data,    setData]    = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error,   setError]   = useState(null)
+
+  // ── Fetch dashboard data ────────────────────────────────────────────────────
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+    setError(null)
+
+    import('../services/dashboard.js')
+      .then((mod) => mod.getDashboardStats())
+      .then((res) => {
+        if (!cancelled) setData(res)
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err.message ?? 'โหลดข้อมูลไม่สำเร็จ')
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+
+    return () => { cancelled = true }
+  }, [])
+
+  // ── Loading skeleton ────────────────────────────────────────────────────────
+  if (loading) {
+    return (
+      <div className="max-w-7xl space-y-5">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="h-28 animate-pulse rounded-2xl bg-white border border-[#E5E7EB]" />
+          ))}
+        </div>
+        <div className="grid gap-4 lg:grid-cols-3">
+          <div className="lg:col-span-2 h-52 animate-pulse rounded-2xl bg-white border border-[#E5E7EB]" />
+          <div className="h-52 animate-pulse rounded-2xl bg-white border border-[#E5E7EB]" />
+        </div>
+        <div className="h-64 animate-pulse rounded-2xl bg-white border border-[#E5E7EB]" />
+      </div>
+    )
+  }
+
+  // ── Error state ─────────────────────────────────────────────────────────────
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 py-24 text-center">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red-50">
+          <span className="material-symbols-outlined text-[28px] text-red-500">error</span>
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-[#111827]">โหลดข้อมูลไม่สำเร็จ</p>
+          <p className="mt-1 text-xs text-[#9CA3AF]">{error}</p>
+        </div>
+        <button
+          onClick={() => { setLoading(true); setError(null); window.location.reload() }}
+          className="flex items-center gap-1.5 rounded-lg bg-[#3D2B1F] px-4 py-2 text-xs font-medium text-white hover:opacity-90 transition"
+        >
+          <span className="material-symbols-outlined text-[16px]">refresh</span>
+          ลองใหม่
+        </button>
+      </div>
+    )
+  }
+
+  // ── Build METRICS จาก API data ──────────────────────────────────────────────
+  const { kpi, monthlySales, recentOrders, topProducts, notifications } = data
 
   const METRICS = [
-    { label:'รายได้วันนี้',  value:'฿42,800',  change:'+16% vs เมื่อวาน', icon:'payments',     bg:'#FEF4EA', fg:'#A0724A', accent:'from-[#A0724A] to-[#3D2B1F]' },
-    { label:'ยอดออเดอร์',   value:'124',      change:'+8% vs เมื่อวาน',  icon:'shopping_bag', bg:'#EAF3DE', fg:'#4A7C59', accent:'from-[#4A7C59] to-[#2d5939]' },
-    { label:'ลูกค้าใหม่',   value:'48',       change:'+12% vs เมื่อวาน', icon:'person_add',   bg:'#E6F1FB', fg:'#2C6FAC', accent:'from-[#2C6FAC] to-[#1a4870]' },
-    { label:'สินค้าคงเหลือ', value:'1,234',  change:'-4% vs เมื่อวาน',  icon:'inventory',    bg:'#FAEEDA', fg:'#C17B2A', accent:'from-[#C17B2A] to-[#8B5410]' },
+    {
+      label: 'รายได้วันนี้',
+      value: `฿${Number(kpi.revenueToday).toLocaleString('th-TH')}`,
+      change: `${kpi.revenueChange} vs เมื่อวาน`,
+      icon: 'payments', bg: '#FEF4EA', fg: '#A0724A', accent: 'from-[#A0724A] to-[#3D2B1F]',
+    },
+    {
+      label: 'ยอดออเดอร์',
+      value: String(kpi.ordersToday),
+      change: `${kpi.ordersChange} vs เมื่อวาน`,
+      icon: 'shopping_bag', bg: '#EAF3DE', fg: '#4A7C59', accent: 'from-[#4A7C59] to-[#2d5939]',
+    },
+    {
+      label: 'ลูกค้าใหม่',
+      value: String(kpi.newCustomers),
+      change: `${kpi.customersChange} vs เมื่อวาน`,
+      icon: 'person_add', bg: '#E6F1FB', fg: '#2C6FAC', accent: 'from-[#2C6FAC] to-[#1a4870]',
+    },
+    {
+      label: 'สินค้าคงเหลือ',
+      value: Number(kpi.totalStock).toLocaleString('th-TH'),
+      change: 'รวมทุกรายการ',
+      icon: 'inventory', bg: '#FAEEDA', fg: '#C17B2A', accent: 'from-[#C17B2A] to-[#8B5410]',
+    },
   ]
 
-  const RECENT_ORDERS = [
-    { id:'ORD-001', customer:'สมชาย ใจดี',     amount:'฿45,900', status:'Completed', date:'2 ชม. ที่แล้ว' },
-    { id:'ORD-002', customer:'วิภา สุขสันต์',  amount:'฿28,500', status:'Processing', date:'5 ชม. ที่แล้ว' },
-    { id:'ORD-003', customer:'นฤมล รักษ์ดี',   amount:'฿67,200', status:'Pending',    date:'1 วันที่แล้ว' },
-    { id:'ORD-004', customer:'กิตติ เก่งการค้า', amount:'฿34,100', status:'Completed', date:'2 วันที่แล้ว' },
-    { id:'ORD-005', customer:'มานี มีสุข',      amount:'฿52,800', status:'Shipped',    date:'3 วันที่แล้ว' },
-  ]
-
-  const NOTIFS = [
-    { icon:'shopping_cart', title:'คำสั่งซื้อใหม่ 25 รายการ', time:'1 ชั่วโมงที่แล้ว', urgent:false },
-    { icon:'warning',       title:'สต็อกสินค้าใกล้หมด',      time:'3 ชั่วโมงที่แล้ว', urgent:true  },
-    { icon:'person_add',    title:'ลูกค้าใหม่ 5 คนวันนี้',   time:'วานนี้',           urgent:false },
-  ]
+  const barMax = Math.max(...monthlySales, 1)
 
   const statusCls = (s) => {
     if (s === 'Completed')  return 'bg-green-50  text-green-700  border border-green-200'
     if (s === 'Processing') return 'bg-blue-50   text-blue-700   border border-blue-200'
     if (s === 'Pending')    return 'bg-amber-50  text-amber-700  border border-amber-200'
     if (s === 'Shipped')    return 'bg-purple-50 text-purple-700 border border-purple-200'
+    if (s === 'Cancelled')  return 'bg-red-50    text-red-700    border border-red-200'
     return 'bg-gray-50 text-gray-700'
   }
+
+  const urgentCount = notifications.filter((n) => n.urgent).length
 
   return (
     <div className="max-w-7xl space-y-5">
@@ -484,26 +561,32 @@ function DashboardView({ reduceMotion, transition }) {
           <div className="flex items-center justify-between mb-5">
             <div>
               <h2 className="text-sm font-semibold text-[#111827]">ยอดขายรายเดือน</h2>
-              <p className="text-xs text-[#9CA3AF]">เปรียบเทียบปีนี้ vs ปีที่แล้ว</p>
+              <p className="text-xs text-[#9CA3AF]">ข้อมูลจริงจากฐานข้อมูล (ปี {new Date().getFullYear()})</p>
             </div>
-            <select className="text-xs border border-[#E5E7EB] rounded-lg px-3 py-1.5 text-[#6B7280] bg-white outline-none focus:border-[#A0724A] transition">
-              <option>ปีนี้</option>
-              <option>ปีที่แล้ว</option>
-            </select>
+            <span className="text-xs font-medium text-[#A0724A] bg-[#FEF4EA] px-3 py-1 rounded-full border border-[#F3D9B8]">
+              ปีนี้
+            </span>
           </div>
           <div className="flex items-end gap-1.5 h-36">
-            {BAR_DATA.map((v, i) => (
+            {monthlySales.map((v, i) => (
               <div key={i} className="flex-1 flex flex-col items-center gap-1.5">
                 <motion.div
                   className="w-full rounded-t-md cursor-pointer hover:opacity-75 transition-opacity"
-                  style={{ background: v === maxVal ? '#3D2B1F' : v > 70 ? '#A0724A' : '#DDD0C4' }}
+                  style={{ background: v === barMax ? '#3D2B1F' : v > barMax * 0.7 ? '#A0724A' : '#DDD0C4' }}
                   initial={{ height: 0 }}
-                  animate={{ height: `${Math.round((v / maxVal) * 100)}%` }}
+                  animate={{ height: barMax > 0 ? `${Math.round((v / barMax) * 100)}%` : '2%' }}
                   transition={{ duration: reduceMotion ? 0 : 0.55, delay: 0.3 + i * 0.04, ease: 'easeOut' }}
                 />
                 <span className="text-[9px] text-[#9CA3AF]">{MONTHS[i]}</span>
               </div>
             ))}
+          </div>
+          {/* ยอดรวมปีนี้ */}
+          <div className="mt-4 pt-4 border-t border-[#F3F4F6] flex items-center justify-between">
+            <span className="text-xs text-[#9CA3AF]">รวมยอดขายปีนี้</span>
+            <span className="text-sm font-bold text-[#3D2B1F]">
+              ฿{monthlySales.reduce((s, v) => s + v, 0).toLocaleString('th-TH')}
+            </span>
           </div>
         </motion.div>
 
@@ -516,33 +599,41 @@ function DashboardView({ reduceMotion, transition }) {
         >
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-[#111827]">การแจ้งเตือน</h2>
-            <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">2 ใหม่</span>
+            {urgentCount > 0 && (
+              <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                {urgentCount} ด่วน
+              </span>
+            )}
           </div>
           <div className="space-y-2">
-            {NOTIFS.map((n, i) => (
-              <motion.div
-                key={i}
-                className={`flex gap-3 items-start rounded-xl p-3 cursor-pointer transition-colors ${
-                  n.urgent ? 'bg-red-50 hover:bg-red-100' : 'bg-[#FAF6F1] hover:bg-[#F2EBE2]'
-                }`}
-                initial={reduceMotion ? false : { x: 10, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ ...transition, delay: 0.38 + i * 0.06 }}
-                whileHover={{ x: 2 }}
-              >
-                <div className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg ${
-                  n.urgent ? 'bg-red-100' : 'bg-[#A0724A]/10'
-                }`}>
-                  <span className={`material-symbols-outlined text-[18px] ${n.urgent ? 'text-red-600' : 'text-[#A0724A]'}`}>
-                    {n.icon}
-                  </span>
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-[#111827]">{n.title}</p>
-                  <p className="text-[10px] text-[#9CA3AF] mt-0.5">{n.time}</p>
-                </div>
-              </motion.div>
-            ))}
+            {notifications.length === 0 ? (
+              <p className="py-6 text-center text-xs text-[#9CA3AF]">ไม่มีการแจ้งเตือน</p>
+            ) : (
+              notifications.map((n, i) => (
+                <motion.div
+                  key={i}
+                  className={`flex gap-3 items-start rounded-xl p-3 cursor-pointer transition-colors ${
+                    n.urgent ? 'bg-red-50 hover:bg-red-100' : 'bg-[#FAF6F1] hover:bg-[#F2EBE2]'
+                  }`}
+                  initial={reduceMotion ? false : { x: 10, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ ...transition, delay: 0.38 + i * 0.06 }}
+                  whileHover={{ x: 2 }}
+                >
+                  <div className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg ${
+                    n.urgent ? 'bg-red-100' : 'bg-[#A0724A]/10'
+                  }`}>
+                    <span className={`material-symbols-outlined text-[18px] ${n.urgent ? 'text-red-600' : 'text-[#A0724A]'}`}>
+                      {n.icon}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-[#111827]">{n.title}</p>
+                    <p className="text-[10px] text-[#9CA3AF] mt-0.5">{n.time}</p>
+                  </div>
+                </motion.div>
+              ))
+            )}
           </div>
         </motion.div>
       </div>
@@ -565,38 +656,42 @@ function DashboardView({ reduceMotion, transition }) {
           </button>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-[#F9FAFB]">
-              <tr>
-                {['Order ID', 'ลูกค้า', 'ยอด', 'สถานะ', 'วันที่'].map((h) => (
-                  <th key={h} className="px-5 py-3 text-left text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide">
-                    {h}
-                  </th>
+          {recentOrders.length === 0 ? (
+            <p className="py-10 text-center text-sm text-[#9CA3AF]">ยังไม่มีออเดอร์</p>
+          ) : (
+            <table className="w-full text-sm">
+              <thead className="bg-[#F9FAFB]">
+                <tr>
+                  {['Order ID', 'ลูกค้า', 'ยอด', 'สถานะ', 'วันที่'].map((h) => (
+                    <th key={h} className="px-5 py-3 text-left text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#F3F4F6]">
+                {recentOrders.map((order, i) => (
+                  <motion.tr
+                    key={order.id}
+                    className="hover:bg-[#FAFAFA] transition-colors cursor-pointer"
+                    initial={reduceMotion ? false : { opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ ...transition, delay: 0.48 + i * 0.04 }}
+                  >
+                    <td className="px-5 py-3.5 font-bold text-[#3D2B1F]">{order.id}</td>
+                    <td className="px-5 py-3.5 text-[#374151]">{order.customer}</td>
+                    <td className="px-5 py-3.5 font-semibold text-[#111827]">{order.amount}</td>
+                    <td className="px-5 py-3.5">
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold ${statusCls(order.status)}`}>
+                        {order.status}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5 text-[#9CA3AF]">{order.date}</td>
+                  </motion.tr>
                 ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#F3F4F6]">
-              {RECENT_ORDERS.map((order, i) => (
-                <motion.tr
-                  key={order.id}
-                  className="hover:bg-[#FAFAFA] transition-colors cursor-pointer"
-                  initial={reduceMotion ? false : { opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ ...transition, delay: 0.48 + i * 0.04 }}
-                >
-                  <td className="px-5 py-3.5 font-bold text-[#3D2B1F]">{order.id}</td>
-                  <td className="px-5 py-3.5 text-[#374151]">{order.customer}</td>
-                  <td className="px-5 py-3.5 font-semibold text-[#111827]">{order.amount}</td>
-                  <td className="px-5 py-3.5">
-                    <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold ${statusCls(order.status)}`}>
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3.5 text-[#9CA3AF]">{order.date}</td>
-                </motion.tr>
-              ))}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          )}
         </div>
       </motion.div>
 
@@ -617,36 +712,46 @@ function DashboardView({ reduceMotion, transition }) {
             <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
           </button>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {TOP_PRODUCTS.map((p, i) => (
-            <motion.div
-              key={p.name}
-              className="rounded-xl border border-[#E5E7EB] overflow-hidden hover:shadow-md transition-all cursor-pointer group"
-              initial={reduceMotion ? false : { scale: 0.96, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ ...transition, delay: 0.58 + i * 0.06 }}
-              whileHover={{ scale: 1.02 }}
-            >
-              <div className="relative h-28 overflow-hidden">
-                <img
-                  src={p.image}
-                  alt={p.name}
-                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-                <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm rounded-full px-2 py-0.5 text-[10px] font-semibold text-[#6B7280]">
-                  #{i + 1}
+        {topProducts.length === 0 ? (
+          <p className="py-8 text-center text-sm text-[#9CA3AF]">ยังไม่มีข้อมูลสินค้าขายดี</p>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {topProducts.map((p, i) => (
+              <motion.div
+                key={p.name}
+                className="rounded-xl border border-[#E5E7EB] overflow-hidden hover:shadow-md transition-all cursor-pointer group"
+                initial={reduceMotion ? false : { scale: 0.96, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ ...transition, delay: 0.58 + i * 0.06 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                <div className="relative h-28 overflow-hidden bg-[#F2EBE2]">
+                  {p.image ? (
+                    <img
+                      src={p.image}
+                      alt={p.name}
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center">
+                      <span className="material-symbols-outlined text-[40px] text-[#C8A882]">table_restaurant</span>
+                    </div>
+                  )}
+                  <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm rounded-full px-2 py-0.5 text-[10px] font-semibold text-[#6B7280]">
+                    #{i + 1}
+                  </div>
                 </div>
-              </div>
-              <div className="p-3">
-                <h3 className="text-xs font-semibold text-[#111827] line-clamp-2 mb-2 leading-relaxed">{p.name}</h3>
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-[#9CA3AF]">{p.sales} sold</span>
-                  <span className="text-xs font-bold text-[#A0724A]">{p.revenue}</span>
+                <div className="p-3">
+                  <h3 className="text-xs font-semibold text-[#111827] line-clamp-2 mb-2 leading-relaxed">{p.name}</h3>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] text-[#9CA3AF]">{p.sales} sold</span>
+                    <span className="text-xs font-bold text-[#A0724A]">{p.revenue}</span>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </motion.div>
     </div>
   )
