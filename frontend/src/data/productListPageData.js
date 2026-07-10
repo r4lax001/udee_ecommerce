@@ -41,7 +41,7 @@ export const productCards = [
     subtitle: 'โต๊ะกินข้าว',
     price: 690,
     badge: 'NEW',
-    image: '/imgages/details/table_id2.avif',
+    image: '/images/details/table_id2.avif',
     gallery: [
       '/images/details/table_id2.avif',
       '/images/details/table_id2.1.avif',

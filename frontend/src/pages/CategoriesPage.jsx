@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import ClickSparkButton from '../components/ClickSparkButton'
 import { getProducts } from '../services/products'
+import { formatPrice } from '../utils/format'
 
 const CategoriesPage = () => {
   const navigate = useNavigate()
@@ -250,9 +251,9 @@ const CategoriesPage = () => {
                       </div>
                       <div className="flex items-end justify-between gap-4">
                         <div>
-                          <p className="text-2xl font-semibold text-[#3D2B1F]">{product.price}</p>
+                          <p className="text-2xl font-semibold text-[#3D2B1F]">{formatPrice(product.price)}</p>
                           {product.originalPrice && (
-                            <p className="text-sm text-[#5a4e46] line-through">{product.originalPrice}</p>
+                            <p className="text-sm text-[#5a4e46] line-through">{formatPrice(product.originalPrice)}</p>
                           )}
                         </div>
                         <ClickSparkButton
