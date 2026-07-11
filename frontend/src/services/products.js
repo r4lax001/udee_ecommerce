@@ -23,7 +23,9 @@ function buildMockProductDetail(product) {
     colors: product.colors || ['#3D2B1F', '#A0764B', '#E7D6C6'],
     materialOptions:
       product.materialOptions ||
-      [product.material || 'สีดาร์คโอ๊ค', 'สีพรีเมียร์โอ๊ค'],
+      (Array.isArray(product.material) 
+        ? product.material 
+        : (product.material ? [product.material] : ['สีดาร์คโอ๊ค', 'สีพรีเมียร์โอ๊ค'])),
     specs:
       product.specs || product.generalProperties ||
       [
