@@ -4,15 +4,15 @@
 
 ---
 
-##  ทีมพัฒนา
+## 👥 ทีมพัฒนา
 
-| รหัสนักศึกษา | ชื่อ-สกุล | หน้าที่ |
-|------------|-----------|--------|
-| 67094657 | วรินทร วรธรรม | Product List / Product Detail |
-| 67101868 | ปวีณภัทร สินหมู | Order / Payment / Tracking |
-| 67124936 | พลอยไพลิน วัชระ | Shopping Cart / Checkout |
-| 67136194 | กรฤทธคุมพวก | Login / Register / Profile |
-| 67131555 | ปัฐวัติ แสนคำเพิงใจ | Admin Dashboard / Report / Integration (PM) |
+| รูป | รหัสนักศึกษา | ชื่อ-สกุล | หน้าที่ |
+|-----|------------|-----------|--------|
+| 👨‍💻 | 67094657 | วรินทร วรธรรม | Product List / Product Detail |
+| 👩‍💻 | 67101868 | ปวีณภัทร สินหมู | Order / Payment / Tracking |
+| 👩‍💻 | 67124936 | พลอยไพลิน วัชระ | Shopping Cart / Checkout |
+| 👨‍💻 | 67136194 | กรฤทธคุมพวก | Login / Register / Profile |
+| 👨‍💻 | 67131555 | ปัฐวัติ แสนคำเพิงใจ | Admin Dashboard / Report / Integration (PM) |
 
 ---
 
