@@ -7,7 +7,7 @@ import { useCart } from '../contexts'
 
 const formatPrice = (value) => `฿${Number(value).toLocaleString('th-TH')}`
 
-const CheckoutPage = ({ checkout = checkoutPageData }) => {
+const CheckoutPageV2 = ({ checkout = checkoutPageData }) => {
   const reduceMotion = useReducedMotion()
   const navigate = useNavigate()
 
@@ -443,4 +443,4 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
   )
 }
 
-export default CheckoutPage
+export default CheckoutPageV2
