@@ -18,7 +18,7 @@ const CartPageV2 = () => {
     applyCoupon(coupon)
     setApplied(Boolean(coupon.trim()))
   }
-
+//ฮึบๆๆ
   return (
     <motion.main
       className="min-h-screen bg-[#F7F2EC] text-[#1D1B1A]"
