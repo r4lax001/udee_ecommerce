@@ -5,7 +5,7 @@ import { useCart } from '../contexts'
 
 const formatPrice = (value) => `฿${value.toLocaleString('th-TH')}`
 
-const CartPage = () => {
+const CartPageV2 = () => {
   const reduceMotion = useReducedMotion()
   const navigate = useNavigate()
   const transition = { duration: reduceMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] }
@@ -18,7 +18,7 @@ const CartPage = () => {
     applyCoupon(coupon)
     setApplied(Boolean(coupon.trim()))
   }
-
+  
   return (
     <motion.main
       className="min-h-screen bg-[#F7F2EC] text-[#1D1B1A]"
@@ -36,7 +36,7 @@ const CartPage = () => {
               transition={transition}
             >
               <h1 className="text-4xl font-semibold text-[#3D2B1F] mb-4">
-                ตะกร้าสินค้าของคุณ
+                ตะกร้าสินค้าของคุณ (V2)
               </h1>
               <p className="text-sm text-[#5a4e46]">
                 พร้อมสำหรับการชำระเงินและจัดส่ง
@@ -123,7 +123,7 @@ const CartPage = () => {
 
               <button
                 type="button"
-                onClick={() => navigate('/checkout')}
+                onClick={() => navigate('/checkout-v2')}
                 className="mt-8 w-full rounded-2xl bg-[#3D2B1F] px-6 py-4 text-white font-semibold hover:opacity-90 transition"
               >
                 ไปที่การชำระเงิน
@@ -166,4 +166,4 @@ const CartPage = () => {
   )
 }
 
-export default CartPage
+export default CartPageV2

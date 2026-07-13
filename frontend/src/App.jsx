@@ -3,6 +3,7 @@ import { lazy, Suspense } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import AppLayout from './layouts/AppLayout'
+import { CartProvider } from './contexts'
 
 const HomePage = lazy(() => import('./pages/HomePage'))
 const AuthPage = lazy(() => import('./pages/AuthPage'))
@@ -15,6 +16,8 @@ const AdminOrdersPage = lazy(() => import('./pages/AdminOrdersPage'))
 const AdminDashboardPage = lazy(() => import('./pages/AdminDashboardPage'))
 const ProfilePage = lazy(() => import('./pages/ProfilePage'))
 const CartPage = lazy(() => import('./pages/CartPage'))
+const CartPageV2 = lazy(() => import('./pages/CartPageV2'))
+const CheckoutPageV2 = lazy(() => import('./pages/CheckoutPageV2'))
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'))
 
 function LoadingFallback() {
@@ -42,28 +45,32 @@ function LoadingFallback() {
 function App() {
   return (
     <BrowserRouter>
-      <Suspense fallback={<LoadingFallback />}>
-        <Routes>
-          <Route path="/" element={<AppLayout />}>
-            <Route index element={<HomePage />} />
-            <Route path="auth" element={<AuthPage />} />
+      <CartProvider>
+        <Suspense fallback={<LoadingFallback />}>
+          <Routes>
+            <Route path="/" element={<AppLayout />}>
+              <Route index element={<HomePage />} />
+              <Route path="auth" element={<AuthPage />} />
 
-            <Route path="order-tracking" element={<OrderTrackingPage />} />
-            <Route path="order-tracking/:orderNumber" element={<OrderTrackingPage />} />
+              <Route path="order-tracking" element={<OrderTrackingPage />} />
+              <Route path="order-tracking/:orderNumber" element={<OrderTrackingPage />} />
 
-            <Route path="checkout" element={<CheckoutPage />} />
-            <Route path="product-detail/:id" element={<ProductDetailPage />} />
-            <Route path="products" element={<CategoriesPage />} />
-            <Route path="profile" element={<ProfilePage />} />
-            <Route path="cart" element={<CartPage />} />
-          </Route>
+              <Route path="checkout" element={<CheckoutPage />} />
+              <Route path="checkout-v2" element={<CheckoutPageV2 />} />
+              <Route path="product-detail/:id" element={<ProductDetailPage />} />
+              <Route path="products" element={<CategoriesPage />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="cart" element={<CartPage />} />
+              <Route path="cart-v2" element={<CartPageV2 />} />
+            </Route>
 
-          <Route path="admin-dashboard" element={<AdminDashboardPage />} />
-          <Route path="admin-products" element={<AdminProductsPage />} />
-          <Route path="admin-orders" element={<AdminOrdersPage />} />
-          <Route path="admin" element={<AdminDashboardPage />} />
-        </Routes>
-      </Suspense>
+            <Route path="admin-dashboard" element={<AdminDashboardPage />} />
+            <Route path="admin-products" element={<AdminProductsPage />} />
+            <Route path="admin-orders" element={<AdminOrdersPage />} />
+            <Route path="admin" element={<AdminDashboardPage />} />
+          </Routes>
+        </Suspense>
+      </CartProvider>
     </BrowserRouter>
   )
 }

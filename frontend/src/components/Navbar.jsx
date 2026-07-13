@@ -2,12 +2,14 @@ import { Link, useLocation } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import ClickSparkButton from './ClickSparkButton'
 import { homePageData } from '../data/homePageData'
+import { useCart } from '../contexts'
 
 const MotionLink = motion(Link)
 
 const Navbar = () => {
   const reduceMotion = useReducedMotion()
   const location = useLocation()
+  const { totalItems } = useCart()
   const transition = { duration: reduceMotion ? 0 : 0.22, ease: [0.22, 1, 0.36, 1] }
 
   const isActive = (href) => href === location.pathname
@@ -75,7 +77,7 @@ const Navbar = () => {
             <Link to="/cart" className="relative p-2 text-[#5a4e46] hover:text-[#3D2B1F] transition-transform active:scale-95">
               <span className="material-symbols-outlined">shopping_cart</span>
               <span className="absolute top-0 right-0 inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#A0724A] text-[10px] text-white font-bold">
-                ?
+                {totalItems || 0}
               </span>
             </Link>
           </motion.div>
