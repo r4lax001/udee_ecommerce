@@ -12,7 +12,7 @@
 | 👩‍💻 | 67101868 | ปวีณภัทร สินหมู | Order / Payment / Tracking |
 | 👩‍💻 | 67124936 | พลอยไพลิน วัชระ | Shopping Cart / Checkout |
 | 👨‍💻 | 67136194 | กรฤทธคุมพวก | Login / Register / Profile |
-| 🎯 | 67131555 | ปัฐวัติ แสนคำเพิงใจ | Admin Dashboard / Report / Integration (PM) |
+| 👨‍💻 | 67131555 | ปัฐวัติ แสนคำเพิงใจ | Admin Dashboard / Report / Integration (PM) |
 
 ---
 
@@ -82,4 +82,4 @@ Users, Products, Categories, Cart, Orders, OrderItems, ProductImage
 
 **CORS Error:** ตรวจสอบ CORS config ใน `app.js`
 
----
+------
