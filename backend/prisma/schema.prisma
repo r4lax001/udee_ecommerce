@@ -9,18 +9,21 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
   password  String
   name      String
-  role      Role     @default(CUSTOMER)
-  createdAt DateTime @default(now())
+  phone     String
+  role      Role      @default(CUSTOMER)
+  createdAt DateTime  @default(now())
   orders    Order[]
   cart      Cart?
+  addresses Address[]
 }
 
 enum Role {
   CUSTOMER
+  MANAGER
   ADMIN
 }
 
@@ -67,21 +70,22 @@ model CartItem {
 }
 
 model Order {
-  id         Int         @id @default(autoincrement())
-  userId     Int
-  user       User        @relation(fields: [userId], references: [id])
-  status     OrderStatus @default(PENDING)
-  total      Decimal
-  createdAt  DateTime    @default(now())
-  items      OrderItem[]
+  id              Int         @id @default(autoincrement())
+  userId          Int
+  user            User        @relation(fields: [userId], references: [id])
+  status          OrderStatus @default(PENDING)
+  total           Decimal
+  shippingAddress String
+  createdAt       DateTime    @default(now())
+  items           OrderItem[]
 }
 
 enum OrderStatus {
   PENDING
-  CONFIRMED
+  WAITING_FOR_PAYMENT
+  PAID
   SHIPPED
   DELIVERED
-  CANCELLED
 }
 
 model OrderItem {
@@ -92,4 +96,17 @@ model OrderItem {
   product   Product @relation(fields: [productId], references: [id])
   quantity  Int
   price     Decimal
+}
+
+model Address {
+  id           Int    @id @default(autoincrement())
+  userId       Int
+  user         User   @relation(fields: [userId], references: [id])
+  houseNo      String
+  soi          String?
+  road         String?
+  subDistrict  String
+  district     String
+  province     String
+  postalCode   String
 }

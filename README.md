@@ -68,7 +68,20 @@ npm run dev
 
 ## 🗄️ Database Schema
 
-Users, Products, Categories, Cart, Orders, OrderItems, ProductImage
+| ตาราง | คำอธิบาย |
+|--------|-----------|
+| **User** | ข้อมูลผู้ใช้ (email, password, name, role) |
+| **Category** | หมวดหมู่สินค้า |
+| **Product** | ข้อมูลสินค้า (name, description, price, stock) |
+| **ProductImage** | รูปภาพสินค้า |
+| **Cart** | ตะกร้าสินค้าของผู้ใช้ |
+| **CartItem** | รายการสินค้าในตะกร้า |
+| **Order** | คำสั่งซื้อ (status, total, createdAt) |
+| **OrderItem** | รายการสินค้าในคำสั่งซื้อ |
+
+**Enums:**
+- **Role:** CUSTOMER, ADMIN
+- **OrderStatus:** PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED
 
 ดูรายละเอียดใน `backend/prisma/schema.prisma`
 
