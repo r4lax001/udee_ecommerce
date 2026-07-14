@@ -1,40 +1,58 @@
-import { useMemo, useState } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
-import { checkoutPageData } from '../data/checkoutPageData'
-import { createOrder } from '../services/orders'
-import { useCart } from '../contexts'
+import { useEffect, useMemo, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { checkoutPageData } from "../data/checkoutPageData";
+import { createOrder } from "../services/orders";
+import { useCart } from "../contexts";
 
-const formatPrice = (value) => `฿${Number(value).toLocaleString('th-TH')}`
+const formatPrice = (value) => `฿${Number(value).toLocaleString("th-TH")}`;
 
 const CheckoutPage = ({ checkout = checkoutPageData }) => {
-  const reduceMotion = useReducedMotion()
-  const navigate = useNavigate()
+  const reduceMotion = useReducedMotion();
+  const navigate = useNavigate();
 
   const transition = {
     duration: reduceMotion ? 0 : 0.24,
     ease: [0.22, 1, 0.36, 1],
-  }
+  };
 
-  const [currentStep, setCurrentStep] = useState(1)
-  const [error, setError] = useState('')
+  const [currentStep, setCurrentStep] = useState(1);
+  const [error, setError] = useState("");
 
   const [shippingInfo, setShippingInfo] = useState({
-    name: '',
-    phone: '',
-    address: '',
-    city: '',
-    district: '',
-    zip: '',
-  })
+    name: "",
+    phone: "",
+    address: "",
+    city: "",
+    district: "",
+    zip: "",
+  });
+
+  const {
+    items,
+    subtotal,
+    discount,
+    shipping,
+    total: cartTotal,
+    clearCart,
+  } = useCart();
+
+  const isCartEmpty = items.length === 0;
 
   const [paymentInfo, setPaymentInfo] = useState({
-    transferDate: '',
-    amount: '',
+    transferDate: "",
+    amount: "",
     slip: null,
-  })
+  });
 
-  const { items, subtotal, discount, shipping, total: cartTotal, clearCart } = useCart()
+  useEffect(() => {
+    if (cartTotal > 0) {
+      setPaymentInfo((prev) => ({
+        ...prev,
+        amount: String(cartTotal),
+      }));
+    }
+  }, [cartTotal]);
 
   const cartCheckoutData = useMemo(
     () => ({
@@ -42,7 +60,10 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
       products: items.map((item) => ({
         name: item.name,
         qty: item.qty,
-        price: typeof item.price === 'number' ? `฿${item.price.toLocaleString('th-TH')}` : item.price,
+        price:
+          typeof item.price === "number"
+            ? `฿${item.price.toLocaleString("th-TH")}`
+            : item.price,
         image: item.image,
       })),
       totals: {
@@ -52,71 +73,125 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
       },
     }),
     [checkout, items, subtotal, discount, shipping],
-  )
+  );
 
-  const total = cartTotal
+  const total = cartTotal;
+  if (isCartEmpty) {
+    return (
+      <main className="min-h-screen bg-[#F2EBE2] px-6 py-16 text-[#1D1B1A]">
+        <section className="mx-auto max-w-3xl rounded-3xl bg-white p-10 text-center shadow-[0_2px_8px_rgba(61,43,31,0.08)]">
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-[#FEF4EA] text-[#A0724A]">
+            <span className="material-symbols-outlined text-4xl">
+              shopping_cart
+            </span>
+          </div>
+
+          <h1 className="text-3xl font-semibold text-[#3D2B1F]">
+            ยังไม่มีสินค้าในตะกร้า
+          </h1>
+
+          <p className="mt-4 text-sm text-[#5a4e46]">
+            กรุณาเลือกสินค้าใส่ตะกร้าก่อนเข้าสู่ขั้นตอนชำระเงิน
+          </p>
+
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={() => navigate("/products")}
+              className="rounded-2xl bg-[#3D2B1F] px-8 py-3 font-semibold text-white transition hover:opacity-90"
+            >
+              ไปเลือกสินค้า
+            </button>
+
+            <button
+              type="button"
+              onClick={() => navigate("/cart")}
+              className="rounded-2xl border border-[#3D2B1F] px-8 py-3 font-semibold text-[#3D2B1F] transition hover:bg-[#F3ECEA]"
+            >
+              กลับไปตะกร้า
+            </button>
+          </div>
+        </section>
+      </main>
+    );
+  }
 
   const handleShippingChange = (event) => {
-    const { name, value } = event.target
+    const { name, value } = event.target;
 
     setShippingInfo((prev) => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
   const handlePaymentChange = (event) => {
-    const { name, value } = event.target
+    const { name, value } = event.target;
 
     setPaymentInfo((prev) => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
   const validateShipping = () => {
-    const requiredFields = ['name', 'phone', 'address', 'city', 'district', 'zip']
-    const isComplete = requiredFields.every((field) => shippingInfo[field].trim())
+    const requiredFields = [
+      "name",
+      "phone",
+      "address",
+      "city",
+      "district",
+      "zip",
+    ];
+    const isComplete = requiredFields.every((field) =>
+      shippingInfo[field].trim(),
+    );
 
     if (!isComplete) {
-      setError('กรุณากรอกข้อมูลการจัดส่งให้ครบถ้วน')
-      return false
+      setError("กรุณากรอกข้อมูลการจัดส่งให้ครบถ้วน");
+      return false;
     }
 
-    setError('')
-    return true
-  }
+    setError("");
+    return true;
+  };
 
   const validatePayment = () => {
     if (!paymentInfo.transferDate || !paymentInfo.amount || !paymentInfo.slip) {
-      setError('กรุณากรอกข้อมูลการชำระเงินและอัปโหลดสลิปให้ครบถ้วน')
-      return false
+      setError("กรุณากรอกข้อมูลการชำระเงินและอัปโหลดสลิปให้ครบถ้วน");
+      return false;
     }
 
-    setError('')
-    return true
-  }
+    setError("");
+    return true;
+  };
 
   const goToPayment = () => {
-    if (!validateShipping()) return
-    setCurrentStep(2)
-  }
+    if (!validateShipping()) return;
+    setCurrentStep(2);
+  };
 
   const goToConfirm = () => {
-    if (!validatePayment()) return
-    setCurrentStep(3)
-  }
+    if (!validatePayment()) return;
+    setCurrentStep(3);
+  };
 
   const handleCreateOrder = () => {
+    if (isCartEmpty) {
+      setError("ไม่สามารถสร้างคำสั่งซื้อได้ เพราะยังไม่มีสินค้าในตะกร้า");
+      setCurrentStep(1);
+      return;
+    }
+
     const order = createOrder({
       shippingInfo,
       paymentInfo,
       checkout: cartCheckoutData,
-    })
+    });
 
-    clearCart()
-    navigate(`/order-tracking/${order.orderNumber}`)
-  }
+    clearCart();
+    navigate(`/order-tracking/${order.orderNumber}`);
+  };
 
   return (
     <motion.main
@@ -150,8 +225,8 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
                       key={step}
                       className={`rounded-full px-4 py-2 text-sm font-medium ${
                         index + 1 === currentStep
-                          ? 'bg-[#3D2B1F] text-white'
-                          : 'bg-[#F3ECEA] text-[#5a4e46]'
+                          ? "bg-[#3D2B1F] text-white"
+                          : "bg-[#F3ECEA] text-[#5a4e46]"
                       }`}
                     >
                       {step}
@@ -175,16 +250,21 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
 
                 <div className="grid gap-6 md:grid-cols-2">
                   {[
-                    { label: 'ชื่อ-นามสกุล', name: 'name', type: 'text' },
-                    { label: 'เบอร์โทรศัพท์', name: 'phone', type: 'tel' },
-                    { label: 'ที่อยู่', name: 'address', type: 'text', full: true },
-                    { label: 'จังหวัด', name: 'city', type: 'text' },
-                    { label: 'เขต/อำเภอ', name: 'district', type: 'text' },
-                    { label: 'รหัสไปรษณีย์', name: 'zip', type: 'text' },
+                    { label: "ชื่อ-นามสกุล", name: "name", type: "text" },
+                    { label: "เบอร์โทรศัพท์", name: "phone", type: "tel" },
+                    {
+                      label: "ที่อยู่",
+                      name: "address",
+                      type: "text",
+                      full: true,
+                    },
+                    { label: "จังหวัด", name: "city", type: "text" },
+                    { label: "เขต/อำเภอ", name: "district", type: "text" },
+                    { label: "รหัสไปรษณีย์", name: "zip", type: "text" },
                   ].map((field) => (
                     <label
                       key={field.name}
-                      className={`${field.full ? 'md:col-span-2' : ''} flex flex-col gap-2`}
+                      className={`${field.full ? "md:col-span-2" : ""} flex flex-col gap-2`}
                     >
                       <span className="text-sm font-medium text-[#81756E]">
                         {field.label}
@@ -234,7 +314,9 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
                         <p className="font-semibold">123-4-56789-0</p>
                         <button
                           type="button"
-                          onClick={() => navigator.clipboard.writeText('123-4-56789-0')}
+                          onClick={() =>
+                            navigator.clipboard.writeText("123-4-56789-0")
+                          }
                           className="text-[#A0724A] font-medium"
                         >
                           คัดลอก
@@ -262,7 +344,7 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
                             name="amount"
                             value={paymentInfo.amount}
                             onChange={handlePaymentChange}
-                            placeholder="0.00"
+                            placeholder={String(total)}
                             className="rounded-2xl border border-[#D2C4BC] bg-[#F9F2F0] px-4 py-3 outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20"
                           />
                         </label>
@@ -290,8 +372,8 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
                   <button
                     type="button"
                     onClick={() => {
-                      setError('')
-                      setCurrentStep(1)
+                      setError("");
+                      setCurrentStep(1);
                     }}
                     className="rounded-2xl border border-[#3D2B1F] px-8 py-3 text-[#3D2B1F] hover:bg-[#F3ECEA] transition"
                   >
@@ -324,7 +406,8 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
                       <p>เบอร์โทร: {shippingInfo.phone}</p>
                       <p>ที่อยู่: {shippingInfo.address}</p>
                       <p>
-                        {shippingInfo.district}, {shippingInfo.city} {shippingInfo.zip}
+                        {shippingInfo.district}, {shippingInfo.city}{" "}
+                        {shippingInfo.zip}
                       </p>
                     </div>
                   </div>
@@ -337,21 +420,22 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
                     <div className="mt-4 space-y-2 text-sm text-[#5a4e46]">
                       <p>วันที่โอน: {paymentInfo.transferDate}</p>
                       <p>จำนวนเงิน: {formatPrice(paymentInfo.amount || 0)}</p>
-                      <p>สลิป: {paymentInfo.slip?.name || '-'}</p>
+                      <p>สลิป: {paymentInfo.slip?.name || "-"}</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="mt-8 rounded-3xl bg-[#FEF4EA] p-6 text-sm text-[#5a4e46]">
-                  หลังจากยืนยันคำสั่งซื้อ ระบบจะสร้างเลขออเดอร์ และพาไปหน้าติดตามคำสั่งซื้อทันที
+                  หลังจากยืนยันคำสั่งซื้อ ระบบจะสร้างเลขออเดอร์
+                  และพาไปหน้าติดตามคำสั่งซื้อทันที
                 </div>
 
                 <div className="mt-10 flex justify-between gap-4">
                   <button
                     type="button"
                     onClick={() => {
-                      setError('')
-                      setCurrentStep(2)
+                      setError("");
+                      setCurrentStep(2);
                     }}
                     className="rounded-2xl border border-[#3D2B1F] px-8 py-3 text-[#3D2B1F] hover:bg-[#F3ECEA] transition"
                   >
@@ -390,9 +474,7 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
                   </div>
 
                   <div className="flex-1">
-                    <p className="font-medium text-[#3D2B1F]">
-                      {product.name}
-                    </p>
+                    <p className="font-medium text-[#3D2B1F]">{product.name}</p>
                     <p className="text-sm text-[#81756E]">
                       จำนวน: {product.qty}
                     </p>
@@ -421,7 +503,7 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
                   <span>ค่าจัดส่ง</span>
                   <span>
                     {cartCheckoutData.totals.shipping === 0
-                      ? 'ฟรี'
+                      ? "ฟรี"
                       : formatPrice(cartCheckoutData.totals.shipping)}
                   </span>
                 </div>
@@ -440,7 +522,7 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
         </div>
       </section>
     </motion.main>
-  )
-}
+  );
+};
 
-export default CheckoutPage
+export default CheckoutPage;
