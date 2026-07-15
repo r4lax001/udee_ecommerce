@@ -148,7 +148,7 @@ const CategoriesPage = () => {
             <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div className="space-y-3">
                 <p className="text-sm uppercase tracking-[0.3em] text-[#A0724A]">โต๊ะทั้งหมด</p>
-                <h1 className="text-4xl font-semibold text-[#3D2B1F] sm:text-5xl">โต๊ะที่ใช่ในทุกไซซ์และสไตล์</h1>
+                <h1 className="text-4xl font-semibold text-[#3D2B1F] sm:text-5xl">โต๊ะที่ใช่ในทุกไซส์และสไตล์</h1>
                 <p className="max-w-2xl text-base leading-8 text-[#5a4e46]">
                   ค้นพบโต๊ะคุณภาพพรีเมียม ออกแบบเพื่อความอบอุ่นและฟังก์ชันการใช้งานในบ้านของคุณ
                 </p>
@@ -311,7 +311,7 @@ const CategoriesPage = () => {
                   >
                     <div className="relative overflow-hidden rounded-t-[2rem]">
                       {product.badge && (
-                        <span className="absolute left-4 top-4 z-10 rounded-full bg-[#3D2B1F] px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-white shadow-lg shadow-black/10">
+                        <span className="absolute left-4 top-4 z-10 rounded-full bg-[#FF0000] px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-white shadow-lg shadow-black/10">
                           {product.badge}
                         </span>
                       )}
