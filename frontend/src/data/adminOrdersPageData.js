@@ -1,0 +1,37 @@
+export const adminOrdersPageData = [
+  {
+    id: '#ORD-9421',
+    date: '15 พ.ค. 2024, 14:30',
+    customer: 'อนันดา ไชยเดช',
+    items: 'โต๊ะทำงานไม้โอ๊ค x1',
+    total: '฿12,500.00',
+    status: 'รอยืนยัน Slip',
+    statusLabel: 'secondary-fixed',
+    initials: 'อน',
+    paymentSlip: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB31z2YkLatFB2gY9YuEgmkjdbUo1n4VW5cwFu_8XX_GjVAcQsgU4ReICm0CyI5AbzRx0MDPaDLwgYGSkuzpfcq_jK0mbKhcrlOzOxe2RJAK6XXewP4PMouNK7cxGbjJzy0ic6pmYevHJqgLBE4riJHgFi-K2ag8DJOfOw-vBGA1lVbVitF2vpnAJ7QP-v2ej5guUuaachocQeWww4KzKXUzOo5qVnc8A0EHHnPMqYFfvNp_dO8uT8O9NPs4rDPl4YNjvqLGYfTBK2u',
+    statusHistory: [
+      { label: 'ได้รับหลักฐานการโอนเงิน', time: '15 พ.ค. 2024, 14:32' },
+      { label: 'สร้างคำสั่งซื้อสำเร็จ', time: '15 พ.ค. 2024, 14:30' },
+    ],
+  },
+  {
+    id: '#ORD-9418',
+    date: '15 พ.ค. 2024, 11:15',
+    customer: 'สมชาย ใจดี',
+    items: 'อาร์มแชร์ Walnut x2',
+    total: '฿24,800.00',
+    status: 'กำลังจัดส่ง',
+    statusLabel: 'blue',
+    initials: 'สม',
+  },
+  {
+    id: '#ORD-9415',
+    date: '14 พ.ค. 2024, 09:45',
+    customer: 'รจนา มีบุญ',
+    items: 'ชั้นวางหนังสือพรีเมียม x1',
+    total: '฿8,900.00',
+    status: 'สำเร็จ',
+    statusLabel: 'green',
+    initials: 'รจ',
+  },
+]
