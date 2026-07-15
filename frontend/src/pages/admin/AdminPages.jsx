@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import React from 'react';
+=======
+import React, { useState, useEffect } from 'react';
+import { getUsers, updateUserStatus } from '../../services/admin';
+>>>>>>> auth-system
 
 const BAR_DATA = [42, 58, 35, 67, 89, 74, 95, 82, 61, 78, 55, 90];
 const MONTH_LABELS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
@@ -317,10 +322,93 @@ const CUSTOMERS = [
 ];
 
 export function Customers() {
+<<<<<<< HEAD
+=======
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeFilter, setActiveFilter] = useState('all');
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const data = await getUsers();
+      if (data.success) {
+        setUsers(data.users);
+      } else {
+        setError(data.message || 'ไม่สามารถดึงข้อมูลสมาชิกได้');
+      }
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || 'เกิดข้อผิดพลาดในการโหลดข้อมูลสมาชิก');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleToggleVerify = async (userId, currentVerified) => {
+    try {
+      const data = await updateUserStatus(userId, { isVerified: !currentVerified });
+      if (data.success) {
+        setUsers(prev => prev.map(u => u.id === userId ? { ...u, isVerified: !currentVerified } : u));
+        alert('อัปเดตสถานะการยืนยันตัวตนสำเร็จ');
+      }
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || 'เกิดข้อผิดพลาดในการอัปเดตสถานะ');
+    }
+  };
+
+  const handleToggleSuspend = async (userId, currentSuspended) => {
+    const actionText = currentSuspended ? 'ต้องการยกเลิกการระงับบัญชีนี้?' : 'ต้องการระงับการใช้งานบัญชีนี้? ผู้ใช้จะไม่สามารถเข้าสู่ระบบได้';
+    if (!confirm(actionText)) return;
+
+    try {
+      const data = await updateUserStatus(userId, { isSuspended: !currentSuspended });
+      if (data.success) {
+        setUsers(prev => prev.map(u => u.id === userId ? { ...u, isSuspended: !currentSuspended } : u));
+        alert('อัปเดตสถานะบัญชีสำเร็จ');
+      }
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || 'เกิดข้อผิดพลาดในการปรับสถานะบัญชี');
+    }
+  };
+
+  const filteredUsers = users.filter(user => {
+    const matchesSearch = 
+      (user.name && user.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (user.email && user.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (user.phone && user.phone.includes(searchTerm));
+
+    if (!matchesSearch) return false;
+
+    if (activeFilter === 'verified') return user.isVerified;
+    if (activeFilter === 'unverified') return !user.isVerified;
+    if (activeFilter === 'suspended') return user.isSuspended;
+    return true;
+  });
+
+  const countFilter = (filterType) => {
+    return users.filter(user => {
+      if (filterType === 'verified') return user.isVerified;
+      if (filterType === 'unverified') return !user.isVerified;
+      if (filterType === 'suspended') return user.isSuspended;
+      return true;
+    }).length;
+  };
+
+>>>>>>> auth-system
   return (
     <>
       <div className="stats-row">
         <div className="stat-card">
+<<<<<<< HEAD
           <div className="stat-num">1,284</div>
           <div className="stat-lbl">ลูกค้าทั้งหมด</div>
         </div>
@@ -335,17 +423,40 @@ export function Customers() {
             ฿3,420
           </div>
           <div className="stat-lbl">ค่าใช้จ่ายเฉลี่ย/คน</div>
+=======
+          <div className="stat-num">{users.length}</div>
+          <div className="stat-lbl">สมาชิกทั้งหมด</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-num" style={{ color: '#4A7C59' }}>
+            {countFilter('verified')}
+          </div>
+          <div className="stat-lbl">ยืนยันอีเมลแล้ว</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-num" style={{ color: '#B94040' }}>
+            {countFilter('suspended')}
+          </div>
+          <div className="stat-lbl">บัญชีที่ถูกระงับ</div>
+>>>>>>> auth-system
         </div>
       </div>
       <div className="card">
         <div className="card-head">
+<<<<<<< HEAD
           <div className="card-title">รายชื่อลูกค้า</div>
           <button className="btn-save">
             <i className="ti ti-plus" aria-hidden="true"></i>เพิ่มลูกค้า
+=======
+          <div className="card-title">การจัดการผู้ใช้งานในระบบ</div>
+          <button className="btn-save" onClick={fetchUsers}>
+            <i className="ti ti-refresh" aria-hidden="true" style={{ marginRight: 4 }}></i>รีเฟรชข้อมูล
+>>>>>>> auth-system
           </button>
         </div>
         <div className="search-bar">
           <i className="ti ti-search" aria-hidden="true"></i>
+<<<<<<< HEAD
           <input placeholder="ค้นหาชื่อ, อีเมล, เบอร์..." />
         </div>
         <div className="filter-bar">
@@ -388,6 +499,132 @@ export function Customers() {
             ))}
           </tbody>
         </table>
+=======
+          <input 
+            placeholder="ค้นหาด้วยชื่อ, อีเมล หรือเบอร์โทรศัพท์..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="filter-bar">
+          <span 
+            className={`filter-chip ${activeFilter === 'all' ? 'active' : ''}`}
+            onClick={() => setActiveFilter('all')}
+          >
+            ทั้งหมด ({users.length})
+          </span>
+          <span 
+            className={`filter-chip ${activeFilter === 'verified' ? 'active' : ''}`}
+            onClick={() => setActiveFilter('verified')}
+          >
+            ยืนยันอีเมลแล้ว ({countFilter('verified')})
+          </span>
+          <span 
+            className={`filter-chip ${activeFilter === 'unverified' ? 'active' : ''}`}
+            onClick={() => setActiveFilter('unverified')}
+          >
+            ยังไม่ยืนยันอีเมล ({countFilter('unverified')})
+          </span>
+          <span 
+            className={`filter-chip ${activeFilter === 'suspended' ? 'active' : ''}`}
+            onClick={() => setActiveFilter('suspended')}
+          >
+            บัญชีที่ถูกระงับ ({countFilter('suspended')})
+          </span>
+        </div>
+        
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: 'var(--tm)' }}>
+            กำลังโหลดข้อมูลสมาชิก...
+          </div>
+        ) : error ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#B94040' }}>
+            {error}
+          </div>
+        ) : filteredUsers.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: 'var(--tm)' }}>
+            ไม่พบข้อมูลผู้ใช้งานที่ตรงตามเงื่อนไข
+          </div>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th style={{ padding: '10px' }}>ลูกค้า</th>
+                <th style={{ padding: '10px' }}>อีเมล</th>
+                <th style={{ padding: '10px' }}>สิทธิ์</th>
+                <th style={{ padding: '10px', textAlign: 'center' }}>ยืนยันเมล</th>
+                <th style={{ padding: '10px', textAlign: 'center' }}>สถานะบัญชี</th>
+                <th style={{ padding: '10px', textAlign: 'center' }}>การจัดการ</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredUsers.map((c) => (
+                <tr key={c.id}>
+                  <td style={{ padding: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div className="avatar" style={{ background: '#F2EBE2', color: '#3D2B1F' }}>
+                        {c.name ? c.name.charAt(0).toUpperCase() : 'U'}
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 500, fontSize: 13 }}>{c.name}</div>
+                        <div style={{ fontSize: 11, color: 'var(--tm)' }}>{c.phone || '-'}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td style={{ padding: '10px', color: 'var(--tm)', fontSize: 12 }}>{c.email}</td>
+                  <td style={{ padding: '10px' }}>
+                    <span className={`tag ${c.role === 'ADMIN' ? 'vip' : 'reg'}`}>
+                      {c.role}
+                    </span>
+                  </td>
+                  <td style={{ padding: '10px', textAlign: 'center' }}>
+                    <span className={`badge ${c.isVerified ? 'done' : 'pending'}`}>
+                      {c.isVerified ? 'Verified' : 'Unverified'}
+                    </span>
+                  </td>
+                  <td style={{ padding: '10px', textAlign: 'center' }}>
+                    <span className={`badge ${c.isSuspended ? 'cancel' : 'done'}`}>
+                      {c.isSuspended ? 'Suspended' : 'Active'}
+                    </span>
+                  </td>
+                  <td style={{ padding: '10px', textAlign: 'center' }}>
+                    <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
+                      <button
+                        onClick={() => handleToggleVerify(c.id, c.isVerified)}
+                        style={{
+                          padding: '4px 8px',
+                          fontSize: '11px',
+                          borderRadius: '6px',
+                          border: '1px solid var(--bd)',
+                          background: 'white',
+                          cursor: 'pointer',
+                          color: 'var(--tx)',
+                        }}
+                      >
+                        {c.isVerified ? 'ยกเลิกยืนยัน' : 'ยืนยัน'}
+                      </button>
+                      <button
+                        onClick={() => handleToggleSuspend(c.id, c.isSuspended)}
+                        style={{
+                          padding: '4px 8px',
+                          fontSize: '11px',
+                          borderRadius: '6px',
+                          border: '1px solid ' + (c.isSuspended ? '#4A7C59' : '#B94040'),
+                          background: 'white',
+                          color: c.isSuspended ? '#4A7C59' : '#B94040',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {c.isSuspended ? 'ปลดแบน' : 'ระงับการใช้งาน'}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+>>>>>>> auth-system
       </div>
     </>
   );

@@ -10,6 +10,7 @@ datasource db {
 }
 
 model User {
+<<<<<<< HEAD
   id        Int      @id @default(autoincrement())
   email     String   @unique
   password  String
@@ -18,6 +19,22 @@ model User {
   createdAt DateTime @default(now())
   orders    Order[]
   cart      Cart?
+=======
+  id          Int       @id @default(autoincrement())
+  email       String    @unique
+  password    String
+  name        String
+  phone       String?
+  role        Role      @default(CUSTOMER)
+  isVerified  Boolean   @default(false)
+  isSuspended Boolean   @default(false)
+  otpCode     String?
+  otpExpiry   DateTime?
+  otpAttempts Int       @default(0)
+  createdAt   DateTime  @default(now())
+  orders      Order[]
+  cart        Cart?
+>>>>>>> auth-system
 }
 
 enum Role {

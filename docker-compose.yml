@@ -10,7 +10,11 @@ services:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: udee
     ports:
+<<<<<<< HEAD
       - "3307:3306"
+=======
+      - "3308:3306"
+>>>>>>> auth-system
     volumes:
       - udee_db_data:/var/lib/mysql
 

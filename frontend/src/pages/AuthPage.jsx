@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +8,24 @@ const getStrength = (value) => {
   let score = 0;
   if (value.length > 5) score++;
   if (value.length > 8) score++;
+=======
+import { useMemo, useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { authPageData } from "../data/authPageData";
+import { useAuth } from "../contexts";
+import * as authService from "../services/auth";
+
+// ── ตรวจสอบรูปแบบข้อมูล ──
+const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+const isValidThaiPhone = (phone) => /^0[0-9]{9}$/.test(phone.trim());
+
+// ── ประเมินความแข็งแกร่งของรหัสผ่าน ──
+const getStrength = (value) => {
+  let score = 0;
+  if (value.length >= 8) score++;
+  if (value.length > 12) score++;
+>>>>>>> auth-system
   if (/[A-Z]/.test(value)) score++;
   if (/[0-9]/.test(value)) score++;
   return score;
@@ -14,6 +33,7 @@ const getStrength = (value) => {
 
 const getStrengthText = (score) => {
   if (score === 0) return { text: "กรุณาใส่รหัสผ่าน", color: "text-[#BA1A1A]" };
+<<<<<<< HEAD
   if (score <= 2)
     return { text: "รหัสผ่านค่อนข้างอ่อน", color: "text-[#BA1A1A]" };
   if (score === 3)
@@ -21,6 +41,33 @@ const getStrengthText = (score) => {
   return { text: "รหัสผ่านปลอดภัยมาก", color: "text-[#3D2B1F]" };
 };
 
+=======
+  if (score <= 2) return { text: "รหัสผ่านค่อนข้างอ่อน", color: "text-[#BA1A1A]" };
+  if (score === 3) return { text: "รหัสผ่านปลอดภัยปานกลาง", color: "text-[#7F5530]" };
+  return { text: "รหัสผ่านปลอดภัยมาก", color: "text-[#3D2B1F]" };
+};
+
+// ── Toast Notification Component (แทน alert()) ──
+const Toast = ({ message, type = 'success', onClose }) => (
+  <motion.div
+    initial={{ opacity: 0, y: -20 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -20 }}
+    className={`fixed top-6 right-6 z-50 flex items-center gap-3 rounded-xl px-5 py-4 shadow-xl text-sm font-medium max-w-sm ${
+      type === 'success' ? 'bg-[#3D2B1F] text-white' : 'bg-[#FFDBD6] text-[#7F1A18]'
+    }`}
+  >
+    <span className="material-symbols-outlined text-base">
+      {type === 'success' ? 'check_circle' : 'error'}
+    </span>
+    <span>{message}</span>
+    <button onClick={onClose} className="ml-2 opacity-70 hover:opacity-100">
+      <span className="material-symbols-outlined text-base">close</span>
+    </button>
+  </motion.div>
+);
+
+>>>>>>> auth-system
 const AuthPage = ({ authData = authPageData }) => {
   const reduceMotion = useReducedMotion();
   const navigate = useNavigate();
@@ -28,7 +75,15 @@ const AuthPage = ({ authData = authPageData }) => {
     duration: reduceMotion ? 0 : 0.24,
     ease: [0.22, 1, 0.36, 1],
   };
+<<<<<<< HEAD
   const [activeTab, setActiveTab] = useState("login");
+=======
+  
+  const { login } = useAuth();
+  const [activeTab, setActiveTab] = useState("login"); // 'login' | 'register' | 'otp'
+  
+  // Form states
+>>>>>>> auth-system
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [showLoginPassword, setShowLoginPassword] = useState(false);
@@ -39,7 +94,33 @@ const AuthPage = ({ authData = authPageData }) => {
   const [registerPassword, setRegisterPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
+<<<<<<< HEAD
   const [errorMessage, setErrorMessage] = useState("");
+=======
+  
+  // OTP states
+  const [otpEmail, setOtpEmail] = useState("");
+  const [otpCode, setOtpCode] = useState("");
+  const [otpResendCooldown, setOtpResendCooldown] = useState(0); // countdown วินาที
+  
+  // UI States
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [toast, setToast] = useState(null); // { message, type }
+
+  // ── Toast helper ──
+  const showToast = useCallback((message, type = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 4000);
+  }, []);
+
+  // ── OTP resend countdown timer ──
+  useEffect(() => {
+    if (otpResendCooldown <= 0) return;
+    const timer = setTimeout(() => setOtpResendCooldown(prev => prev - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [otpResendCooldown]);
+>>>>>>> auth-system
 
   const passwordStrength = useMemo(
     () => getStrength(registerPassword),
@@ -51,11 +132,16 @@ const AuthPage = ({ authData = authPageData }) => {
     setErrorMessage("");
   };
 
+<<<<<<< HEAD
   const handleLoginSubmit = () => {
+=======
+  const handleLoginSubmit = async () => {
+>>>>>>> auth-system
     if (!loginEmail.trim() || !loginPassword.trim()) {
       setErrorMessage("กรุณากรอกอีเมลและรหัสผ่านให้ครบถ้วน");
       return;
     }
+<<<<<<< HEAD
 
     const savedUser = JSON.parse(localStorage.getItem("udee_user") || "null");
 
@@ -90,6 +176,48 @@ const AuthPage = ({ authData = authPageData }) => {
   };
 
   const handleRegisterSubmit = () => {
+=======
+    if (!isValidEmail(loginEmail)) {
+      setErrorMessage("รูปแบบอีเมลไม่ถูกต้อง");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setErrorMessage("");
+
+    try {
+      const data = await authService.login(loginEmail.trim(), loginPassword);
+      if (data.success) {
+        login(data.token, data.user);
+        showToast("เข้าสู่ระบบสำเร็จ ยินดีต้อนรับ!");
+        setTimeout(() => {
+          if (data.user.role === "ADMIN") {
+            navigate("/admin-dashboard");
+          } else {
+            navigate("/");
+          }
+        }, 800);
+      } else if (data.needsVerification) {
+        setOtpEmail(data.email);
+        setOtpCode("");
+        setOtpResendCooldown(60);
+        setActiveTab("otp");
+        setErrorMessage(data.message || "บัญชีของคุณยังไม่เปิดใช้งาน กรุณากรอกรหัส OTP ที่ส่งไปยังอีเมลของคุณ");
+      } else {
+        setErrorMessage(data.message || "อีเมลหรือรหัสผ่านไม่ถูกต้อง");
+      }
+    } catch (error) {
+      console.error(error);
+      setErrorMessage(
+        error.response?.data?.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ กรุณาลองใหม่อีกครั้ง"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleRegisterSubmit = async () => {
+>>>>>>> auth-system
     if (
       !registerName.trim() ||
       !registerPhone.trim() ||
@@ -101,12 +229,41 @@ const AuthPage = ({ authData = authPageData }) => {
       return;
     }
 
+<<<<<<< HEAD
+=======
+    if (!isValidEmail(registerEmail)) {
+      setErrorMessage("รูปแบบอีเมลไม่ถูกต้อง (เช่น example@email.com)");
+      return;
+    }
+
+    if (!isValidThaiPhone(registerPhone)) {
+      setErrorMessage("รูปแบบเบอร์โทรไม่ถูกต้อง (กรุณากรอก 10 หลัก เช่น 0812345678)");
+      return;
+    }
+
+    if (registerPassword.length < 8) {
+      setErrorMessage("รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร");
+      return;
+    }
+
+    if (!/[A-Z]/.test(registerPassword)) {
+      setErrorMessage("รหัสผ่านต้องมีตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว (เช่น A-Z)");
+      return;
+    }
+
+    if (!/[0-9]/.test(registerPassword)) {
+      setErrorMessage("รหัสผ่านต้องมีตัวเลขอย่างน้อย 1 ตัว (เช่น 0-9)");
+      return;
+    }
+
+>>>>>>> auth-system
     if (registerPassword !== confirmPassword) {
       setErrorMessage("รหัสผ่านและยืนยันรหัสผ่านต้องตรงกัน");
       return;
     }
 
     if (!agreeTerms) {
+<<<<<<< HEAD
       setErrorMessage(
         "กรุณายอมรับเงื่อนไขการให้บริการและนโยบายความเป็นส่วนตัว",
       );
@@ -128,6 +285,97 @@ const AuthPage = ({ authData = authPageData }) => {
     setLoginPassword("");
 
     alert("สมัครสมาชิกสำเร็จ กรุณาเข้าสู่ระบบ");
+=======
+      setErrorMessage("กรุณายอมรับเงื่อนไขการให้บริการและนโยบายความเป็นส่วนตัว");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setErrorMessage("");
+
+    try {
+      const data = await authService.register(
+        registerName.trim(),
+        registerEmail.trim(),
+        registerPassword,
+        registerPhone.trim()
+      );
+      if (data.success) {
+        setOtpEmail(registerEmail.trim());
+        setOtpCode("");
+        setOtpResendCooldown(60);
+        setActiveTab("otp");
+        showToast("สมัครสมาชิกสำเร็จ! รหัส OTP ถูกส่งไปที่อีเมลของคุณแล้ว");
+      } else {
+        setErrorMessage(data.message || "การสมัครสมาชิกไม่สำเร็จ");
+      }
+    } catch (error) {
+      console.error(error);
+      setErrorMessage(
+        error.response?.data?.message || "เกิดข้อผิดพลาดในการสมัครสมาชิก กรุณาลองใหม่อีกครั้ง"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleOtpSubmit = async () => {
+    if (!/^\d{6}$/.test(otpCode)) {
+      setErrorMessage("กรุณากรอกรหัส OTP ให้ครบ 6 หลัก (ตัวเลขเท่านั้น)");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setErrorMessage("");
+
+    try {
+      const data = await authService.verifyOtp(otpEmail, otpCode);
+      if (data.success) {
+        login(data.token, data.user);
+        showToast("ยืนยันตัวตนสำเร็จ! ยินดีต้อนรับสู่ UDEE Furniture");
+        setTimeout(() => {
+          if (data.user.role === "ADMIN") {
+            navigate("/admin-dashboard");
+          } else {
+            navigate("/");
+          }
+        }, 800);
+      } else {
+        setErrorMessage(data.message || "รหัส OTP ไม่ถูกต้อง");
+        if (data.tooManyAttempts) {
+          setOtpCode("");
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      setErrorMessage(
+        error.response?.data?.message || "เกิดข้อผิดพลาดในการยืนยันตัวตน กรุณาลองใหม่อีกครั้ง"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (otpResendCooldown > 0) return;
+    setErrorMessage("");
+    try {
+      const data = await authService.resendOtp(otpEmail);
+      if (data.success) {
+        setOtpResendCooldown(60);
+        setOtpCode("");
+        showToast("ส่งรหัส OTP ใหม่เรียบร้อยแล้ว กรุณาตรวจสอบอีเมลของคุณ");
+      } else {
+        setErrorMessage(data.message || "ไม่สามารถส่งรหัส OTP ได้");
+        if (data.cooldownSeconds) setOtpResendCooldown(data.cooldownSeconds);
+      }
+    } catch (error) {
+      console.error(error);
+      setErrorMessage(
+        error.response?.data?.message || "เกิดข้อผิดพลาดในการส่งรหัส OTP"
+      );
+    }
+>>>>>>> auth-system
   };
 
   const strengthText = getStrengthText(passwordStrength);
@@ -139,6 +387,18 @@ const AuthPage = ({ authData = authPageData }) => {
       animate={{ opacity: 1 }}
       transition={transition}
     >
+<<<<<<< HEAD
+=======
+      <AnimatePresence>
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
+        )}
+      </AnimatePresence>
+>>>>>>> auth-system
       <motion.div
         className="w-full max-w-[1280px] min-h-[800px] flex flex-col overflow-hidden bg-white md:flex-row md:rounded-[1.5rem] shadow-[0_2px_8px_rgba(61,43,31,0.08)]"
         initial={reduceMotion ? false : { scale: 0.95, opacity: 0 }}
@@ -202,6 +462,7 @@ const AuthPage = ({ authData = authPageData }) => {
             </h2>
           </div>
 
+<<<<<<< HEAD
           <div className="mb-10 flex border-b border-[#D2C4BC]">
             <button
               type="button"
@@ -226,6 +487,34 @@ const AuthPage = ({ authData = authPageData }) => {
               สมัครสมาชิก
             </button>
           </div>
+=======
+          {activeTab !== "otp" && (
+            <div className="mb-10 flex border-b border-[#D2C4BC]">
+              <button
+                type="button"
+                onClick={() => handleTabChange("login")}
+                className={`px-6 py-3 text-base font-medium transition ${
+                  activeTab === "login"
+                    ? "border-b-2 border-[#3D2B1F] text-[#3D2B1F]"
+                    : "border-b-2 border-transparent text-[#81756E] hover:text-[#3D2B1F]"
+                }`}
+              >
+                เข้าสู่ระบบ
+              </button>
+              <button
+                type="button"
+                onClick={() => handleTabChange("register")}
+                className={`px-6 py-3 text-base font-medium transition ${
+                  activeTab === "register"
+                    ? "border-b-2 border-[#3D2B1F] text-[#3D2B1F]"
+                    : "border-b-2 border-transparent text-[#81756E] hover:text-[#3D2B1F]"
+                }`}
+              >
+                สมัครสมาชิก
+              </button>
+            </div>
+          )}
+>>>>>>> auth-system
 
           {errorMessage && (
             <div className="mb-6 flex items-center gap-3 rounded-xl bg-[#FFDBD6] px-4 py-4 text-[#7F1A18]">
@@ -234,7 +523,68 @@ const AuthPage = ({ authData = authPageData }) => {
             </div>
           )}
 
+<<<<<<< HEAD
           {activeTab === "login" ? (
+=======
+          {activeTab === "otp" ? (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-xl font-semibold text-[#3D2B1F] mb-1">ยืนยันที่อยู่อีเมลของคุณ</h3>
+                <p className="text-sm text-[#81756E] mb-6">
+                  ระบบได้ส่งรหัส OTP 6 หลักไปที่ <span className="font-medium text-[#3D2B1F]">{otpEmail}</span> กรุณากรอกรหัสดังกล่าวเพื่อยืนยันความเป็นเจ้าของบัญชี
+                </p>
+                <label className="mb-2 block text-sm font-medium text-[#4F453F]">
+                  รหัสยืนยัน OTP (6 หลัก)
+                </label>
+                <input
+                  type="text"
+                  maxLength={6}
+                  value={otpCode}
+                  onChange={(event) => setOtpCode(event.target.value.replace(/\D/g, ""))}
+                  placeholder="000000"
+                  className="w-full text-center text-3xl tracking-[12px] font-bold rounded-md border border-[#D2C4BC] bg-white px-4 py-3 text-[#1D1B1A] outline-none transition focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20"
+                />
+              </div>
+
+              <button
+                type="button"
+                disabled={otpCode.length !== 6 || isSubmitting}
+                onClick={handleOtpSubmit}
+                className="w-full rounded-xl bg-[#3D2B1F] py-3 text-base font-semibold text-white shadow-lg transition hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+              >
+                {isSubmitting ? "กำลังยืนยัน..." : "ยืนยันรหัส OTP"}
+              </button>
+
+              <div className="flex flex-col items-center gap-3 mt-6">
+                <button
+                  type="button"
+                  onClick={handleResendOtp}
+                  disabled={otpResendCooldown > 0}
+                  className={`text-sm font-medium transition ${
+                    otpResendCooldown > 0
+                      ? 'text-[#81756E] cursor-not-allowed'
+                      : 'text-[#7F5530] hover:underline'
+                  }`}
+                >
+                  {otpResendCooldown > 0
+                    ? `ส่งรหัสใหม่ได้ใน ${otpResendCooldown} วินาที`
+                    : 'ส่งรหัส OTP อีกครั้ง'
+                  }
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveTab("login");
+                    setErrorMessage("");
+                  }}
+                  className="text-sm text-[#81756E] hover:text-[#3D2B1F]"
+                >
+                  กลับสู่หน้าเข้าสู่ระบบ
+                </button>
+              </div>
+            </div>
+          ) : activeTab === "login" ? (
+>>>>>>> auth-system
             <div className="space-y-6">
               <div>
                 <label className="mb-2 block text-sm font-medium text-[#4F453F]">
@@ -285,10 +635,18 @@ const AuthPage = ({ authData = authPageData }) => {
               </div>
               <button
                 type="button"
+<<<<<<< HEAD
                 onClick={handleLoginSubmit}
                 className="w-full rounded-xl bg-[#3D2B1F] py-3 text-base font-semibold text-white shadow-lg transition hover:opacity-90 active:scale-95"
               >
                 เข้าสู่ระบบ
+=======
+                disabled={isSubmitting}
+                onClick={handleLoginSubmit}
+                className="w-full rounded-xl bg-[#3D2B1F] py-3 text-base font-semibold text-white shadow-lg transition hover:opacity-90 active:scale-95 disabled:opacity-50"
+              >
+                {isSubmitting ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}
+>>>>>>> auth-system
               </button>
               <div className="my-8 flex items-center gap-3">
                 <div className="h-px flex-1 bg-[#D2C4BC]" />
@@ -384,7 +742,11 @@ const AuthPage = ({ authData = authPageData }) => {
                       key={index}
                       className={`h-1 flex-1 rounded-full transition-colors ${
                         passwordStrength >= index
+<<<<<<< HEAD
                           ? "bg-[#7F5530]"
+=======
+                          ? passwordStrength >= 3 ? "bg-[#3D2B1F]" : "bg-[#A0724A]"
+>>>>>>> auth-system
                           : "bg-[#D2C4BC]"
                       }`}
                     />
@@ -393,6 +755,23 @@ const AuthPage = ({ authData = authPageData }) => {
                 <p className={`mt-2 text-sm ${strengthText.color}`}>
                   {strengthText.text}
                 </p>
+<<<<<<< HEAD
+=======
+                <ul className="mt-2 space-y-1">
+                  {[
+                    { ok: registerPassword.length >= 8, label: "ความยาวอย่างน้อย 8 ตัวอักษร" },
+                    { ok: /[A-Z]/.test(registerPassword), label: "มีตัวพิมพ์ใหญ่ (A-Z)" },
+                    { ok: /[0-9]/.test(registerPassword), label: "มีตัวเลข (0-9)" },
+                  ].map(({ ok, label }) => (
+                    <li key={label} className={`flex items-center gap-2 text-xs transition-colors ${ok ? 'text-[#3D2B1F]' : 'text-[#81756E]'}`}>
+                      <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>
+                        {ok ? 'check_circle' : 'radio_button_unchecked'}
+                      </span>
+                      {label}
+                    </li>
+                  ))}
+                </ul>
+>>>>>>> auth-system
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-[#4F453F]">
@@ -426,10 +805,18 @@ const AuthPage = ({ authData = authPageData }) => {
               </label>
               <button
                 type="button"
+<<<<<<< HEAD
                 onClick={handleRegisterSubmit}
                 className="w-full rounded-xl bg-[#3D2B1F] py-3 text-base font-semibold text-white shadow-lg transition hover:opacity-90 active:scale-95"
               >
                 สมัครสมาชิก
+=======
+                disabled={isSubmitting}
+                onClick={handleRegisterSubmit}
+                className="w-full rounded-xl bg-[#3D2B1F] py-3 text-base font-semibold text-white shadow-lg transition hover:opacity-90 active:scale-95 disabled:opacity-50"
+              >
+                {isSubmitting ? "กำลังสมัครสมาชิก..." : "สมัครสมาชิก"}
+>>>>>>> auth-system
               </button>
             </div>
           )}

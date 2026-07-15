@@ -3,7 +3,11 @@ import { lazy, Suspense } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
+<<<<<<< HEAD
 import { CartProvider } from "./contexts";
+=======
+import { CartProvider, AuthProvider } from "./contexts";
+>>>>>>> auth-system
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const AuthPage = lazy(() => import("./pages/AuthPage"));
@@ -54,8 +58,14 @@ function LoadingFallback() {
 function App() {
   return (
     <BrowserRouter>
+<<<<<<< HEAD
       <CartProvider>
         <Suspense fallback={<LoadingFallback />}>
+=======
+      <AuthProvider>
+        <CartProvider>
+          <Suspense fallback={<LoadingFallback />}>
+>>>>>>> auth-system
           <Routes>
             <Route path="/" element={<AppLayout />}>
               <Route index element={<HomePage />} />
@@ -86,8 +96,14 @@ function App() {
             <Route path="admin-orders" element={<AdminOrdersPage />} />
             <Route path="admin" element={<AdminDashboardPage />} />
           </Routes>
+<<<<<<< HEAD
         </Suspense>
       </CartProvider>
+=======
+          </Suspense>
+        </CartProvider>
+      </AuthProvider>
+>>>>>>> auth-system
     </BrowserRouter>
   );
 }

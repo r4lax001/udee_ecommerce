@@ -1,14 +1,45 @@
 import { useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+<<<<<<< HEAD
 import { profilePageData } from '../data/profilePageData'
+=======
+import { Link } from 'react-router-dom'
+import { profilePageData } from '../data/profilePageData'
+import { useAuth } from '../contexts'
+>>>>>>> auth-system
 
 const defaultUser = profilePageData.user
 const purchases = profilePageData.history
 
+<<<<<<< HEAD
 const ProfilePage = ({ user = defaultUser, history = purchases }) => {
   const reduceMotion = useReducedMotion()
   const transition = { duration: reduceMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] }
   const [activeTab, setActiveTab] = useState('dashboard')
+=======
+const ProfilePage = ({ user: propUser, history = purchases }) => {
+  const reduceMotion = useReducedMotion()
+  const transition = { duration: reduceMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] }
+  const [activeTab, setActiveTab] = useState('dashboard')
+  const { user: authUser, isAuthenticated } = useAuth()
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center bg-[#FAF6F1] px-6 text-[#1D1B1A]">
+        <span className="material-symbols-outlined text-6xl text-[#D2C4BC] mb-4">lock</span>
+        <h2 className="text-2xl font-bold text-[#3D2B1F] mb-2">กรุณาเข้าสู่ระบบก่อน</h2>
+        <p className="text-sm text-[#81756E] mb-6 text-center max-w-md">
+          คุณต้องเข้าสู่ระบบสมาชิก UDEE เพื่อเข้าถึงข้อมูลส่วนตัว รายการโปรด และประวัติการสั่งซื้อของคุณ
+        </p>
+        <Link to="/auth" className="rounded-xl bg-[#3D2B1F] px-6 py-3 font-semibold text-white hover:opacity-90 active:scale-95 transition">
+          เข้าสู่ระบบสมาชิก
+        </Link>
+      </div>
+    )
+  }
+
+  const user = authUser || propUser || defaultUser
+>>>>>>> auth-system
 
   const tabs = [
     { id: 'dashboard', label: 'ภาพรวมบัญชี', icon: 'dashboard' },

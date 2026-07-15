@@ -2,7 +2,11 @@ import { Link, useLocation } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import ClickSparkButton from './ClickSparkButton'
 import { homePageData } from '../data/homePageData'
+<<<<<<< HEAD
 import { useCart } from '../contexts'
+=======
+import { useCart, useAuth } from '../contexts'
+>>>>>>> auth-system
 
 const MotionLink = motion(Link)
 
@@ -10,6 +14,10 @@ const Navbar = () => {
   const reduceMotion = useReducedMotion()
   const location = useLocation()
   const { totalItems } = useCart()
+<<<<<<< HEAD
+=======
+  const { user, logout, isAuthenticated } = useAuth()
+>>>>>>> auth-system
   const transition = { duration: reduceMotion ? 0 : 0.22, ease: [0.22, 1, 0.36, 1] }
 
   const isActive = (href) => href === location.pathname
@@ -81,6 +89,7 @@ const Navbar = () => {
               </span>
             </Link>
           </motion.div>
+<<<<<<< HEAD
           <motion.div whileHover={{ y: -2, scale: 1.04 }} whileTap={{ scale: 0.96 }}>
             <ClickSparkButton
               as="link"
@@ -90,6 +99,38 @@ const Navbar = () => {
               Login
             </ClickSparkButton>
           </motion.div>
+=======
+          {isAuthenticated ? (
+            <div className="flex items-center gap-3">
+              <MotionLink
+                to={user.role === 'ADMIN' ? '/admin-dashboard' : '/profile'}
+                className="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold text-[#3D2B1F] hover:text-[#A0724A] transition"
+                whileHover={{ y: -1 }}
+              >
+                <span className="material-symbols-outlined text-[20px]">account_circle</span>
+                <span>{user.name}</span>
+              </MotionLink>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={logout}
+                className="hidden md:inline-flex items-center justify-center rounded-lg border border-[#BA1A1A] bg-white px-4 py-2 text-sm font-medium text-[#BA1A1A] hover:bg-[#BA1A1A] hover:text-white transition-all cursor-pointer"
+              >
+                Logout
+              </motion.button>
+            </div>
+          ) : (
+            <motion.div whileHover={{ y: -2, scale: 1.04 }} whileTap={{ scale: 0.96 }}>
+              <ClickSparkButton
+                as="link"
+                to="/auth"
+                className="hidden md:inline-flex items-center justify-center rounded-lg border border-[#3D2B1F] bg-white px-5 py-2 text-sm font-medium text-[#3D2B1F] hover:bg-[#3D2B1F] hover:text-white transition-all"
+              >
+                Login
+              </ClickSparkButton>
+            </motion.div>
+          )}
+>>>>>>> auth-system
           <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="md:hidden p-2 text-[#3D2B1F]">
             <span className="material-symbols-outlined">menu</span>
           </motion.button>
