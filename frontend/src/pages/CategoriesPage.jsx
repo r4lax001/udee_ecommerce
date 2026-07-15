@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import ClickSparkButton from '../components/ClickSparkButton'
@@ -11,12 +11,18 @@ const CategoriesPage = () => {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [sortBy, setSortBy] = useState('ยอดนิยม')
-  const [priceValue, setPriceValue] = useState(20000)
-  const [selectedSizes, setSelectedSizes] = useState(['120 x 60 ซม.'])
-  const [selectedColors, setSelectedColors] = useState(['#3D2B1F'])
-  const [selectedMaterials, setSelectedMaterials] = useState(['ไม้โอ๊ค'])
+  const [priceValue, setPriceValue] = useState(5000)
+  const [selectedSizes, setSelectedSizes] = useState([])
+  const [selectedColors, setSelectedColors] = useState([])
+  const [selectedMaterials, setSelectedMaterials] = useState([])
   const [selectedCategories, setSelectedCategories] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
   const transition = { duration: reduceMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] }
+
+  // Reset page to 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [sortBy, priceValue, selectedSizes, selectedColors, selectedMaterials, selectedCategories])
 
   useEffect(() => {
     let isMounted = true
@@ -43,6 +49,84 @@ const CategoriesPage = () => {
       prev.includes(item) ? prev.filter((value) => value !== item) : [...prev, item]
     )
   }
+
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) => {
+      // 1. Filter out empty templates
+      if (!product.title || product.price <= 0) return false
+
+      // 2. Filter by category
+      if (selectedCategories.length > 0) {
+        if (!selectedCategories.includes(product.category)) {
+          return false
+        }
+      }
+
+      // 3. Filter by price
+      if (product.price > priceValue) {
+        return false
+      }
+
+      // 4. Filter by size
+      if (selectedSizes.length > 0) {
+        const match = selectedSizes.some((s) => {
+          const cleanS = s.replace(/\s+/g, '')
+          const cleanP = (product.size || '').replace(/\s+/g, '')
+          if (cleanS.includes('120') && (cleanP.includes('120') || product.title.includes('120'))) return true
+          if (cleanS.includes('140') && (cleanP.includes('140') || product.title.includes('140'))) return true
+          if (cleanS.includes('160') && (cleanP.includes('160') || product.title.includes('160'))) return true
+          return false
+        })
+        if (!match) return false
+      }
+
+      // 5. Filter by color
+      if (selectedColors.length > 0) {
+        const hasColor = selectedColors.some((c) => product.colors?.includes(c))
+        if (!hasColor) return false
+      }
+
+      // 6. Filter by material
+      if (selectedMaterials.length > 0) {
+        const hasMaterial = selectedMaterials.some((m) => {
+          if (Array.isArray(product.material)) {
+            return product.material.includes(m)
+          }
+          return product.material === m
+        })
+        if (!hasMaterial) return false
+      }
+
+      return true
+    })
+  }, [products, selectedCategories, priceValue, selectedSizes, selectedColors, selectedMaterials])
+
+  const sortedProducts = useMemo(() => {
+    const list = [...filteredProducts]
+    if (sortBy === 'ราคา: ต่ำไปสูง') {
+      list.sort((a, b) => a.price - b.price)
+    } else if (sortBy === 'ราคา: สูงไปต่ำ') {
+      list.sort((a, b) => b.price - a.price)
+    } else if (sortBy === 'สินค้าใหม่') {
+      list.sort((a, b) => {
+        const aNew = a.badge === 'NEW' ? 1 : 0
+        const bNew = b.badge === 'NEW' ? 1 : 0
+        return bNew - aNew
+      })
+    } else {
+      // Default: 'ยอดนิยม'
+      list.sort((a, b) => (b.sold || 0) - (a.sold || 0))
+    }
+    return list
+  }, [filteredProducts, sortBy])
+
+  const itemsPerPage = 6
+  const totalPages = Math.ceil(sortedProducts.length / itemsPerPage) || 1
+
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage
+    return sortedProducts.slice(startIndex, startIndex + itemsPerPage)
+  }, [sortedProducts, currentPage])
 
   return (
     <motion.main
@@ -97,11 +181,11 @@ const CategoriesPage = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    setSelectedSizes(['120 x 60 ซม.'])
-                    setSelectedColors(['#3D2B1F'])
-                    setSelectedMaterials(['ไม้โอ๊ค'])
+                    setSelectedSizes([])
+                    setSelectedColors([])
+                    setSelectedMaterials([])
                     setSelectedCategories([])
-                    setPriceValue(20000)
+                    setPriceValue(5000)
                   }}
                   className="text-sm font-medium text-[#A0724A] hover:text-[#3D2B1F] transition"
                 >
@@ -127,13 +211,13 @@ const CategoriesPage = () => {
               <div className="space-y-3 rounded-[1.5rem] border border-[#E8E1DF] bg-[#FAF6F1] p-4">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#A0724A]">ช่วงราคา</p>
-                  <span className="text-sm text-[#5a4e46]">฿8,000 - ฿{priceValue.toLocaleString()}</span>
+                  <span className="text-sm text-[#5a4e46]">฿0 - ฿{priceValue.toLocaleString()}</span>
                 </div>
                 <input
                   type="range"
-                  min="8000"
-                  max="20000"
-                  step="500"
+                  min="0"
+                  max="5000"
+                  step="100"
                   value={priceValue}
                   onChange={(e) => setPriceValue(Number(e.target.value))}
                   className="w-full accent-[#A0724A]"
@@ -212,7 +296,7 @@ const CategoriesPage = () => {
                   ))
                 )}
 
-                {!loading && products.map((product, index) => (
+                {!loading && paginatedProducts.map((product, index) => (
                   <motion.article
                     key={product.id}
                     onClick={(e) => {
@@ -267,20 +351,43 @@ const CategoriesPage = () => {
                     </div>
                   </motion.article>
                 ))}
+                {!loading && paginatedProducts.length === 0 && (
+                  <div className="col-span-full py-20 text-center text-[#5a4e46]">
+                    ไม่พบสินค้าที่ตรงตามเงื่อนไขการค้นหา
+                  </div>
+                )}
               </motion.div>
 
-              <div className="flex items-center justify-center gap-3 rounded-full bg-white p-4 shadow-[0_12px_30px_rgba(61,43,31,0.08)]">
-                <button className="h-11 w-11 rounded-full border border-[#E8E1DF] text-[#5a4e46] transition hover:border-[#A0724A]">‹</button>
-                {[1, 2, 3, 4].map((page) => (
+              {sortedProducts.length > 0 && (
+                <div className="flex items-center justify-center gap-3 rounded-full bg-white p-4 shadow-[0_12px_30px_rgba(61,43,31,0.08)]">
                   <button
-                    key={page}
-                    className={`h-11 min-w-[44px] rounded-full ${page === 1 ? 'bg-[#3D2B1F] text-white' : 'bg-[#F8F3EB] text-[#5a4e46]'}`}
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className={`h-11 w-11 rounded-full border border-[#E8E1DF] text-[#5a4e46] transition hover:border-[#A0724A] ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
-                    {page}
+                    ‹
                   </button>
-                ))}
-                <button className="h-11 w-11 rounded-full border border-[#E8E1DF] text-[#5a4e46] transition hover:border-[#A0724A]">›</button>
-              </div>
+                  {Array.from({ length: totalPages }).map((_, index) => {
+                    const page = index + 1
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`h-11 min-w-[44px] rounded-full transition ${page === currentPage ? 'bg-[#3D2B1F] text-white' : 'bg-[#F8F3EB] text-[#5a4e46] hover:bg-[#FAF6F1]'}`}
+                      >
+                        {page}
+                      </button>
+                    )
+                  })}
+                  <button
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className={`h-11 w-11 rounded-full border border-[#E8E1DF] text-[#5a4e46] transition hover:border-[#A0724A] ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    ›
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -121,9 +121,9 @@ const HomePage = ({
               transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className='w-full max-w-[600px] h-[420px] sm:h-[500px] mx-auto rounded-[2rem] overflow-hidden'>
-                <img 
-                  src={hero.image} 
-                  alt="Hero product" 
+                <img
+                  src={hero.image}
+                  alt="Hero product"
                   className={`h-full w-full object-cover transition-opacity duration-300 ${loadedImages['hero'] ? 'opacity-100' : 'opacity-0'}`}
                   onLoad={() => handleImageLoad('hero')}
                 />
