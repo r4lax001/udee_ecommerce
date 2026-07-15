@@ -1,22 +1,12 @@
 import { useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-<<<<<<< HEAD
-import { profilePageData } from '../data/profilePageData'
-=======
 import { Link } from 'react-router-dom'
 import { profilePageData } from '../data/profilePageData'
 import { useAuth } from '../contexts'
->>>>>>> auth-system
 
 const defaultUser = profilePageData.user
 const purchases = profilePageData.history
 
-<<<<<<< HEAD
-const ProfilePage = ({ user = defaultUser, history = purchases }) => {
-  const reduceMotion = useReducedMotion()
-  const transition = { duration: reduceMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] }
-  const [activeTab, setActiveTab] = useState('dashboard')
-=======
 const ProfilePage = ({ user: propUser, history = purchases }) => {
   const reduceMotion = useReducedMotion()
   const transition = { duration: reduceMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] }
@@ -39,7 +29,6 @@ const ProfilePage = ({ user: propUser, history = purchases }) => {
   }
 
   const user = authUser || propUser || defaultUser
->>>>>>> auth-system
 
   const tabs = [
     { id: 'dashboard', label: 'ภาพรวมบัญชี', icon: 'dashboard' },
@@ -64,7 +53,6 @@ const ProfilePage = ({ user: propUser, history = purchases }) => {
       transition={transition}
     >
       <section className="max-w-7xl mx-auto px-6 py-16">
-        {/* Profile Header */}
         <motion.div
           className="mb-10 rounded-[2rem] bg-gradient-to-r from-[#3D2B1F] to-[#5a4e46] p-10 text-white shadow-[0_24px_70px_rgba(61,43,31,0.15)]"
           initial={reduceMotion ? false : { y: 20, opacity: 0 }}
@@ -97,7 +85,6 @@ const ProfilePage = ({ user: propUser, history = purchases }) => {
           </div>
         </motion.div>
 
-        {/* Stats Cards */}
         <motion.div
           className="mb-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
           initial={reduceMotion ? false : { y: 20, opacity: 0 }}
@@ -123,9 +110,7 @@ const ProfilePage = ({ user: propUser, history = purchases }) => {
           ))}
         </motion.div>
 
-        {/* Main Content */}
         <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
-          {/* Sidebar */}
           <motion.aside
             className="space-y-6"
             initial={reduceMotion ? false : { x: -20, opacity: 0 }}
@@ -153,22 +138,8 @@ const ProfilePage = ({ user: propUser, history = purchases }) => {
                 ))}
               </nav>
             </div>
-
-            <motion.div
-              className="rounded-[2rem] bg-gradient-to-br from-[#A0724A] to-[#8B5E3C] p-6 text-white shadow-[0_12px_30px_rgba(160,114,74,0.25)]"
-              whileHover={{ scale: 1.02 }}
-              transition={transition}
-            >
-              <p className="text-sm uppercase tracking-[0.28em] text-[#F4E7D9]">VIP Member</p>
-              <p className="mt-3 text-lg font-semibold">รับสิทธิพิเศษ</p>
-              <p className="mt-2 text-sm text-[#E7D7C9]">สะสมคะแนนเพื่อรับของขวัญ</p>
-              <button className="mt-4 w-full rounded-xl bg-white/20 px-4 py-2 text-sm font-semibold backdrop-blur-sm transition hover:bg-white/30">
-                ดูรายละเอียด
-              </button>
-            </motion.div>
           </motion.aside>
 
-          {/* Content Area */}
           <motion.div
             className="space-y-8"
             initial={reduceMotion ? false : { x: 20, opacity: 0 }}
@@ -177,97 +148,26 @@ const ProfilePage = ({ user: propUser, history = purchases }) => {
           >
             <AnimatePresence mode="wait">
               {activeTab === 'dashboard' && (
-                <motion.div
-                  key="dashboard"
-                  initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={transition}
-                  className="space-y-8"
-                >
-                  <div className="rounded-[2rem] bg-white p-10 shadow-[0_12px_30px_rgba(61,43,31,0.08)]">
-                    <div className="flex items-center justify-between mb-8">
-                      <h2 className="text-2xl font-semibold text-[#3D2B1F]">ออเดอร์ล่าสุด</h2>
-                      <button onClick={() => setActiveTab('orders')} className="text-sm font-medium text-[#A0724A] hover:text-[#3D2B1F] transition">ดูทั้งหมด</button>
-                    </div>
-                    <div className="space-y-4">
-                      {history.slice(0, 2).map((purchase, index) => (
-                        <motion.div
-                          key={purchase.id}
-                          className="rounded-3xl border border-[#E8E1DF] p-6 transition hover:border-[#A0724A] hover:shadow-md"
-                          whileHover={{ scale: 1.01 }}
-                        >
-                          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                            <div className="flex items-center gap-4">
-                              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#F3ECEA]">
-                                <span className="material-symbols-outlined text-[#A0724A]">receipt_long</span>
-                              </div>
-                              <div>
-                                <p className="font-semibold text-[#3D2B1F]">{purchase.id}</p>
-                                <p className="text-sm text-[#81756e]">{purchase.date}</p>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <p className="text-sm text-[#81756e]">ยอดรวม</p>
-                              <p className="text-lg font-semibold text-[#A0724A]">{purchase.total}</p>
-                            </div>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="grid gap-8 md:grid-cols-2">
-                    <div className="rounded-[2rem] bg-white p-8 shadow-[0_12px_30px_rgba(61,43,31,0.08)]">
-                      <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-lg font-semibold text-[#3D2B1F]">ที่อยู่จัดส่งเริ่มต้น</h3>
-                        <button onClick={() => setActiveTab('profile')} className="text-sm text-[#A0724A] hover:text-[#3D2B1F]">แก้ไข</button>
-                      </div>
-                      <div className="rounded-2xl bg-[#F8F3EB] p-5">
-                        <p className="font-medium text-[#3D2B1F] mb-1">{user.name}</p>
-                        <p className="text-sm text-[#81756e] leading-relaxed">{user.address}</p>
-                        <p className="text-sm text-[#81756e] mt-2 flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[16px]">call</span> {user.phone}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="rounded-[2rem] bg-white p-8 shadow-[0_12px_30px_rgba(61,43,31,0.08)]">
-                      <h3 className="text-lg font-semibold text-[#3D2B1F] mb-6">การแจ้งเตือนล่าสุด</h3>
-                      <div className="space-y-4">
-                        <div className="flex gap-3 items-start">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F3ECEA] flex-shrink-0">
-                            <span className="material-symbols-outlined text-[16px] text-[#A0724A]">local_shipping</span>
-                          </div>
+                <motion.div key="dashboard" className="rounded-[2rem] bg-white p-10 shadow-[0_12px_30px_rgba(61,43,31,0.08)]">
+                  <h2 className="text-2xl font-semibold text-[#3D2B1F]">ออเดอร์ล่าสุด</h2>
+                  <div className="mt-6 space-y-4">
+                    {history.slice(0, 2).map((purchase) => (
+                      <div key={purchase.id} className="rounded-3xl border border-[#E8E1DF] p-6">
+                        <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-sm font-medium text-[#3D2B1F]">ออเดอร์ #ORD-001 จัดส่งแล้ว</p>
-                            <p className="text-xs text-[#81756e] mt-0.5">2 ชั่วโมงที่แล้ว</p>
+                            <p className="font-semibold text-[#3D2B1F]">{purchase.id}</p>
+                            <p className="text-sm text-[#81756e]">{purchase.date}</p>
                           </div>
-                        </div>
-                        <div className="flex gap-3 items-start">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#EAF3DE] flex-shrink-0">
-                            <span className="material-symbols-outlined text-[16px] text-[#4A7C59]">redeem</span>
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-[#3D2B1F]">คุณได้รับโค้ดส่วนลด 10%</p>
-                            <p className="text-xs text-[#81756e] mt-0.5">เมื่อวานนี้</p>
-                          </div>
+                          <p className="text-lg font-semibold text-[#A0724A]">{purchase.total}</p>
                         </div>
                       </div>
-                    </div>
+                    ))}
                   </div>
                 </motion.div>
               )}
 
               {activeTab === 'profile' && (
-                <motion.div
-                  key="profile"
-                  initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={transition}
-                  className="rounded-[2rem] bg-white p-10 shadow-[0_12px_30px_rgba(61,43,31,0.08)]"
-                >
+                <motion.div key="profile" className="rounded-[2rem] bg-white p-10 shadow-[0_12px_30px_rgba(61,43,31,0.08)]">
                   <h2 className="text-2xl font-semibold text-[#3D2B1F]">ข้อมูลส่วนตัว</h2>
                   <div className="mt-8 grid gap-6 sm:grid-cols-2">
                     {[
@@ -276,126 +176,59 @@ const ProfilePage = ({ user: propUser, history = purchases }) => {
                       { label: 'เบอร์โทรศัพท์', value: user.phone, icon: 'phone' },
                       { label: 'ที่อยู่', value: user.address, icon: 'location_on' },
                     ].map((field) => (
-                      <motion.div
-                        key={field.label}
-                        className="rounded-3xl bg-[#F8F3EB] p-6 transition hover:bg-[#F3ECEA]"
-                        whileHover={{ scale: 1.01 }}
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="material-symbols-outlined text-[#A0724A]">{field.icon}</span>
-                          <p className="text-sm text-[#81756e]">{field.label}</p>
-                        </div>
-                        <p className="mt-3 text-lg font-medium text-[#3D2B1F]">{field.value}</p>
-                      </motion.div>
+                      <div key={field.label} className="rounded-3xl bg-[#F8F3EB] p-6">
+                        <p className="text-sm text-[#81756e]">{field.label}</p>
+                        <p className="mt-2 text-lg font-medium text-[#3D2B1F]">{field.value}</p>
+                      </div>
                     ))}
                   </div>
                 </motion.div>
               )}
 
               {activeTab === 'orders' && (
-                <motion.div
-                  key="orders"
-                  initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={transition}
-                  className="rounded-[2rem] bg-white p-10 shadow-[0_12px_30px_rgba(61,43,31,0.08)]"
-                >
+                <motion.div key="orders" className="rounded-[2rem] bg-white p-10 shadow-[0_12px_30px_rgba(61,43,31,0.08)]">
                   <h2 className="text-2xl font-semibold text-[#3D2B1F]">ประวัติการสั่งซื้อ</h2>
-                  <div className="mt-8 space-y-4">
-                    {history.map((purchase, index) => (
-                      <motion.div
-                        key={purchase.id}
-                        className="rounded-3xl border border-[#E8E1DF] p-6 transition hover:border-[#A0724A] hover:shadow-md"
-                        initial={reduceMotion ? false : { y: 10, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ ...transition, delay: index * 0.05 }}
-                        whileHover={{ scale: 1.01 }}
-                      >
-                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                          <div className="flex items-center gap-4">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#F3ECEA]">
-                              <span className="material-symbols-outlined text-[#A0724A]">receipt_long</span>
-                            </div>
-                            <div>
-                              <p className="font-semibold text-[#3D2B1F]">{purchase.id}</p>
-                              <p className="text-sm text-[#81756e]">{purchase.date}</p>
-                            </div>
+                  <div className="mt-6 space-y-4">
+                    {history.map((purchase) => (
+                      <div key={purchase.id} className="rounded-3xl border border-[#E8E1DF] p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-semibold text-[#3D2B1F]">{purchase.id}</p>
+                            <p className="text-sm text-[#81756e]">{purchase.date}</p>
                           </div>
                           <div className="text-right">
-                            <p className="text-sm text-[#81756e]">ยอดรวม</p>
                             <p className="text-lg font-semibold text-[#A0724A]">{purchase.total}</p>
+                            <p className="text-sm text-[#81756e]">{purchase.status}</p>
                           </div>
                         </div>
-                        <div className="mt-4 flex items-center justify-between">
-                          <span className="inline-flex rounded-full bg-[#F3ECEA] px-3 py-1 text-xs font-semibold text-[#3D2B1F]">
-                            {purchase.status}
-                          </span>
-                          <button className="text-sm font-medium text-[#A0724A] hover:text-[#3D2B1F] transition">
-                            ดูรายละเอียด
-                          </button>
-                        </div>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
                 </motion.div>
               )}
 
               {activeTab === 'settings' && (
-                <motion.div
-                  key="settings"
-                  initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={transition}
-                  className="rounded-[2rem] bg-white p-10 shadow-[0_12px_30px_rgba(61,43,31,0.08)]"
-                >
+                <motion.div key="settings" className="rounded-[2rem] bg-white p-10 shadow-[0_12px_30px_rgba(61,43,31,0.08)]">
                   <h2 className="text-2xl font-semibold text-[#3D2B1F]">การตั้งค่า</h2>
-                  <div className="mt-8 space-y-6">
+                  <div className="mt-6 space-y-4">
                     {[
-                      { label: 'การแจ้งเตือน', value: 'เปิดใช้งาน', icon: 'notifications' },
-                      { label: 'ภาษา', value: 'ไทย', icon: 'language' },
-                      { label: 'การจัดส่ง', value: 'มาตรฐาน', icon: 'local_shipping' },
-                      { label: 'ความเป็นส่วนตัว', value: 'สาธารณะ', icon: 'lock' },
+                      { label: 'การแจ้งเตือน', value: 'เปิดใช้งาน' },
+                      { label: 'ภาษา', value: 'ไทย' },
+                      { label: 'ความเป็นส่วนตัว', value: 'สาธารณะ' },
                     ].map((setting) => (
-                      <motion.div
-                        key={setting.label}
-                        className="flex items-center justify-between rounded-3xl bg-[#F8F3EB] p-6 transition hover:bg-[#F3ECEA]"
-                        whileHover={{ scale: 1.01 }}
-                      >
-                        <div className="flex items-center gap-4">
-                          <span className="material-symbols-outlined text-[#A0724A]">{setting.icon}</span>
-                          <div>
-                            <p className="text-sm text-[#81756e]">{setting.label}</p>
-                            <p className="mt-1 text-lg text-[#3D2B1F]">{setting.value}</p>
-                          </div>
-                        </div>
-                        <button className="rounded-xl bg-white px-4 py-2 text-sm font-medium text-[#A0724A] transition hover:bg-[#F3ECEA]">
-                          เปลี่ยน
-                        </button>
-                      </motion.div>
+                      <div key={setting.label} className="rounded-3xl bg-[#F8F3EB] p-6">
+                        <p className="text-sm text-[#81756e]">{setting.label}</p>
+                        <p className="mt-2 text-lg font-medium text-[#3D2B1F]">{setting.value}</p>
+                      </div>
                     ))}
                   </div>
                 </motion.div>
               )}
 
               {activeTab === 'wishlist' && (
-                <motion.div
-                  key="wishlist"
-                  initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={transition}
-                  className="rounded-[2rem] bg-white p-10 shadow-[0_12px_30px_rgba(61,43,31,0.08)]"
-                >
+                <motion.div key="wishlist" className="rounded-[2rem] bg-white p-10 shadow-[0_12px_30px_rgba(61,43,31,0.08)]">
                   <h2 className="text-2xl font-semibold text-[#3D2B1F]">รายการโปรด</h2>
-                  <div className="mt-8 text-center py-12">
-                    <span className="material-symbols-outlined text-6xl text-[#D2C4BC]">favorite_border</span>
-                    <p className="mt-4 text-[#81756e]">ยังไม่มีรายการโปรด</p>
-                    <button className="mt-4 rounded-2xl bg-[#3D2B1F] px-6 py-3 text-white hover:opacity-90 transition">
-                      เริ่มช้อปปิ้ง
-                    </button>
-                  </div>
+                  <p className="mt-6 text-[#81756e]">ยังไม่มีรายการโปรด</p>
                 </motion.div>
               )}
             </AnimatePresence>

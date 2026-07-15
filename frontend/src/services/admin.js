@@ -1,6 +1,14 @@
 import api from './api';
 
 /**
+ * Get dashboard statistics for admin overview
+ */
+export const getDashboardStats = async () => {
+  const response = await api.get('/dashboard');
+  return response.data;
+};
+
+/**
  * Get all users for admin review
  */
 export const getUsers = async () => {
