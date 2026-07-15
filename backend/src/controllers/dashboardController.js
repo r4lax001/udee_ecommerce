@@ -3,7 +3,8 @@ import { prisma } from '../lib/prisma.js'
 // ─── Helper: แปลง OrderStatus ของ Prisma → label สำหรับ frontend ──────────────
 const STATUS_MAP = {
   PENDING:   'Pending',
-  CONFIRMED: 'Processing',
+  WAITING_FOR_PAYMENT: 'Waiting for Payment',
+  PAID:      'Paid',
   SHIPPED:   'Shipped',
   DELIVERED: 'Completed',
   CANCELLED: 'Cancelled',

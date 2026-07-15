@@ -8,6 +8,8 @@ import dashboardRouter from './routes/dashboard.js'
 import categoryRouter from './routes/category.js'
 import productRouter from './routes/product.js'
 import orderRouter from './routes/order.js'
+import addressRouter from './routes/address.js'
+import reportRouter from './routes/report.js'
 
 dotenv.config()
 
@@ -30,6 +32,8 @@ app.use('/api/dashboard', dashboardRouter)
 app.use('/api/categories', categoryRouter)
 app.use('/api/products', productRouter)
 app.use('/api/orders', orderRouter)
+app.use('/api/addresses', addressRouter)
+app.use('/api/reports', reportRouter)
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
