@@ -1,38 +1,30 @@
 import express from 'express'
 import cors from 'cors'
-<<<<<<< HEAD
-import dotenv from 'dotenv'
-=======
 import helmet from 'helmet'
 import dotenv from 'dotenv'
+import path from 'path'
+import { fileURLToPath } from 'url'
 import authRoutes from './routes/auth.js'
 import adminRoutes from './routes/admin.js'
->>>>>>> auth-system
+import dashboardRouter from './routes/dashboard.js'
+import categoryRouter from './routes/category.js'
+import productRouter from './routes/product.js'
+import orderRouter from './routes/order.js'
+import addressRouter from './routes/address.js'
+import reportRouter from './routes/report.js'
 
 dotenv.config()
 
 const app = express()
 
-<<<<<<< HEAD
-app.use(cors())
-app.use(express.json())
-
-=======
-// ──────────────────────────────────────────────
-// Security Headers (helmet)
-// ──────────────────────────────────────────────
 app.use(helmet())
 
-// ──────────────────────────────────────────────
-// CORS – อนุญาตเฉพาะ Origin ที่กำหนด
-// ──────────────────────────────────────────────
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173,http://localhost:5174')
   .split(',')
   .map(o => o.trim())
 
 app.use(cors({
   origin: (origin, callback) => {
-    // อนุญาต request ที่ไม่มี Origin (เช่น curl / Postman)
     if (!origin) return callback(null, true)
     if (allowedOrigins.includes(origin)) {
       return callback(null, true)
@@ -42,31 +34,30 @@ app.use(cors({
   credentials: true,
 }))
 
-app.use(express.json({ limit: '10kb' })) // จำกัดขนาด body ป้องกัน DoS
+app.use(express.json({ limit: '10kb' }))
 
-// ──────────────────────────────────────────────
-// Routes
-// ──────────────────────────────────────────────
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')))
+
 app.use('/api/auth', authRoutes)
 app.use('/api/admin', adminRoutes)
+app.use('/api/dashboard', dashboardRouter)
+app.use('/api/categories', categoryRouter)
+app.use('/api/products', productRouter)
+app.use('/api/orders', orderRouter)
+app.use('/api/addresses', addressRouter)
+app.use('/api/reports', reportRouter)
 
-// Health check
->>>>>>> auth-system
 app.get('/', (req, res) => {
   res.json({ message: 'Udee API is running' })
 })
 
-<<<<<<< HEAD
-const PORT = process.env.PORT || 5000
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-=======
-// 404 handler
 app.use((req, res) => {
   res.status(404).json({ success: false, message: 'ไม่พบเส้นทางที่ร้องขอ' })
 })
 
-// Global error handler
 app.use((err, req, res, next) => {
   console.error('Unhandled Error:', err)
   res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดภายในระบบเซิร์ฟเวอร์' })
@@ -75,5 +66,4 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`)
->>>>>>> auth-system
 })
