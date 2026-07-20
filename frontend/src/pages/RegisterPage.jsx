@@ -273,7 +273,7 @@ const RegisterPage = ({ authData = authPageData }) => {
 
   return (
     <motion.main
-      className="h-[1200px] bg-gradient-to-br from-[#FAF6F1] via-[#F5EBE3] to-[#EDE4DB] text-[#1D1B1A] flex items-center justify-center relative overflow-hidden"
+      className="min-h-screen bg-gradient-to-br from-[#FAF6F1] via-[#F5EBE3] to-[#EDE4DB] text-[#1D1B1A] flex items-start justify-center py-8 relative overflow-x-hidden"
       initial={reduceMotion ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={transition}

@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom'
 import Tilt from 'react-parallax-tilt'
 import ClickSparkButton from '../components/ClickSparkButton'
 import { homePageData } from '../data/homePageData'
+import { getProducts } from '../services/products'
+import { formatPrice } from '../utils/format'
+import { useEffect, useMemo } from 'react'
 
 const HomePage = ({
   hero = homePageData.hero,
@@ -14,7 +17,52 @@ const HomePage = ({
   const navigate = useNavigate()
   const reduceMotion = useReducedMotion()
   const [loadedImages, setLoadedImages] = useState({})
+  const [products, setProducts] = useState([])
+  const [loadingProducts, setLoadingProducts] = useState(true)
   const transition = { duration: reduceMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] }
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await getProducts()
+        setProducts(data)
+      } catch (error) {
+        console.error('Error fetching products:', error)
+      } finally {
+        setLoadingProducts(false)
+      }
+    }
+    fetchProducts()
+  }, [])
+
+  const dynamicCategories = useMemo(() => {
+    if (loadingProducts || products.length === 0) return categories.map(c => ({ ...c, href: `/products?category=${c.title}` }))
+
+    return categories.map(category => {
+      const count = products.filter(p => p.category === category.title || (p.subtitle && p.subtitle.includes(category.title))).length
+      return {
+        ...category,
+        subtitle: `${count} รายการ`,
+        href: `/products?category=${category.title}`
+      }
+    })
+  }, [categories, products, loadingProducts])
+
+  const dynamicRecommended = useMemo(() => {
+    if (loadingProducts || products.length === 0) return recommendedProducts
+
+    // Select some products to recommend (e.g., first 8)
+    return products.slice(0, 8).map(p => ({
+      id: p.id,
+      name: p.title || p.name,
+      price: formatPrice(p.price),
+      originalPrice: p.originalPrice ? formatPrice(p.originalPrice) : null,
+      image: p.image,
+      rating: p.rating || 4.8,
+      reviews: p.reviews || 24,
+      badge: p.badge || (p.soldOut ? 'สินค้าหมด' : null),
+    }))
+  }, [recommendedProducts, products, loadingProducts])
 
   const handleImageLoad = (key) => {
     setLoadedImages(prev => ({ ...prev, [key]: true }))
@@ -163,9 +211,14 @@ const HomePage = ({
             />
           </motion.div>
           <div className="grid gap-6 py-6 md:grid-cols-2 lg:grid-cols-3">
-            {categories.map((category, index) => (
+            {dynamicCategories.map((category, index) => (
               <motion.article
                 key={category.title}
+                onClick={(e) => {
+                  if (!e.target.closest('button') && !e.target.closest('a')) {
+                    navigate(category.href)
+                  }
+                }}
                 className="overflow-hidden rounded-3xl bg-white border border-transparent shadow-[0_12px_30px_rgba(61,43,31,0.06)] transition-all duration-500 group cursor-pointer perspective hover:border-[#A0724A] hover:shadow-[0_18px_40px_rgba(61,43,31,0.16)]"
                 role="article"
                 aria-label={`${category.title}, ${category.subtitle}`}
@@ -253,7 +306,7 @@ const HomePage = ({
             />
           </motion.div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {recommendedProducts.map((product, index) => (
+            {dynamicRecommended.map((product, index) => (
               <motion.article
                 key={product.id}
                 onClick={(e) => {
