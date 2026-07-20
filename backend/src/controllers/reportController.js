@@ -103,7 +103,7 @@ export async function getProductReport(req, res) {
     const products = await prisma.product.findMany({
       include: {
         orderItems: {
-          select: { quantity: true }
+          select: { quantity: true, price: true }
         },
         category: {
           select: { name: true }

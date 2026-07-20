@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Dashboard, PagePlaceholder, Customers, Analytics } from './AdminPages';
+import { useNavigate } from 'react-router-dom';
+import { Dashboard, PagePlaceholder, Customers, Analytics, Products, Orders } from './AdminPages';
 import Settings from './AdminSettings';
+import { useAuth } from '../../contexts/AuthContext';
 
 const GLOBAL_STYLES = `
 *{box-sizing:border-box;margin:0;padding:0}
@@ -13,19 +15,22 @@ const GLOBAL_STYLES = `
 }
 .wrap{display:flex;min-height:600px;background:var(--bg);border-radius:12px;overflow:hidden;border:1px solid var(--bd)}
 .side{width:200px;background:var(--pr);padding:16px 0;flex-shrink:0;display:flex;flex-direction:column}
-.side-logo{padding:12px 16px 20px;color:#fff;font-size:18px;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:8px}
+.side-logo{padding:12px 16px 20px;color:#fff;font-size:18px;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:8px;display:flex;align-items:center;gap:8px}
 .side-logo span{color:var(--acl)}
+.side-logo .admin-badge{background:rgba(200,168,130,0.3);color:var(--acl);font-size:10px;padding:2px 6px;border-radius:10px;font-weight:500}
 .nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,0.65);font-size:13px;cursor:pointer;transition:all .15s;border-left:3px solid transparent}
 .nav-item i{font-size:17px}
 .nav-item:hover{color:#fff;background:rgba(255,255,255,0.08)}
 .nav-item.active{color:#fff;background:rgba(200,168,130,0.2);border-left-color:var(--acl)}
 .side-bottom{margin-top:auto;padding:12px 0;border-top:1px solid rgba(255,255,255,0.1)}
 .main{flex:1;overflow:auto}
-.topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--sf);border-bottom:1px solid var(--bd)}
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--sf);border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:10}
 .topbar-title{font-size:16px;font-weight:600;color:var(--tx);flex:1}
-.topbar-search{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:6px 12px;width:200px}
-.topbar-search input{border:none;background:transparent;font-size:13px;color:var(--tx);outline:none;width:100%}
-.topbar-search i{color:var(--tm);font-size:16px}
+.topbar-breadcrumb{font-size:12px;color:var(--tm)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.admin-user-info{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg);border:1px solid var(--bd);border-radius:8px}
+.admin-user-info .avatar{width:28px;height:28px;border-radius:50%;background:var(--ac);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+.admin-user-info .name{font-size:12px;font-weight:500;color:var(--tx)}
 .icon-btn{width:34px;height:34px;border-radius:8px;background:var(--bg);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--tm)}
 .icon-btn:hover{background:var(--sa)}
 .content{padding:20px}
@@ -54,6 +59,7 @@ const GLOBAL_STYLES = `
 .card-title{font-size:14px;font-weight:600;color:var(--tx)}
 .card-sub{font-size:12px;color:var(--tm);margin-top:2px}
 .view-all{font-size:12px;color:var(--ac);cursor:pointer;text-decoration:none}
+.space-y-4 > * + *{margin-top:16px}
 
 /* Chart */
 .chart-area{height:160px;display:flex;align-items:flex-end;gap:6px;padding-bottom:8px;border-bottom:1px solid var(--bd)}
@@ -81,7 +87,7 @@ const GLOBAL_STYLES = `
 .notif-title{font-size:13px;font-weight:500;color:var(--tx)}
 .notif-time{font-size:11px;color:var(--tm);margin-top:2px}
 
-/* Customers page */
+/* Customers / Products page */
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
 .stat-card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:16px;text-align:center}
 .stat-num{font-size:28px;font-weight:600;color:var(--tx)}
@@ -103,7 +109,7 @@ const GLOBAL_STYLES = `
 .progress-bar{flex:1;height:6px;background:var(--sa);border-radius:3px;overflow:hidden}
 .progress-fill{height:100%;border-radius:3px;background:var(--ac)}
 .progress-lbl{font-size:12px;color:var(--tm);min-width:80px}
-.progress-val{font-size:12px;font-weight:500;color:var(--tx);min-width:35px;text-align:right}
+.progress-val{font-size:12px;font-weight:500;color:var(--tx);min-width:60px;text-align:right}
 .donut-wrap{display:flex;align-items:center;gap:16px}
 .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .legend-item{display:flex;align-items:center;gap:8px;margin-bottom:8px}
@@ -144,9 +150,15 @@ const GLOBAL_STYLES = `
 .top5-row:last-child{border-bottom:none}
 .top5-rank{font-size:13px;font-weight:600;color:var(--tm);min-width:20px}
 .top5-img{width:36px;height:36px;border-radius:8px;background:var(--sa);display:flex;align-items:center;justify-content:center}
-.top5-name{flex:1;font-size:13px;color:var(--tx)}
+.top5-name{font-size:13px;color:var(--tx)}
 .top5-sales{font-size:12px;color:var(--tm)}
 .top5-val{font-size:13px;font-weight:500;color:var(--tx)}
+
+/* Access Denied */
+.access-denied{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);gap:16px}
+.access-denied h2{font-size:22px;font-weight:600;color:var(--tx)}
+.access-denied p{font-size:14px;color:var(--tm)}
+.access-denied .btn-login{background:var(--pr);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:500;cursor:pointer}
 `;
 
 const PAGE_TITLES = {
@@ -159,68 +171,140 @@ const PAGE_TITLES = {
 };
 
 const NAV_ITEMS = [
-  { id: 'dashboard', icon: 'ti-layout-dashboard', label: 'Dashboard' },
-  { id: 'products', icon: 'ti-package', label: 'Products' },
-  { id: 'orders', icon: 'ti-shopping-cart', label: 'Orders' },
-  { id: 'customers', icon: 'ti-users', label: 'Customers' },
-  { id: 'analytics', icon: 'ti-chart-line', label: 'Analytics' },
-  { id: 'settings', icon: 'ti-settings', label: 'Settings' },
+  { id: 'dashboard', icon: 'ti-layout-dashboard', label: 'Dashboard', group: 'OVERVIEW' },
+  { id: 'products', icon: 'ti-package', label: 'Products', group: 'OVERVIEW' },
+  { id: 'orders', icon: 'ti-shopping-cart', label: 'Orders', group: 'OVERVIEW' },
+  { id: 'customers', icon: 'ti-users', label: 'Customers', group: 'INSIGHTS' },
+  { id: 'analytics', icon: 'ti-chart-line', label: 'Analytics', group: 'INSIGHTS' },
+  { id: 'settings', icon: 'ti-settings', label: 'Settings', group: 'SYSTEM' },
 ];
 
 export default function AdminLayout() {
   const [activePage, setActivePage] = useState('dashboard');
+  const { user, isLoading, logout } = useAuth();
+  const navigate = useNavigate();
+
+  // ── Route Guard ──────────────────────────────────────────────────────────
+  if (isLoading) {
+    return (
+      <div className="udee-wrap-root">
+        <style>{GLOBAL_STYLES}</style>
+        <div className="access-denied">
+          <i className="ti ti-loader" style={{ fontSize: 32, color: 'var(--ac)' }} aria-hidden="true" />
+          <p>กำลังตรวจสอบสิทธิ์...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="udee-wrap-root">
+        <style>{GLOBAL_STYLES}</style>
+        <div className="access-denied">
+          <i className="ti ti-lock" style={{ fontSize: 48, color: 'var(--bd)' }} aria-hidden="true" />
+          <h2>กรุณาเข้าสู่ระบบ</h2>
+          <p>คุณต้องล็อกอินก่อนเข้าใช้งานส่วนของผู้ดูแลระบบ</p>
+          <button className="btn-login" onClick={() => navigate('/login')}>
+            เข้าสู่ระบบ
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (user.role !== 'ADMIN') {
+    return (
+      <div className="udee-wrap-root">
+        <style>{GLOBAL_STYLES}</style>
+        <div className="access-denied">
+          <i className="ti ti-shield-off" style={{ fontSize: 48, color: '#B94040' }} aria-hidden="true" />
+          <h2>ไม่มีสิทธิ์เข้าถึง</h2>
+          <p>หน้านี้สำหรับผู้ดูแลระบบ (Admin) เท่านั้น</p>
+          <button className="btn-login" onClick={() => navigate('/')}>
+            กลับหน้าหลัก
+          </button>
+        </div>
+      </div>
+    );
+  }
+  // ─────────────────────────────────────────────────────────────────────────
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <div className="udee-wrap-root">
       <style>{GLOBAL_STYLES}</style>
       <div className="wrap">
+        {/* ── Sidebar ── */}
         <div className="side">
           <div className="side-logo">
             U<span>D</span>EE
+            <span className="admin-badge">Admin</span>
           </div>
-          {NAV_ITEMS.map((item) => (
-            <div
-              key={item.id}
-              className={`nav-item${activePage === item.id ? ' active' : ''}`}
-              onClick={() => setActivePage(item.id)}
-            >
-              <i className={`ti ${item.icon}`} aria-hidden="true"></i>
-              {item.label}
+
+          {/* Nav groups */}
+          {['OVERVIEW', 'INSIGHTS', 'SYSTEM'].map((group) => (
+            <div key={group}>
+              <div style={{
+                padding: '10px 16px 4px',
+                fontSize: 10,
+                color: 'rgba(255,255,255,0.35)',
+                letterSpacing: '0.08em',
+                fontWeight: 600,
+              }}>
+                {group}
+              </div>
+              {NAV_ITEMS.filter((item) => item.group === group).map((item) => (
+                <div
+                  key={item.id}
+                  className={`nav-item${activePage === item.id ? ' active' : ''}`}
+                  onClick={() => setActivePage(item.id)}
+                >
+                  <i className={`ti ${item.icon}`} aria-hidden="true" />
+                  {item.label}
+                </div>
+              ))}
             </div>
           ))}
+
           <div className="side-bottom">
-            <div className="nav-item">
-              <i className="ti ti-help-circle" aria-hidden="true"></i>ช่วยเหลือ
+            <div className="nav-item" onClick={() => navigate('/')}>
+              <i className="ti ti-home" aria-hidden="true" />หน้าร้านค้า
             </div>
-            <div className="nav-item">
-              <i className="ti ti-logout" aria-hidden="true"></i>ออกจากระบบ
+            <div className="nav-item" onClick={handleLogout}>
+              <i className="ti ti-logout" aria-hidden="true" />ออกจากระบบ
             </div>
           </div>
         </div>
 
+        {/* ── Main Content ── */}
         <div className="main">
           <div className="topbar">
-            <div className="topbar-title">{PAGE_TITLES[activePage] || activePage}</div>
-            <div className="topbar-search">
-              <i className="ti ti-search" aria-hidden="true"></i>
-              <input placeholder="ค้นหา..." />
+            <div>
+              <div className="topbar-breadcrumb">Admin › {PAGE_TITLES[activePage] || activePage}</div>
+              <div className="topbar-title">{PAGE_TITLES[activePage] || activePage}</div>
             </div>
-            <div className="icon-btn">
-              <i className="ti ti-bell" aria-hidden="true"></i>
-            </div>
-            <div className="icon-btn">
-              <i className="ti ti-settings" aria-hidden="true"></i>
+            <div className="topbar-right">
+              <div className="admin-user-info">
+                <div className="avatar">{user.name?.charAt(0)?.toUpperCase() || 'A'}</div>
+                <div className="name">{user.name}</div>
+              </div>
             </div>
           </div>
+
           <div className="content">
             <div className={`page${activePage === 'dashboard' ? ' active' : ''}`}>
               <Dashboard />
             </div>
             <div className={`page${activePage === 'products' ? ' active' : ''}`}>
-              <PagePlaceholder icon="ti-package" text="หน้า Products มีอยู่แล้วในโปรเจคของคุณ" />
+              <Products />
             </div>
             <div className={`page${activePage === 'orders' ? ' active' : ''}`}>
-              <PagePlaceholder icon="ti-shopping-cart" text="หน้า Orders มีอยู่แล้วในโปรเจคของคุณ" />
+              <Orders />
             </div>
             <div className={`page${activePage === 'customers' ? ' active' : ''}`}>
               <Customers />
