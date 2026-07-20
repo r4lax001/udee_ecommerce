@@ -1,12 +1,13 @@
 import { useEffect, useState, useMemo } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import ClickSparkButton from '../components/ClickSparkButton'
 import { getProducts } from '../services/products'
 import { formatPrice } from '../utils/format'
 
 const CategoriesPage = () => {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const reduceMotion = useReducedMotion()
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -15,7 +16,9 @@ const CategoriesPage = () => {
   const [selectedSizes, setSelectedSizes] = useState([])
   const [selectedColors, setSelectedColors] = useState([])
   const [selectedMaterials, setSelectedMaterials] = useState([])
-  const [selectedCategories, setSelectedCategories] = useState([])
+  const [selectedCategories, setSelectedCategories] = useState(
+    searchParams.get('category') ? [searchParams.get('category')] : []
+  )
   const [currentPage, setCurrentPage] = useState(1)
   const transition = { duration: reduceMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] }
 
@@ -23,6 +26,14 @@ const CategoriesPage = () => {
   useEffect(() => {
     setCurrentPage(1)
   }, [sortBy, priceValue, selectedSizes, selectedColors, selectedMaterials, selectedCategories])
+
+  // Update selected category if URL parameter changes
+  useEffect(() => {
+    const category = searchParams.get('category')
+    if (category) {
+      setSelectedCategories([category])
+    }
+  }, [searchParams])
 
   useEffect(() => {
     let isMounted = true

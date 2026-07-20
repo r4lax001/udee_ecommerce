@@ -214,6 +214,11 @@ const HomePage = ({
             {dynamicCategories.map((category, index) => (
               <motion.article
                 key={category.title}
+                onClick={(e) => {
+                  if (!e.target.closest('button') && !e.target.closest('a')) {
+                    navigate(category.href)
+                  }
+                }}
                 className="overflow-hidden rounded-3xl bg-white border border-transparent shadow-[0_12px_30px_rgba(61,43,31,0.06)] transition-all duration-500 group cursor-pointer perspective hover:border-[#A0724A] hover:shadow-[0_18px_40px_rgba(61,43,31,0.16)]"
                 role="article"
                 aria-label={`${category.title}, ${category.subtitle}`}
