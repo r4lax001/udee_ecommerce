@@ -1,6 +1,6 @@
 import prisma from '../db.js'
 
-// GET /api/orders - ดูออเดอร์ทั้งหมด
+// GET /api/orders - ดูออเดอร์ทั้งหมด (admin)
 export async function getOrders(req, res) {
   try {
     const orders = await prisma.order.findMany({
@@ -23,6 +23,31 @@ export async function getOrders(req, res) {
     res.status(500).json({ error: error.message })
   }
 }
+
+// GET /api/orders/my - ดูออเดอร์ของ user ที่ login
+export async function getMyOrders(req, res) {
+  try {
+    const userId = req.user.id
+    const orders = await prisma.order.findMany({
+      where: { userId },
+      include: {
+        items: {
+          include: {
+            product: {
+              select: { id: true, name: true, price: true }
+            }
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    })
+    res.json({ success: true, orders })
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message })
+  }
+}
+
+
 
 // GET /api/orders/:id - ดูรายละเอียดออเดอร์
 export async function getOrderById(req, res) {
