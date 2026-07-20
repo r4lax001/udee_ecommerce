@@ -21,7 +21,7 @@ const ProfilePage = ({ user: propUser, history = purchases }) => {
         <p className="text-sm text-[#81756E] mb-6 text-center max-w-md">
           คุณต้องเข้าสู่ระบบสมาชิก UDEE เพื่อเข้าถึงข้อมูลส่วนตัว รายการโปรด และประวัติการสั่งซื้อของคุณ
         </p>
-        <Link to="/auth" className="rounded-xl bg-[#3D2B1F] px-6 py-3 font-semibold text-white hover:opacity-90 active:scale-95 transition">
+        <Link to="/login" className="rounded-xl bg-[#3D2B1F] px-6 py-3 font-semibold text-white hover:opacity-90 active:scale-95 transition">
           เข้าสู่ระบบสมาชิก
         </Link>
       </div>

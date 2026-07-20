@@ -105,7 +105,7 @@ const Navbar = () => {
             <motion.div whileHover={{ y: -2, scale: 1.04 }} whileTap={{ scale: 0.96 }}>
               <ClickSparkButton
                 as="link"
-                to="/auth"
+                to="/login"
                 className="hidden md:inline-flex items-center justify-center rounded-lg border border-[#3D2B1F] bg-white px-5 py-2 text-sm font-medium text-[#3D2B1F] hover:bg-[#3D2B1F] hover:text-white transition-all"
               >
                 Login

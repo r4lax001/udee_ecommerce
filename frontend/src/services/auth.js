@@ -3,8 +3,8 @@ import api from './api';
 /**
  * Register a new customer
  */
-export const register = async (name, email, password, phone) => {
-  const response = await api.post('/auth/register', { name, email, password, phone });
+export const register = async (name, email, password, phone, address) => {
+  const response = await api.post('/auth/register', { name, email, password, phone, address });
   return response.data;
 };
 

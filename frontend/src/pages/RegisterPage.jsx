@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useCallback, useRef } from 'react'
+import { useMemo, useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence, useReducedMotion, useAnimation } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { authPageData } from '../data/authPageData'
@@ -110,30 +110,27 @@ const Particle = ({ x, y, delay }) => {
   )
 }
 
-const AuthPage = ({ authData = authPageData }) => {
+const RegisterPage = ({ authData = authPageData }) => {
   const reduceMotion = useReducedMotion()
   const navigate = useNavigate()
   const transition = { duration: reduceMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }
   const { login } = useAuth()
   const [focusedInput, setFocusedInput] = useState(null)
 
-  const [activeTab, setActiveTab] = useState('login')
-  const [loginEmail, setLoginEmail] = useState('')
-  const [loginPassword, setLoginPassword] = useState('')
-  const [showLoginPassword, setShowLoginPassword] = useState(false)
-  const [showRegisterPassword, setShowRegisterPassword] = useState(false)
   const [registerName, setRegisterName] = useState('')
   const [registerPhone, setRegisterPhone] = useState('')
   const [registerEmail, setRegisterEmail] = useState('')
   const [registerPassword, setRegisterPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [agreeTerms, setAgreeTerms] = useState(false)
+  const [showRegisterPassword, setShowRegisterPassword] = useState(false)
   const [otpEmail, setOtpEmail] = useState('')
   const [otpCode, setOtpCode] = useState('')
   const [otpResendCooldown, setOtpResendCooldown] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [toast, setToast] = useState(null)
+  const [showOtp, setShowOtp] = useState(false)
   
   // Address fields
   const [houseNo, setHouseNo] = useState('')
@@ -157,48 +154,6 @@ const AuthPage = ({ authData = authPageData }) => {
 
   const passwordStrength = useMemo(() => getStrength(registerPassword), [registerPassword])
   const strengthText = getStrengthText(passwordStrength)
-
-  const handleTabChange = (type) => {
-    setActiveTab(type)
-    setErrorMessage('')
-  }
-
-  const handleLoginSubmit = async () => {
-    if (!loginEmail.trim() || !loginPassword.trim()) {
-      setErrorMessage('กรุณากรอกอีเมลและรหัสผ่านให้ครบถ้วน')
-      return
-    }
-    if (!isValidEmail(loginEmail)) {
-      setErrorMessage('รูปแบบอีเมลไม่ถูกต้อง')
-      return
-    }
-
-    setIsSubmitting(true)
-    setErrorMessage('')
-
-    try {
-      const data = await authService.login(loginEmail.trim(), loginPassword)
-      if (data.success) {
-        login(data.token, data.user)
-        showToast('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับ!')
-        setTimeout(() => {
-          navigate(data.user.role === 'ADMIN' ? '/admin-dashboard' : '/')
-        }, 800)
-      } else if (data.needsVerification) {
-        setOtpEmail(data.email)
-        setOtpCode('')
-        setOtpResendCooldown(60)
-        setActiveTab('otp')
-        setErrorMessage(data.message || 'บัญชีของคุณยังไม่เปิดใช้งาน กรุณากรอกรหัส OTP ที่ส่งไปยังอีเมลของคุณ')
-      } else {
-        setErrorMessage(data.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง')
-      }
-    } catch (error) {
-      setErrorMessage(error.response?.data?.message || 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ กรุณาลองใหม่อีกครั้ง')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
 
   const handleRegisterSubmit = async () => {
     if (!registerName.trim() || !registerPhone.trim() || !registerEmail.trim() || !registerPassword.trim() || !confirmPassword.trim()) {
@@ -261,7 +216,7 @@ const AuthPage = ({ authData = authPageData }) => {
         setOtpEmail(registerEmail.trim())
         setOtpCode('')
         setOtpResendCooldown(60)
-        setActiveTab('otp')
+        setShowOtp(true)
         showToast('สมัครสมาชิกสำเร็จ! รหัส OTP ถูกส่งไปที่อีเมลของคุณแล้ว')
       } else {
         setErrorMessage(data.message || 'การสมัครสมาชิกไม่สำเร็จ')
@@ -318,12 +273,11 @@ const AuthPage = ({ authData = authPageData }) => {
 
   return (
     <motion.main
-      className="h-[850px] bg-gradient-to-br from-[#FAF6F1] via-[#F5EBE3] to-[#EDE4DB] text-[#1D1B1A] flex items-center justify-center relative overflow-hidden"
+      className="h-[1200px] bg-gradient-to-br from-[#FAF6F1] via-[#F5EBE3] to-[#EDE4DB] text-[#1D1B1A] flex items-center justify-center relative overflow-hidden"
       initial={reduceMotion ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={transition}
     >
-      {/* Animated background particles */}
       {!reduceMotion && (
         <>
           {[...Array(15)].map((_, i) => (
@@ -343,7 +297,6 @@ const AuthPage = ({ authData = authPageData }) => {
         transition={{ type: 'spring', stiffness: 120, damping: 18 }}
       >
         <motion.section className="relative flex w-full flex-col justify-between bg-gradient-to-br from-[#3D2B1F] via-[#4A3828] to-[#2D1F15] px-8 py-10 text-[#F3ECEA] md:w-[38%] md:px-12 md:py-14 overflow-hidden">
-          {/* Animated floating elements */}
           {!reduceMotion && (
             <>
               <FloatingElement delay={0} duration={6} size="280px" color="#FFC698" top="-8%" right="-8%" />
@@ -410,41 +363,6 @@ const AuthPage = ({ authData = authPageData }) => {
             <h2 className="text-3xl font-bold text-[#3D2B1F] font-prompt">{authData.brand}</h2>
           </div>
 
-          {activeTab !== 'otp' && (
-            <motion.div 
-              initial={{ opacity: 0, y: -15 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-8 flex p-1.5 bg-[#EDE4DB] rounded-2xl"
-            >
-              <motion.button 
-                type="button" 
-                onClick={() => handleTabChange('login')} 
-                className={`flex-1 px-5 py-3 text-sm md:text-base font-semibold rounded-xl transition-all duration-300 ${
-                  activeTab === 'login' 
-                    ? 'bg-white text-[#3D2B1F] shadow-md' 
-                    : 'text-[#81756E] hover:text-[#3D2B1F]'
-                }`}
-                whileHover={{ scale: activeTab !== 'login' ? 1.02 : 1 }}
-                whileTap={{ scale: 0.97 }}
-              >
-                เข้าสู่ระบบ
-              </motion.button>
-              <motion.button 
-                type="button" 
-                onClick={() => handleTabChange('register')} 
-                className={`flex-1 px-5 py-3 text-sm md:text-base font-semibold rounded-xl transition-all duration-300 ${
-                  activeTab === 'register' 
-                    ? 'bg-white text-[#3D2B1F] shadow-md' 
-                    : 'text-[#81756E] hover:text-[#3D2B1F]'
-                }`}
-                whileHover={{ scale: activeTab !== 'register' ? 1.02 : 1 }}
-                whileTap={{ scale: 0.97 }}
-              >
-                สมัครสมาชิก
-              </motion.button>
-            </motion.div>
-          )}
-
           <AnimatePresence>
             {errorMessage && (
               <motion.div 
@@ -469,7 +387,7 @@ const AuthPage = ({ authData = authPageData }) => {
           </AnimatePresence>
 
           <AnimatePresence mode="wait">
-            {activeTab === 'otp' ? (
+            {showOtp ? (
               <motion.div 
                 key="otp"
                 initial={{ opacity: 0 }}
@@ -561,112 +479,14 @@ const AuthPage = ({ authData = authPageData }) => {
                   </motion.button>
                   <motion.button 
                     type="button" 
-                    onClick={() => { setActiveTab('login'); setErrorMessage('') }} 
+                    onClick={() => { setShowOtp(false); setErrorMessage('') }} 
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                     className="text-sm text-[#81756E] hover:text-[#3D2B1F] transition-colors"
                   >
-                    กลับสู่หน้าเข้าสู่ระบบ
+                    กลับสู่หน้าสมัครสมาชิก
                   </motion.button>
                 </div>
-              </motion.div>
-            ) : activeTab === 'login' ? (
-              <motion.div 
-                key="login"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="space-y-5"
-              >
-                <motion.div 
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.08 }}
-                >
-                  <label className="mb-2 block text-sm font-semibold text-[#4F453F]">อีเมล</label>
-                  <motion.div 
-                    className="relative"
-                    whileFocus={{ scale: 1.005 }}
-                  >
-                    <input 
-                      type="email" 
-                      value={loginEmail} 
-                      onChange={(event) => setLoginEmail(event.target.value)} 
-                      placeholder="example@email.com" 
-                      onFocus={() => setFocusedInput('login-email')}
-                      onBlur={() => setFocusedInput(null)}
-                      className={`w-full rounded-lg border-2 bg-white px-4 py-3.5 text-[#1D1B1A] outline-none transition-all duration-300 ${
-                        focusedInput === 'login-email' 
-                          ? 'border-[#A0724A] ring-3 ring-[#A0724A]/20 shadow-md shadow-[#A0724A]/30' 
-                          : 'border-[#D2C4BC] hover:border-[#A0724A]/50'
-                      }`}
-                    />
-                    <motion.span 
-                      animate={{ 
-                        scale: focusedInput === 'login-email' ? 1 : 0.85,
-                        opacity: focusedInput === 'login-email' ? 1 : 0.5
-                      }}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#81756E]"
-                    >
-                      <span className="material-symbols-outlined text-lg">email</span>
-                    </motion.span>
-                  </motion.div>
-                </motion.div>
-                <motion.div 
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.16 }}
-                >
-                  <label className="mb-2 block text-sm font-semibold text-[#4F453F]">รหัสผ่าน</label>
-                  <motion.div 
-                    className="relative"
-                    whileFocus={{ scale: 1.005 }}
-                  >
-                    <input 
-                      type={showLoginPassword ? 'text' : 'password'} 
-                      value={loginPassword} 
-                      onChange={(event) => setLoginPassword(event.target.value)} 
-                      placeholder="••••••••" 
-                      onFocus={() => setFocusedInput('login-password')}
-                      onBlur={() => setFocusedInput(null)}
-                      className={`w-full rounded-lg border-2 bg-white px-4 py-3.5 pr-12 text-[#1D1B1A] outline-none transition-all duration-300 ${
-                        focusedInput === 'login-password' 
-                          ? 'border-[#A0724A] ring-3 ring-[#A0724A]/20 shadow-md shadow-[#A0724A]/30' 
-                          : 'border-[#D2C4BC] hover:border-[#A0724A]/50'
-                      }`}
-                    />
-                    <motion.button 
-                      type="button" 
-                      onClick={() => setShowLoginPassword((current) => !current)} 
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#81756E] hover:text-[#3D2B1F] transition-colors"
-                    >
-                      <span className="material-symbols-outlined text-lg">{showLoginPassword ? 'visibility_off' : 'visibility'}</span>
-                    </motion.button>
-                  </motion.div>
-                </motion.div>
-                <motion.button 
-                  type="button" 
-                  disabled={isSubmitting} 
-                  onClick={handleLoginSubmit} 
-                  whileHover={{ scale: 1.01, boxShadow: '0 8px 30px -8px rgba(61, 43, 31, 0.4)' }}
-                  whileTap={{ scale: 0.97 }}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.24 }}
-                  className="w-full rounded-xl bg-gradient-to-r from-[#3D2B1F] to-[#5D4B3F] py-3.5 text-sm md:text-base font-semibold text-white shadow-lg transition-all duration-300 disabled:opacity-50 disabled:hover:scale-100"
-                >
-                  {isSubmitting ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <motion.span animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="material-symbols-outlined">refresh</motion.span>
-                      กำลังเข้าสู่ระบบ...
-                    </span>
-                  ) : (
-                    'เข้าสู่ระบบ'
-                  )}
-                </motion.button>
               </motion.div>
             ) : (
               <motion.div 
@@ -677,6 +497,13 @@ const AuthPage = ({ authData = authPageData }) => {
                 transition={{ duration: 0.2 }}
                 className="space-y-4"
               >
+                <motion.h2 
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-2xl font-bold text-[#3D2B1F] mb-6 font-prompt"
+                >
+                  สมัครสมาชิก
+                </motion.h2>
                 <motion.div 
                   className="grid gap-3 md:grid-cols-2"
                   initial={{ opacity: 0, y: 8 }}
@@ -1016,6 +843,24 @@ const AuthPage = ({ authData = authPageData }) => {
                     'สมัครสมาชิก'
                   )}
                 </motion.button>
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.72 }}
+                  className="text-center"
+                >
+                  <p className="text-sm text-[#81756E]">
+                    มีบัญชีอยู่แล้ว?{' '}
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => navigate('/login')}
+                      className="text-[#7F5530] hover:text-[#A0724A] font-semibold transition-colors"
+                    >
+                      เข้าสู่ระบบ
+                    </motion.button>
+                  </p>
+                </motion.div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -1025,4 +870,4 @@ const AuthPage = ({ authData = authPageData }) => {
   )
 }
 
-export default AuthPage
+export default RegisterPage

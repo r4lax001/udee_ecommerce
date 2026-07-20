@@ -24,6 +24,7 @@ model User {
   createdAt   DateTime  @default(now())
   orders      Order[]
   cart        Cart?
+  addresses   Address[]
 }
 
 enum Role {
@@ -99,4 +100,18 @@ model OrderItem {
   product   Product @relation(fields: [productId], references: [id])
   quantity  Int
   price     Decimal
+}
+
+model Address {
+  id           Int     @id @default(autoincrement())
+  userId       Int
+  user         User    @relation(fields: [userId], references: [id])
+  houseNo      String  @map("house_no") @db.VarChar(50)
+  soi          String? @db.VarChar(100)
+  road         String? @db.VarChar(100)
+  subDistrict  String  @map("sub_district") @db.VarChar(100)
+  district     String  @db.VarChar(100)
+  province     String  @db.VarChar(100)
+  postalCode   String  @map("postal_code") @db.VarChar(5)
+  createdAt    DateTime @default(now())
 }

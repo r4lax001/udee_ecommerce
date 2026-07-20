@@ -41,11 +41,21 @@ const isValidThaiPhone = (phone) => /^0[0-9]{9}$/.test(phone.trim());
  */
 router.post('/register', authLimiter, async (req, res) => {
   try {
-    const { name, email, password, phone } = req.body;
+    const { name, email, password, phone, address } = req.body;
 
     // ── ตรวจสอบข้อมูลที่จำเป็น ──
     if (!name || !email || !password || !phone) {
       return res.status(400).json({ success: false, message: 'กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน' });
+    }
+
+    // ── ตรวจสอบข้อมูลที่อยู่ ──
+    if (!address || !address.houseNo || !address.subDistrict || !address.district || !address.province || !address.postalCode) {
+      return res.status(400).json({ success: false, message: 'กรุณากรอกข้อมูลที่อยู่ให้ครบถ้วน' });
+    }
+
+    // ── ตรวจสอบรูปแบบรหัสไปรษณีย์ (5 หลัก) ──
+    if (!/^\d{5}$/.test(address.postalCode)) {
+      return res.status(400).json({ success: false, message: 'รูปแบบรหัสไปรษณีย์ไม่ถูกต้อง (กรุณากรอก 5 หลัก)' });
     }
 
     if (!isValidEmail(email)) {
@@ -96,6 +106,17 @@ router.post('/register', authLimiter, async (req, res) => {
         otpExpiry,
         otpAttempts: 0,
         isVerified: false,
+        addresses: {
+          create: {
+            houseNo: address.houseNo.trim(),
+            soi: address.soi ? address.soi.trim() : null,
+            road: address.road ? address.road.trim() : null,
+            subDistrict: address.subDistrict.trim(),
+            district: address.district.trim(),
+            province: address.province.trim(),
+            postalCode: address.postalCode.trim(),
+          },
+        },
       },
     });
 

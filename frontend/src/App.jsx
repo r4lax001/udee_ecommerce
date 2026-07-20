@@ -3,10 +3,12 @@ import { lazy, Suspense } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
+import AuthLayout from "./layouts/AuthLayout";
 import { CartProvider, AuthProvider } from "./contexts";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
-const AuthPage = lazy(() => import("./pages/AuthPage"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const RegisterPage = lazy(() => import("./pages/RegisterPage"));
 const OrderTrackingPage = lazy(() => import("./pages/OrderTrackingPage"));
 const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
 const AdminProductsPage = lazy(() => import("./pages/AdminProductsPage"));
@@ -58,9 +60,15 @@ function App() {
         <CartProvider>
           <Suspense fallback={<LoadingFallback />}>
           <Routes>
+            <Route path="/login" element={<AuthLayout />}>
+              <Route index element={<LoginPage />} />
+            </Route>
+            <Route path="/register" element={<AuthLayout />}>
+              <Route index element={<RegisterPage />} />
+            </Route>
+
             <Route path="/" element={<AppLayout />}>
               <Route index element={<HomePage />} />
-              <Route path="auth" element={<AuthPage />} />
 
               <Route path="order-tracking" element={<OrderTrackingPage />} />
               <Route
