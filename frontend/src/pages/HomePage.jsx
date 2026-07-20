@@ -36,8 +36,8 @@ const HomePage = ({
   }, [])
 
   const dynamicCategories = useMemo(() => {
-    if (loadingProducts || products.length === 0) return categories.map(c => ({...c, href: `/products?category=${c.title}`}))
-    
+    if (loadingProducts || products.length === 0) return categories.map(c => ({ ...c, href: `/products?category=${c.title}` }))
+
     return categories.map(category => {
       const count = products.filter(p => p.category === category.title || (p.subtitle && p.subtitle.includes(category.title))).length
       return {
