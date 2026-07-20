@@ -383,18 +383,85 @@ router.post('/login', authLimiter, async (req, res) => {
  * โหลดโปรไฟล์ผู้ใช้งานที่ล็อกอินอยู่
  */
 router.get('/me', requireAuth, async (req, res) => {
-  return res.status(200).json({
-    success: true,
-    user: {
-      id: req.user.id,
-      name: req.user.name,
-      email: req.user.email,
-      phone: req.user.phone,
-      role: req.user.role,
-      isVerified: req.user.isVerified,
-      createdAt: req.user.createdAt,
-    },
-  });
+  try {
+    const userWithAddresses = await prisma.user.findUnique({
+      where: { id: req.user.id },
+      include: {
+        addresses: {
+          orderBy: { id: 'asc' },
+        },
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      user: {
+        id: userWithAddresses.id,
+        name: userWithAddresses.name,
+        email: userWithAddresses.email,
+        phone: userWithAddresses.phone,
+        role: userWithAddresses.role,
+        isVerified: userWithAddresses.isVerified,
+        createdAt: userWithAddresses.createdAt,
+        addresses: userWithAddresses.addresses,
+      },
+    });
+  } catch (error) {
+    console.error('Get Me Error:', error);
+    return res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดภายในระบบเซิร์ฟเวอร์' });
+  }
+});
+
+// ──────────────────────────────────────────────────────────────────────────────
+// PUT /api/auth/me/profile
+// ──────────────────────────────────────────────────────────────────────────────
+/**
+ * อัปเดตข้อมูลส่วนตัว (name, phone)
+ */
+router.put('/me/profile', requireAuth, async (req, res) => {
+  try {
+    const { name, phone } = req.body;
+
+    if (!name && !phone) {
+      return res.status(400).json({ success: false, message: 'กรุณาระบุข้อมูลที่ต้องการอัปเดต' });
+    }
+
+    if (name && (name.trim().length < 2 || name.trim().length > 100)) {
+      return res.status(400).json({ success: false, message: 'ชื่อต้องมีความยาว 2–100 ตัวอักษร' });
+    }
+
+    if (phone && !isValidThaiPhone(phone)) {
+      return res.status(400).json({ success: false, message: 'รูปแบบเบอร์โทรศัพท์ไม่ถูกต้อง (กรุณากรอก 10 หลัก เช่น 0812345678)' });
+    }
+
+    const updateData = {};
+    if (name) updateData.name = name.trim();
+    if (phone) updateData.phone = phone.trim();
+
+    const updatedUser = await prisma.user.update({
+      where: { id: req.user.id },
+      data: updateData,
+      include: { addresses: true },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'อัปเดตข้อมูลส่วนตัวสำเร็จ',
+      user: {
+        id: updatedUser.id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        phone: updatedUser.phone,
+        role: updatedUser.role,
+        isVerified: updatedUser.isVerified,
+        createdAt: updatedUser.createdAt,
+        addresses: updatedUser.addresses,
+      },
+    });
+  } catch (error) {
+    console.error('Update Profile Error:', error);
+    return res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดภายในระบบเซิร์ฟเวอร์' });
+  }
 });
 
 export default router;

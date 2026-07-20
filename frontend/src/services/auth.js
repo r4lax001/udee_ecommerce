@@ -33,9 +33,17 @@ export const resendOtp = async (email) => {
 };
 
 /**
- * Fetch current user profile
+ * Fetch current user profile (includes addresses)
  */
 export const getMe = async () => {
   const response = await api.get('/auth/me');
+  return response.data;
+};
+
+/**
+ * Update current user's profile (name, phone)
+ */
+export const updateProfile = async (data) => {
+  const response = await api.put('/auth/me/profile', data);
   return response.data;
 };

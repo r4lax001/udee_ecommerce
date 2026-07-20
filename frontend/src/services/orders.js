@@ -1,5 +1,16 @@
+import api from './api';
 import { checkoutPageData } from "../data/checkoutPageData";
 import { orderTrackingPageData } from "../data/orderTrackingPageData";
+
+/**
+ * ดึงออเดอร์ทั้งหมดของ user ที่ login อยู่ (จาก backend API)
+ */
+export const getMyOrders = async () => {
+  const response = await api.get('/orders/my');
+  return response.data;
+};
+
+
 
 const STORAGE_KEY = "udee_orders";
 
