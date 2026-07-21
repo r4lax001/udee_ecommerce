@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getCategories } from '../../services/categories'
+import { uploadImage } from '../../services/upload'
 
 export default function ProductModal({ isOpen, onClose, onSave, product = null }) {
   const [categories, setCategories] = useState([])
@@ -21,6 +22,8 @@ export default function ProductModal({ isOpen, onClose, onSave, product = null }
     colors: ''
   })
   const [loading, setLoading] = useState(false)
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const fileInputRef = useRef(null)
 
   useEffect(() => {
     if (isOpen) {
@@ -72,6 +75,36 @@ export default function ProductModal({ isOpen, onClose, onSave, product = null }
     }
   }, [categories, product])
 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploadingImage(true)
+    try {
+      const result = await uploadImage(file)
+      if (result?.url) {
+        setFormData(prev => ({
+          ...prev,
+          images: prev.images ? `${prev.images.trim()}\n${result.url}` : result.url
+        }))
+      }
+    } catch (err) {
+      console.error('Upload failed:', err)
+      alert(err.response?.data?.message || 'เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ')
+    } finally {
+      setUploadingImage(false)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
+  }
+
+  const handleRemoveImage = (indexToRemove) => {
+    const lines = formData.images.split('\n').map(l => l.trim()).filter(Boolean)
+    const updated = lines.filter((_, idx) => idx !== indexToRemove).join('\n')
+    setFormData(prev => ({ ...prev, [ 'images' ]: updated }))
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
@@ -122,6 +155,11 @@ export default function ProductModal({ isOpen, onClose, onSave, product = null }
   }
 
   if (!isOpen) return null
+
+  const imageList = formData.images
+    .split('\n')
+    .map(url => url.trim())
+    .filter(url => url.length > 0)
 
   return (
     <AnimatePresence>
@@ -218,14 +256,76 @@ export default function ProductModal({ isOpen, onClose, onSave, product = null }
               <input type="text" name="warranty" placeholder="เช่น รับประกัน 1 ปี..." value={formData.warranty} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20" />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-[#5a4e46] mb-1">ลิงก์รูปภาพ (บรรทัดละ 1 ลิงก์)</label>
-              <textarea name="images" rows="2" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg" value={formData.images} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-3 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20 font-mono"></textarea>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-medium text-[#5a4e46]">
+                  รูปภาพสินค้า (อัปโหลดไฟล์ หรือใส่ลิงก์บรรทัดละ 1 รูป)
+                </label>
+                <div>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileUpload}
+                    accept="image/*,.avif,.webp"
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploadingImage}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-[#A0724A] bg-[#F8F3EB] px-3 py-1.5 text-xs font-semibold text-[#3D2B1F] hover:bg-[#EFE5D8] transition disabled:opacity-50"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">add_photo_alternate</span>
+                    {uploadingImage ? 'กำลังอัปโหลด...' : 'เลือกไฟล์รูปภาพ (Upload)'}
+                  </button>
+                </div>
+              </div>
+
+              <textarea 
+                name="images" 
+                rows="3" 
+                placeholder="/images/details/table_id15.avif&#10;https://example.com/image.jpg" 
+                value={formData.images} 
+                onChange={handleChange} 
+                className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-3 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20 font-mono"
+              />
+
+              {/* Image Preview Grid */}
+              {imageList.length > 0 && (
+                <div className="mt-3">
+                  <p className="text-xs font-medium text-[#81756E] mb-2">ตัวอย่างรูปภาพ ({imageList.length} รูป):</p>
+                  <div className="grid grid-cols-4 gap-3">
+                    {imageList.map((url, idx) => (
+                      <div key={idx} className="relative group rounded-xl border border-[#E5E7EB] bg-[#FAF8F5] overflow-hidden p-1">
+                        <img 
+                          src={url} 
+                          alt={`Product Preview ${idx + 1}`} 
+                          className="h-20 w-full object-cover rounded-lg"
+                          onError={(e) => {
+                            e.target.src = 'https://via.placeholder.com/150?text=Invalid+Image'
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(idx)}
+                          className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-md hover:bg-red-600 transition"
+                          title="ลบรูปนี้"
+                        >
+                          <span className="material-symbols-outlined text-[14px]">close</span>
+                        </button>
+                        <span className="absolute bottom-2 left-2 rounded bg-black/60 px-1.5 py-0.5 text-[9px] font-semibold text-white">
+                          {idx === 0 ? 'รูปหลัก' : `รูปที่ ${idx + 1}`}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="mt-8 flex justify-end gap-3 pt-4 border-t border-[#E8E1DF]">
               <button type="button" onClick={onClose} className="rounded-xl px-6 py-2.5 text-sm font-semibold text-[#5a4e46] hover:bg-[#F8F3EB] transition">ยกเลิก</button>
-              <button type="submit" disabled={loading} className="rounded-xl bg-[#3D2B1F] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#2A1F14] transition disabled:opacity-50 flex items-center gap-2">
+              <button type="submit" disabled={loading || uploadingImage} className="rounded-xl bg-[#3D2B1F] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#2A1F14] transition disabled:opacity-50 flex items-center gap-2">
                 {loading && <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>}
                 บันทึกข้อมูล
               </button>

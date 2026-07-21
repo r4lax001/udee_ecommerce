@@ -35,6 +35,25 @@ const HomePage = ({
     fetchProducts()
   }, [])
 
+  const dynamicStats = useMemo(() => {
+    if (loadingProducts || products.length === 0) return stats
+
+    const totalProducts = products.length
+    const numericRatings = products
+      .map(p => parseFloat(p.rating))
+      .filter(r => !isNaN(r) && r > 0)
+
+    const avgRating = numericRatings.length > 0
+      ? (numericRatings.reduce((sum, r) => sum + r, 0) / numericRatings.length).toFixed(1)
+      : '5.0'
+
+    return [
+      { value: `${totalProducts}+`, label: 'รายการสินค้า' },
+      { value: `★ ${avgRating}/5`, label: 'รีวิวจากลูกค้า' },
+      { value: 'จัดส่ง', label: 'ทั่วไทย' },
+    ]
+  }, [stats, products, loadingProducts])
+
   const dynamicCategories = useMemo(() => {
     if (loadingProducts || products.length === 0) return categories.map(c => ({ ...c, href: `/products?category=${c.title}` }))
 
@@ -52,16 +71,22 @@ const HomePage = ({
     if (loadingProducts || products.length === 0) return recommendedProducts
 
     // Select some products to recommend (e.g., first 8)
-    return products.slice(0, 8).map(p => ({
-      id: p.id,
-      name: p.title || p.name,
-      price: formatPrice(p.price),
-      originalPrice: p.originalPrice ? formatPrice(p.originalPrice) : null,
-      image: p.image,
-      rating: p.rating || 4.8,
-      reviews: p.reviews || 24,
-      badge: p.badge || (p.soldOut ? 'สินค้าหมด' : null),
-    }))
+    return products.slice(0, 8).map(p => {
+      const hasReviews = Number(p.reviews) > 0
+      const ratingText = p.rating && p.rating !== '0' && p.rating !== 'ยังไม่มีรีวิว'
+        ? p.rating
+        : (hasReviews ? 4.8 : 'ยังไม่มีรีวิว')
+      return {
+        id: p.id,
+        name: p.title || p.name,
+        price: formatPrice(p.price),
+        originalPrice: p.originalPrice ? formatPrice(p.originalPrice) : null,
+        image: p.image,
+        rating: ratingText,
+        reviews: hasReviews ? Number(p.reviews) : 0,
+        badge: p.badge || (p.soldOut ? 'สินค้าหมด' : null),
+      }
+    })
   }, [recommendedProducts, products, loadingProducts])
 
   const handleImageLoad = (key) => {
@@ -124,7 +149,7 @@ const HomePage = ({
           </motion.div>
 
           <div className="flex flex-wrap gap-12 pt-8">
-            {stats.map((stat, index) => (
+            {dynamicStats.map((stat, index) => (
               <motion.div
                 key={stat.label}
                 initial={reduceMotion ? false : { opacity: 0, y: 10 }}
@@ -370,7 +395,9 @@ const HomePage = ({
                   >
                     <span className="text-yellow-500">★</span>
                     <span className="text-sm text-[#5a4e46]">{product.rating}</span>
-                    <span className="text-xs text-[#5a4e46]">({product.reviews})</span>
+                    {product.rating !== 'ยังไม่มีรีวิว' && Number(product.reviews) > 0 && (
+                      <span className="text-xs text-[#5a4e46]">({product.reviews})</span>
+                    )}
                   </motion.div>
                   <motion.div
                     className="flex items-center gap-2"
