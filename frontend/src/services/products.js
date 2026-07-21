@@ -1,8 +1,4 @@
 import api from './api'
-import { productCards } from '../data/productListPageData'
-import { productDetailPageData } from '../data/productDetailPageData'
-
-const USE_MOCK = false
 
 function mapDatabaseProductToFrontend(dbProduct) {
   if (!dbProduct) return null
@@ -88,28 +84,14 @@ function buildMockProductDetail(product) {
 }
 
 export async function getProducts() {
-  if (!USE_MOCK) {
-    const response = await api.get('/products')
-    return (response.data || []).map(mapDatabaseProductToFrontend)
-  }
-
-  return productCards
+  const response = await api.get('/products')
+  return (response.data || []).map(mapDatabaseProductToFrontend)
 }
 
 export async function getProductById(id) {
-  if (!USE_MOCK) {
-    const response = await api.get(`/products/${id}`)
-    const mapped = mapDatabaseProductToFrontend(response.data)
-    return buildMockProductDetail(mapped)
-  }
-
-  const numericId = Number(id)
-  const product = productCards.find((item) => item.id === numericId)
-  if (product) {
-    return buildMockProductDetail(product)
-  }
-
-  return productDetailPageData.id === numericId ? productDetailPageData : null
+  const response = await api.get(`/products/${id}`)
+  const mapped = mapDatabaseProductToFrontend(response.data)
+  return buildMockProductDetail(mapped)
 }
 
 export async function createProduct(productData) {

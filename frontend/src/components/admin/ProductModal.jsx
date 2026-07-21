@@ -12,7 +12,13 @@ export default function ProductModal({ isOpen, onClose, onSave, product = null }
     categoryId: '',
     badge: '',
     description: '',
-    images: ''
+    images: '',
+    specs: '',
+    highlights: '',
+    warranty: '',
+    size: '',
+    material: '',
+    colors: ''
   })
   const [loading, setLoading] = useState(false)
 
@@ -27,8 +33,14 @@ export default function ProductModal({ isOpen, onClose, onSave, product = null }
           stock: product.stock || '',
           categoryId: '',
           badge: product.badge || '',
-          description: product.description || '',
-          images: product.gallery?.join('\n') || product.image || ''
+          description: Array.isArray(product.description) ? product.description.join('\n') : (product.description || ''),
+          images: product.gallery?.join('\n') || product.image || '',
+          specs: product.generalProperties?.join('\n') || product.specs?.join('\n') || '',
+          highlights: product.highlights?.map(h => h.text).join('\n') || '',
+          warranty: product.warranty || '',
+          size: product.size || '',
+          material: product.material || '',
+          colors: product.colors?.join(', ') || ''
         })
       } else {
         setFormData({
@@ -39,7 +51,13 @@ export default function ProductModal({ isOpen, onClose, onSave, product = null }
           categoryId: '',
           badge: '',
           description: '',
-          images: ''
+          images: '',
+          specs: '',
+          highlights: '',
+          warranty: '',
+          size: '',
+          material: '',
+          colors: ''
         })
       }
     }
@@ -64,12 +82,27 @@ export default function ProductModal({ isOpen, onClose, onSave, product = null }
       .filter(url => url.length > 0)
       .map(url => ({ imageUrl: url }))
 
+    const specsArray = formData.specs.split('\n').map(s => s.trim()).filter(s => s.length > 0)
+    const highlightsArray = formData.highlights.split('\n').map(s => s.trim()).filter(s => s.length > 0).map(text => ({ icon: 'check_circle', text }))
+    const colorsArray = formData.colors.split(',').map(c => c.trim()).filter(c => c.length > 0)
+
     const payload = {
-      ...formData,
+      name: formData.name,
+      subtitle: formData.subtitle,
+      description: formData.description,
+      badge: formData.badge,
       price: Number(formData.price),
       stock: Number(formData.stock),
       categoryId: Number(formData.categoryId),
-      images: imageUrls
+      images: imageUrls,
+      details: {
+        generalProperties: specsArray,
+        highlights: highlightsArray,
+        warranty: formData.warranty,
+        size: formData.size,
+        material: formData.material,
+        colors: colorsArray
+      }
     }
 
     try {
@@ -148,16 +181,46 @@ export default function ProductModal({ isOpen, onClose, onSave, product = null }
                 <label className="block text-sm font-medium text-[#5a4e46] mb-1">ป้ายกำกับ (Badge)</label>
                 <input type="text" name="badge" placeholder="เช่น NEW, HOT" value={formData.badge} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20" />
               </div>
+
+              <div className="col-span-2 sm:col-span-1">
+                <label className="block text-sm font-medium text-[#5a4e46] mb-1">ขนาดสินค้า (Size)</label>
+                <input type="text" name="size" placeholder="เช่น 120 x 60 ซม." value={formData.size} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20" />
+              </div>
+              <div className="col-span-2 sm:col-span-1">
+                <label className="block text-sm font-medium text-[#5a4e46] mb-1">วัสดุ (Material)</label>
+                <input type="text" name="material" placeholder="เช่น ไม้โอ๊ค" value={formData.material} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20" />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#5a4e46] mb-1">สี (คั่นด้วยลูกน้ำ เช่น #F4EFE7, #000000)</label>
+              <input type="text" name="colors" placeholder="#FFFFFF, #000000" value={formData.colors} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20" />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-[#5a4e46] mb-1">รายละเอียดสินค้า</label>
               <textarea name="description" rows="3" value={formData.description} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-3 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20"></textarea>
             </div>
+            
+            <div className="grid grid-cols-2 gap-5">
+              <div className="col-span-2 sm:col-span-1">
+                <label className="block text-sm font-medium text-[#5a4e46] mb-1">Highlights (บรรทัดละ 1 ข้อ)</label>
+                <textarea name="highlights" rows="3" placeholder="โครงสร้างแข็งแรง&#10;ดีไซน์ทันสมัย" value={formData.highlights} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-3 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20"></textarea>
+              </div>
+              <div className="col-span-2 sm:col-span-1">
+                <label className="block text-sm font-medium text-[#5a4e46] mb-1">ข้อมูลเชิงเทคนิค (บรรทัดละ 1 ข้อ)</label>
+                <textarea name="specs" rows="3" placeholder="ทำจากไม้แท้&#10;ขนาด 120x60 ซม." value={formData.specs} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-3 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20"></textarea>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#5a4e46] mb-1">เงื่อนไขการรับประกัน</label>
+              <input type="text" name="warranty" placeholder="เช่น รับประกัน 1 ปี..." value={formData.warranty} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20" />
+            </div>
 
             <div>
               <label className="block text-sm font-medium text-[#5a4e46] mb-1">ลิงก์รูปภาพ (บรรทัดละ 1 ลิงก์)</label>
-              <textarea name="images" rows="3" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg" value={formData.images} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-3 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20 font-mono"></textarea>
+              <textarea name="images" rows="2" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg" value={formData.images} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-3 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20 font-mono"></textarea>
             </div>
 
             <div className="mt-8 flex justify-end gap-3 pt-4 border-t border-[#E8E1DF]">
