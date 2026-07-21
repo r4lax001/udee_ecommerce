@@ -2,7 +2,43 @@ import api from './api'
 import { productCards } from '../data/productListPageData'
 import { productDetailPageData } from '../data/productDetailPageData'
 
-const USE_MOCK = true
+const USE_MOCK = false
+
+function mapDatabaseProductToFrontend(dbProduct) {
+  if (!dbProduct) return null
+
+  const details = typeof dbProduct.details === 'string'
+    ? JSON.parse(dbProduct.details)
+    : (dbProduct.details || {})
+
+  const gallery = dbProduct.images ? dbProduct.images.map(img => img.imageUrl) : []
+  const image = gallery[0] || ''
+
+  return {
+    id: dbProduct.id,
+    title: dbProduct.name,
+    name: dbProduct.name,
+    subtitle: dbProduct.subtitle || '',
+    price: Number(dbProduct.price),
+    badge: dbProduct.badge || '',
+    image: image,
+    gallery: gallery,
+    category: dbProduct.category?.name || '',
+    size: details.size || '',
+    colors: details.colors || [],
+    material: details.material || '',
+    soldOut: dbProduct.stock === 0,
+    rating: dbProduct.rating || '0',
+    reviews: dbProduct.reviews || 0,
+    stock: dbProduct.stock,
+    variants: details.variants || [],
+    sold: dbProduct.sold || 0,
+    description: dbProduct.description || '',
+    highlights: details.highlights || [],
+    generalProperties: details.generalProperties || [],
+    warranty: details.warranty || ''
+  }
+}
 
 function buildMockProductDetail(product) {
   return {
@@ -54,7 +90,7 @@ function buildMockProductDetail(product) {
 export async function getProducts() {
   if (!USE_MOCK) {
     const response = await api.get('/products')
-    return response.data
+    return (response.data || []).map(mapDatabaseProductToFrontend)
   }
 
   return productCards
@@ -63,7 +99,7 @@ export async function getProducts() {
 export async function getProductById(id) {
   if (!USE_MOCK) {
     const response = await api.get(`/products/${id}`)
-    return response.data
+    return mapDatabaseProductToFrontend(response.data)
   }
 
   const numericId = Number(id)

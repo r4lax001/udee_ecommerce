@@ -1,0 +1,8 @@
+-- AlterTable
+ALTER TABLE `Product` ADD COLUMN `badge` VARCHAR(191) NULL,
+    ADD COLUMN `details` JSON NULL,
+    ADD COLUMN `rating` VARCHAR(191) NULL,
+    ADD COLUMN `reviews` INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN `sold` INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN `subtitle` VARCHAR(191) NULL,
+    MODIFY `description` TEXT NULL;
