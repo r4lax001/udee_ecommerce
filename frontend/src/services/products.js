@@ -99,7 +99,8 @@ export async function getProducts() {
 export async function getProductById(id) {
   if (!USE_MOCK) {
     const response = await api.get(`/products/${id}`)
-    return mapDatabaseProductToFrontend(response.data)
+    const mapped = mapDatabaseProductToFrontend(response.data)
+    return buildMockProductDetail(mapped)
   }
 
   const numericId = Number(id)
@@ -109,4 +110,19 @@ export async function getProductById(id) {
   }
 
   return productDetailPageData.id === numericId ? productDetailPageData : null
+}
+
+export async function createProduct(productData) {
+  const response = await api.post('/products', productData)
+  return response.data
+}
+
+export async function updateProduct(id, productData) {
+  const response = await api.put(`/products/${id}`, productData)
+  return response.data
+}
+
+export async function deleteProduct(id) {
+  const response = await api.delete(`/products/${id}`)
+  return response.data
 }
