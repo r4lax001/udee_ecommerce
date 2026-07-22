@@ -6,8 +6,32 @@ import { orderTrackingPageData } from "../data/orderTrackingPageData";
  * ดึงออเดอร์ทั้งหมดของ user ที่ login อยู่ จาก backend API
  */
 export const getMyOrders = async () => {
-  const response = await api.get("/orders/my");
-  return response.data;
+  try {
+    const response = await api.get("/orders/my");
+    const backendOrders = response.data?.orders || [];
+    
+    // Mix in local mock orders since CheckoutPage saves to local storage
+    const localOrders = getLocalOrders().map(o => {
+      let mappedStatus = 'PENDING';
+      if (o.status === 'delivered') mappedStatus = 'DELIVERED';
+      else if (o.status === 'shipped') mappedStatus = 'SHIPPED';
+      else if (o.status === 'packing') mappedStatus = 'PROCESSING';
+      else if (o.status === 'paid') mappedStatus = 'CONFIRMED';
+      else if (o.status === 'rejected') mappedStatus = 'CANCELLED';
+
+      return {
+        id: o.orderNumber,
+        orderNumber: o.orderNumber,
+        createdAt: new Date().toISOString(), // Fallback date
+        status: mappedStatus,
+        total: Number(String(o.totals?.total).replace(/[^\d.-]/g, "")) || 0
+      };
+    });
+
+    return { success: true, orders: [...backendOrders, ...localOrders] };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
 };
 
 const STORAGE_KEY = "udee_orders";

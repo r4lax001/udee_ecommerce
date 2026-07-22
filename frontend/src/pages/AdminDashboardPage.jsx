@@ -512,32 +512,39 @@ function DashboardView({ reduceMotion, transition, onNavigate }) {
             <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
           </button>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-2 sm:grid-cols-2">
           {TOP_PRODUCTS.map((p, i) => (
             <motion.div
               key={p.name}
-              className="rounded-xl border border-[#E5E7EB] overflow-hidden hover:shadow-md transition-all cursor-pointer group"
-              initial={reduceMotion ? false : { scale: 0.96, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
+              className="flex items-center gap-4 p-3 rounded-xl border border-transparent hover:border-[#E5E7EB] hover:bg-[#FAFAFA] transition-all cursor-pointer group"
+              initial={reduceMotion ? false : { x: 10, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
               transition={{ ...transition, delay: 0.58 + i * 0.06 }}
-              whileHover={{ scale: 1.02 }}
             >
-              <div className="relative h-28 overflow-hidden">
-                <img
-                  src={p.image}
-                  alt={p.name}
-                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-                <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm rounded-full px-2 py-0.5 text-[10px] font-semibold text-[#6B7280]">
-                  #{i + 1}
+              <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl bg-[#F3F4F6]">
+                {p.image ? (
+                  <img
+                    src={p.image}
+                    alt={p.name}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-[#9CA3AF]">
+                    <span className="material-symbols-outlined text-xl">image</span>
+                  </div>
+                )}
+                <div className="absolute top-1 left-1 flex h-4 w-4 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm text-[9px] font-bold text-[#111827] shadow-sm">
+                  {i + 1}
                 </div>
               </div>
-              <div className="p-3">
-                <h3 className="text-xs font-semibold text-[#111827] line-clamp-2 mb-2 leading-relaxed">{p.name}</h3>
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-[#9CA3AF]">{p.sales} sold</span>
-                  <span className="text-xs font-bold text-[#A0724A]">{p.revenue}</span>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-medium text-[#111827] truncate group-hover:text-[#A0724A] transition-colors">{p.name}</h3>
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="text-[11px] text-[#6B7280]">{p.sales} items sold</span>
                 </div>
+              </div>
+              <div className="text-right">
+                <span className="text-sm font-semibold text-[#3D2B1F]">{p.revenue}</span>
               </div>
             </motion.div>
           ))}
