@@ -45,7 +45,7 @@ router.get('/users', async (req, res) => {
 router.put('/users/:id/status', async (req, res) => {
   try {
     const userId = parseInt(req.params.id, 10);
-    const { isVerified, isSuspended } = req.body;
+    const { isVerified, isSuspended, role } = req.body;
 
     if (isNaN(userId)) {
       return res.status(400).json({ success: false, message: 'รหัสผู้ใช้งานไม่ถูกต้อง' });
@@ -67,6 +67,14 @@ router.put('/users/:id/status', async (req, res) => {
     const updateData = {};
     if (typeof isVerified === 'boolean') updateData.isVerified = isVerified;
     if (typeof isSuspended === 'boolean') updateData.isSuspended = isSuspended;
+    
+    if (role && ['CUSTOMER', 'MANAGER', 'ADMIN'].includes(role)) {
+      // Protection to prevent admin from demoting themselves
+      if (user.id === req.user.id && role !== 'ADMIN') {
+        return res.status(400).json({ success: false, message: 'คุณไม่สามารถเปลี่ยนสิทธิ์แอดมินของตนเองได้' });
+      }
+      updateData.role = role;
+    }
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },

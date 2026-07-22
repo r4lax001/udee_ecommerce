@@ -1,5 +1,6 @@
 import { PrismaClient } from '../generated/prisma/index.js'
 import { productCards } from './seedData.js'
+import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
@@ -88,6 +89,52 @@ async function main() {
           })
         }
       }
+    }
+  }
+
+  // ─── 4. Seed Users ──────────────────────────────────────────────────────────
+  console.log('Starting user seeding...')
+  const defaultPassword = await bcrypt.hash('Password123', 12)
+  const usersToCreate = [
+    {
+      name: 'System Admin',
+      email: 'admin@udee.co.th',
+      password: defaultPassword,
+      phone: '0899999999',
+      role: 'ADMIN',
+      isVerified: true
+    },
+    {
+      name: 'Store Manager',
+      email: 'manager@udee.co.th',
+      password: defaultPassword,
+      phone: '0888888888',
+      role: 'MANAGER',
+      isVerified: true
+    },
+    {
+      name: 'John Customer',
+      email: 'customer@udee.co.th',
+      password: defaultPassword,
+      phone: '0877777777',
+      role: 'CUSTOMER',
+      isVerified: true
+    }
+  ]
+
+  for (const userData of usersToCreate) {
+    const existingUser = await prisma.user.findUnique({
+      where: { email: userData.email }
+    })
+    if (!existingUser) {
+      const created = await prisma.user.create({ data: userData })
+      console.log(`Created User: ${created.email} with Role: ${created.role}`)
+    } else {
+      console.log(`User ${userData.email} already exists. Updating role...`)
+      await prisma.user.update({
+        where: { email: userData.email },
+        data: { role: userData.role }
+      })
     }
   }
 
