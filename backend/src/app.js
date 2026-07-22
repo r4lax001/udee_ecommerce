@@ -12,6 +12,7 @@ import productRouter from './routes/product.js'
 import orderRouter from './routes/order.js'
 import addressRouter from './routes/address.js'
 import reportRouter from './routes/report.js'
+import uploadRouter from './routes/upload.js'
 
 dotenv.config()
 
@@ -34,7 +35,7 @@ app.use(cors({
   credentials: true,
 }))
 
-app.use(express.json({ limit: '10kb' }))
+app.use(express.json({ limit: '10mb' }))
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -49,6 +50,7 @@ app.use('/api/products', productRouter)
 app.use('/api/orders', orderRouter)
 app.use('/api/addresses', addressRouter)
 app.use('/api/reports', reportRouter)
+app.use('/api/upload', uploadRouter)
 
 app.get('/', (req, res) => {
   res.json({ message: 'Udee API is running' })

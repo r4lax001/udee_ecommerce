@@ -12,7 +12,7 @@ const CategoriesPage = () => {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [sortBy, setSortBy] = useState('ยอดนิยม')
-  const [priceValue, setPriceValue] = useState(5000)
+  const [priceValue, setPriceValue] = useState(100000)
   const [selectedSizes, setSelectedSizes] = useState([])
   const [selectedColors, setSelectedColors] = useState([])
   const [selectedMaterials, setSelectedMaterials] = useState([])
@@ -21,6 +21,12 @@ const CategoriesPage = () => {
   )
   const [currentPage, setCurrentPage] = useState(1)
   const transition = { duration: reduceMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] }
+
+  const maxPrice = useMemo(() => {
+    if (!products.length) return 100000
+    const highest = Math.max(...products.map(p => Number(p.price) || 0))
+    return Math.max(100000, highest)
+  }, [products])
 
   // Reset page to 1 when filters change
   useEffect(() => {
@@ -55,6 +61,12 @@ const CategoriesPage = () => {
     }
   }, [])
 
+  const availableCategories = useMemo(() => {
+    const defaultCats = ['โต๊ะทำงาน', 'โต๊ะกินข้าว', 'โต๊ะตกแต่ง']
+    const fromProducts = products.map(p => p.category).filter(Boolean)
+    return Array.from(new Set([...defaultCats, ...fromProducts]))
+  }, [products])
+
   const toggleItem = (item, current, setCurrent) => {
     setCurrent((prev) =>
       prev.includes(item) ? prev.filter((value) => value !== item) : [...prev, item]
@@ -64,7 +76,7 @@ const CategoriesPage = () => {
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
       // 1. Filter out empty templates
-      if (!product.title || product.price <= 0) return false
+      if (!product.title || product.price < 0) return false
 
       // 2. Filter by category
       if (selectedCategories.length > 0) {
@@ -122,11 +134,16 @@ const CategoriesPage = () => {
       list.sort((a, b) => {
         const aNew = a.badge === 'NEW' ? 1 : 0
         const bNew = b.badge === 'NEW' ? 1 : 0
-        return bNew - aNew
+        if (bNew !== aNew) return bNew - aNew
+        return b.id - a.id
       })
     } else {
-      // Default: 'ยอดนิยม'
-      list.sort((a, b) => (b.sold || 0) - (a.sold || 0))
+      // Default: 'ยอดนิยม' - secondary sort by ID desc so new products show at top of same sold count
+      list.sort((a, b) => {
+        const soldDiff = (b.sold || 0) - (a.sold || 0)
+        if (soldDiff !== 0) return soldDiff
+        return b.id - a.id
+      })
     }
     return list
   }, [filteredProducts, sortBy])
@@ -196,7 +213,7 @@ const CategoriesPage = () => {
                     setSelectedColors([])
                     setSelectedMaterials([])
                     setSelectedCategories([])
-                    setPriceValue(5000)
+                    setPriceValue(maxPrice)
                   }}
                   className="text-sm font-medium text-[#A0724A] hover:text-[#3D2B1F] transition"
                 >
@@ -206,7 +223,7 @@ const CategoriesPage = () => {
 
               <div className="space-y-3 rounded-[1.5rem] border border-[#E8E1DF] bg-[#FAF6F1] p-4">
                 <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#A0724A]">ประเภทโต๊ะ</p>
-                {['โต๊ะทำงาน', 'โต๊ะกินข้าว', 'โต๊ะตกแต่ง',].map((item) => (
+                {availableCategories.map((item) => (
                   <label key={item} className="flex cursor-pointer items-center gap-3 rounded-2xl border border-transparent px-3 py-3 transition hover:border-[#A0724A]/30">
                     <input
                       type="checkbox"
@@ -227,7 +244,7 @@ const CategoriesPage = () => {
                 <input
                   type="range"
                   min="0"
-                  max="5000"
+                  max={maxPrice}
                   step="100"
                   value={priceValue}
                   onChange={(e) => setPriceValue(Number(e.target.value))}

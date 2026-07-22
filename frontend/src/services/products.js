@@ -1,8 +1,40 @@
 import api from './api'
-import { productCards } from '../data/productListPageData'
-import { productDetailPageData } from '../data/productDetailPageData'
 
-const USE_MOCK = true
+function mapDatabaseProductToFrontend(dbProduct) {
+  if (!dbProduct) return null
+
+  const details = typeof dbProduct.details === 'string'
+    ? JSON.parse(dbProduct.details)
+    : (dbProduct.details || {})
+
+  const gallery = dbProduct.images ? dbProduct.images.map(img => img.imageUrl) : []
+  const image = gallery[0] || ''
+
+  return {
+    id: dbProduct.id,
+    title: dbProduct.name,
+    name: dbProduct.name,
+    subtitle: dbProduct.subtitle || '',
+    price: Number(dbProduct.price),
+    badge: dbProduct.badge || '',
+    image: image,
+    gallery: gallery,
+    category: dbProduct.category?.name || '',
+    size: details.size || '',
+    colors: details.colors || [],
+    material: details.material || '',
+    soldOut: dbProduct.stock === 0,
+    rating: dbProduct.rating || '0',
+    reviews: dbProduct.reviews || 0,
+    stock: dbProduct.stock,
+    variants: details.variants || [],
+    sold: dbProduct.sold || 0,
+    description: dbProduct.description || '',
+    highlights: details.highlights || [],
+    generalProperties: details.generalProperties || [],
+    warranty: details.warranty || ''
+  }
+}
 
 function buildMockProductDetail(product) {
   return {
@@ -52,25 +84,27 @@ function buildMockProductDetail(product) {
 }
 
 export async function getProducts() {
-  if (!USE_MOCK) {
-    const response = await api.get('/products')
-    return response.data
-  }
-
-  return productCards
+  const response = await api.get('/products')
+  return (response.data || []).map(mapDatabaseProductToFrontend)
 }
 
 export async function getProductById(id) {
-  if (!USE_MOCK) {
-    const response = await api.get(`/products/${id}`)
-    return response.data
-  }
+  const response = await api.get(`/products/${id}`)
+  const mapped = mapDatabaseProductToFrontend(response.data)
+  return buildMockProductDetail(mapped)
+}
 
-  const numericId = Number(id)
-  const product = productCards.find((item) => item.id === numericId)
-  if (product) {
-    return buildMockProductDetail(product)
-  }
+export async function createProduct(productData) {
+  const response = await api.post('/products', productData)
+  return response.data
+}
 
-  return productDetailPageData.id === numericId ? productDetailPageData : null
+export async function updateProduct(id, productData) {
+  const response = await api.put(`/products/${id}`, productData)
+  return response.data
+}
+
+export async function deleteProduct(id) {
+  const response = await api.delete(`/products/${id}`)
+  return response.data
 }

@@ -42,12 +42,18 @@ model Category {
 model Product {
   id          Int            @id @default(autoincrement())
   name        String
-  description String?
+  description String?        @db.Text
   price       Decimal
   stock       Int
   categoryId  Int
   category    Category       @relation(fields: [categoryId], references: [id])
   images      ProductImage[]
+  subtitle    String?
+  badge       String?
+  details     Json?
+  sold        Int            @default(0)
+  rating      String?
+  reviews     Int            @default(0)
   cartItems   CartItem[]
   orderItems  OrderItem[]
 }

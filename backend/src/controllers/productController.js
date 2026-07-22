@@ -41,8 +41,19 @@ export async function getProductById(req, res) {
 // POST /api/products - เพิ่มสินค้า
 export async function createProduct(req, res) {
   try {
-    const { name, description, price, stock, categoryId, imageUrl } = req.body
+    const { name, description, price, stock, categoryId, imageUrl, images, subtitle, badge, details, sold, rating, reviews } = req.body
     
+    let imageCreateList = []
+    if (Array.isArray(images) && images.length > 0) {
+      imageCreateList = images.map(img => {
+        if (typeof img === 'string') return { imageUrl: img }
+        if (img && typeof img === 'object' && img.imageUrl) return { imageUrl: img.imageUrl }
+        return null
+      }).filter(Boolean)
+    } else if (typeof imageUrl === 'string' && imageUrl.trim()) {
+      imageCreateList = [{ imageUrl: imageUrl.trim() }]
+    }
+
     const product = await prisma.product.create({
       data: {
         name,
@@ -50,8 +61,14 @@ export async function createProduct(req, res) {
         price: parseFloat(price),
         stock: parseInt(stock),
         categoryId: parseInt(categoryId),
-        images: imageUrl ? {
-          create: { imageUrl }
+        subtitle: subtitle || undefined,
+        badge: badge || undefined,
+        details: details || undefined,
+        sold: sold ? parseInt(sold) : undefined,
+        rating: rating ? String(rating) : undefined,
+        reviews: reviews ? parseInt(reviews) : undefined,
+        images: imageCreateList.length > 0 ? {
+          create: imageCreateList
         } : undefined
       },
       include: {
@@ -69,16 +86,50 @@ export async function createProduct(req, res) {
 export async function updateProduct(req, res) {
   try {
     const { id } = req.params
-    const { name, description, price, stock, categoryId, imageUrl } = req.body
+    const productId = parseInt(id)
+    const { name, description, price, stock, categoryId, imageUrl, images, subtitle, badge, details, sold, rating, reviews } = req.body
     
+    if (images !== undefined || imageUrl !== undefined) {
+      let imageList = []
+      if (Array.isArray(images)) {
+        imageList = images.map(img => {
+          if (typeof img === 'string') return img.trim()
+          if (img && typeof img === 'object' && img.imageUrl) return img.imageUrl.trim()
+          return null
+        }).filter(Boolean)
+      } else if (typeof imageUrl === 'string' && imageUrl.trim()) {
+        imageList = [imageUrl.trim()]
+      }
+
+      // Re-create images in ProductImage table
+      await prisma.productImage.deleteMany({
+        where: { productId }
+      })
+
+      if (imageList.length > 0) {
+        await prisma.productImage.createMany({
+          data: imageList.map(url => ({
+            productId,
+            imageUrl: url
+          }))
+        })
+      }
+    }
+
     const product = await prisma.product.update({
-      where: { id: parseInt(id) },
+      where: { id: productId },
       data: {
         name: name || undefined,
         description: description !== undefined ? description : undefined,
-        price: price ? parseFloat(price) : undefined,
+        price: price !== undefined ? parseFloat(price) : undefined,
         stock: stock !== undefined ? parseInt(stock) : undefined,
-        categoryId: categoryId ? parseInt(categoryId) : undefined
+        categoryId: categoryId ? parseInt(categoryId) : undefined,
+        subtitle: subtitle !== undefined ? subtitle : undefined,
+        badge: badge !== undefined ? badge : undefined,
+        details: details !== undefined ? details : undefined,
+        sold: sold !== undefined ? parseInt(sold) : undefined,
+        rating: rating !== undefined ? String(rating) : undefined,
+        reviews: reviews !== undefined ? parseInt(reviews) : undefined
       },
       include: {
         category: true,
