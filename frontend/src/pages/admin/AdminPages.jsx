@@ -316,127 +316,135 @@ export function Customers() {
     }).length
 
   return (
-    <div className="space-y-4">
-      <div className="stats-row">
-        <div className="stat-card">
-          <div className="stat-num">{users.length}</div>
-          <div className="stat-lbl">สมาชิกทั้งหมด</div>
+    <div className="space-y-6">
+      <div className="grid gap-4 sm:grid-cols-3">
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="text-3xl font-bold text-gray-900">{users.length}</div>
+          <div className="mt-1 text-xs font-medium text-gray-500 uppercase tracking-wider">สมาชิกทั้งหมด</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-num" style={{ color: '#4A7C59' }}>{countFilter('verified')}</div>
-          <div className="stat-lbl">ยืนยันอีเมลแล้ว</div>
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="text-3xl font-bold text-emerald-600">{countFilter('verified')}</div>
+          <div className="mt-1 text-xs font-medium text-gray-500 uppercase tracking-wider">ยืนยันอีเมลแล้ว</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-num" style={{ color: '#B94040' }}>{countFilter('suspended')}</div>
-          <div className="stat-lbl">บัญชีที่ถูกระงับ</div>
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="text-3xl font-bold text-red-600">{countFilter('suspended')}</div>
+          <div className="mt-1 text-xs font-medium text-gray-500 uppercase tracking-wider">บัญชีที่ถูกระงับ</div>
         </div>
       </div>
 
-      <div className="card">
-        <div className="card-head">
-          <div className="card-title">การจัดการผู้ใช้งานในระบบ</div>
-          <button className="btn-save" onClick={fetchUsers}>รีเฟรชข้อมูล</button>
+      <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-5">
+          <div className="text-lg font-semibold text-gray-900">การจัดการผู้ใช้งานในระบบ</div>
+          <button className="flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 transition-colors shadow-sm" onClick={fetchUsers}>
+            <span className="material-symbols-outlined text-[18px]">refresh</span>
+            รีเฟรชข้อมูล
+          </button>
         </div>
-        <div className="search-bar">
-          <i className="ti ti-search" aria-hidden="true" />
+        <div className="flex items-center gap-3 border border-gray-200 bg-gray-50 rounded-xl px-4 py-2.5 mx-6 mt-6 mb-4 focus-within:border-gray-900 focus-within:ring-1 focus-within:ring-gray-900 transition-all">
+          <span className="material-symbols-outlined text-gray-400">search</span>
           <input
+            className="flex-1 bg-transparent border-none outline-none text-sm text-gray-900 placeholder-gray-400"
             placeholder="ค้นหาด้วยชื่อ, อีเมล หรือเบอร์โทรศัพท์..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="filter-bar">
-          <span className={`filter-chip ${activeFilter === 'all' ? 'active' : ''}`} onClick={() => setActiveFilter('all')}>ทั้งหมด ({users.length})</span>
-          <span className={`filter-chip ${activeFilter === 'verified' ? 'active' : ''}`} onClick={() => setActiveFilter('verified')}>ยืนยันอีเมลแล้ว ({countFilter('verified')})</span>
-          <span className={`filter-chip ${activeFilter === 'unverified' ? 'active' : ''}`} onClick={() => setActiveFilter('unverified')}>ยังไม่ยืนยันอีเมล ({countFilter('unverified')})</span>
-          <span className={`filter-chip ${activeFilter === 'suspended' ? 'active' : ''}`} onClick={() => setActiveFilter('suspended')}>บัญชีที่ถูกระงับ ({countFilter('suspended')})</span>
+        <div className="flex items-center gap-2 px-6 mb-6 overflow-x-auto pb-2">
+          <button className={`rounded-full px-4 py-1.5 text-xs font-medium transition-all ${activeFilter === 'all' ? 'bg-gray-900 text-white shadow-sm border border-transparent' : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'}`} onClick={() => setActiveFilter('all')}>ทั้งหมด ({users.length})</button>
+          <button className={`rounded-full px-4 py-1.5 text-xs font-medium transition-all ${activeFilter === 'verified' ? 'bg-gray-900 text-white shadow-sm border border-transparent' : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'}`} onClick={() => setActiveFilter('verified')}>ยืนยันอีเมลแล้ว ({countFilter('verified')})</button>
+          <button className={`rounded-full px-4 py-1.5 text-xs font-medium transition-all ${activeFilter === 'unverified' ? 'bg-gray-900 text-white shadow-sm border border-transparent' : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'}`} onClick={() => setActiveFilter('unverified')}>ยังไม่ยืนยันอีเมล ({countFilter('unverified')})</button>
+          <button className={`rounded-full px-4 py-1.5 text-xs font-medium transition-all ${activeFilter === 'suspended' ? 'bg-gray-900 text-white shadow-sm border border-transparent' : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'}`} onClick={() => setActiveFilter('suspended')}>บัญชีที่ถูกระงับ ({countFilter('suspended')})</button>
         </div>
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: 40, color: 'var(--tm)' }}>กำลังโหลดข้อมูลสมาชิก...</div>
+          <div className="flex items-center justify-center py-20 text-gray-500">
+            <span className="material-symbols-outlined animate-spin text-2xl mr-2">progress_activity</span>
+            กำลังโหลดข้อมูลสมาชิก...
+          </div>
         ) : error ? (
-          <div style={{ textAlign: 'center', padding: 40, color: '#B94040' }}>{error}</div>
+          <div className="text-center py-20 text-red-600">{error}</div>
         ) : filteredUsers.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: 40, color: 'var(--tm)' }}>ไม่พบข้อมูลผู้ใช้งานที่ตรงตามเงื่อนไข</div>
+          <div className="text-center py-20 text-gray-500">ไม่พบข้อมูลผู้ใช้งานที่ตรงตามเงื่อนไข</div>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th style={{ padding: 10 }}>ลูกค้า</th>
-                <th style={{ padding: 10 }}>อีเมล</th>
-                <th style={{ padding: 10 }}>สิทธิ์</th>
-                <th style={{ padding: 10, textAlign: 'center' }}>ยืนยันเมล</th>
-                <th style={{ padding: 10, textAlign: 'center' }}>สถานะบัญชี</th>
-                <th style={{ padding: 10, textAlign: 'center' }}>การจัดการ</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredUsers.map((c) => (
-                <tr key={c.id}>
-                  <td style={{ padding: 10 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <div className="avatar" style={{ background: '#F2EBE2', color: '#3D2B1F' }}>
-                        {c.name ? c.name.charAt(0).toUpperCase() : 'U'}
-                      </div>
-                      <div>
-                        <div style={{ fontWeight: 500, fontSize: 13 }}>{c.name}</div>
-                        <div style={{ fontSize: 11, color: 'var(--tm)' }}>{c.phone || '-'}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td style={{ padding: 10, color: 'var(--tm)', fontSize: 12 }}>{c.email}</td>
-                  <td style={{ padding: 10 }}>
-                    <select
-                      value={c.role}
-                      onChange={(e) => handleRoleChange(c.id, e.target.value)}
-                      style={{
-                        padding: '4px 8px',
-                        borderRadius: '20px',
-                        fontSize: '11px',
-                        fontWeight: '500',
-                        border: '1px solid ' + (c.role === 'ADMIN' ? '#F5C6C6' : c.role === 'MANAGER' ? '#F3D9B8' : '#B6D4F0'),
-                        background: c.role === 'ADMIN' ? '#FCEBEB' : c.role === 'MANAGER' ? '#FEF4EA' : '#E6F1FB',
-                        color: c.role === 'ADMIN' ? '#B94040' : c.role === 'MANAGER' ? '#C17B2A' : '#185FA5',
-                        outline: 'none',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <option value="CUSTOMER">CUSTOMER</option>
-                      <option value="MANAGER">MANAGER</option>
-                      <option value="ADMIN">ADMIN</option>
-                    </select>
-                  </td>
-                  <td style={{ padding: 10, textAlign: 'center' }}>
-                    <span className={`badge ${c.isVerified ? 'done' : 'pending'}`}>{c.isVerified ? 'Verified' : 'Unverified'}</span>
-                  </td>
-                  <td style={{ padding: 10, textAlign: 'center' }}>
-                    <span className={`badge ${c.isSuspended ? 'cancel' : 'done'}`}>{c.isSuspended ? 'Suspended' : 'Active'}</span>
-                  </td>
-                  <td style={{ padding: 10, textAlign: 'center' }}>
-                    <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
-                      <button
-                        onClick={() => handleToggleVerify(c.id, c.isVerified)}
-                        style={{ padding: '4px 8px', fontSize: '11px', borderRadius: '6px', border: '1px solid var(--bd)', background: 'white', cursor: 'pointer', color: 'var(--tx)' }}
-                      >
-                        {c.isVerified ? 'ยกเลิกยืนยัน' : 'ยืนยัน'}
-                      </button>
-                      <button
-                        onClick={() => handleToggleSuspend(c.id, c.isSuspended)}
-                        style={{ padding: '4px 8px', fontSize: '11px', borderRadius: '6px', border: `1px solid ${c.isSuspended ? '#4A7C59' : '#B94040'}`, background: 'white', color: c.isSuspended ? '#4A7C59' : '#B94040', cursor: 'pointer' }}
-                      >
-                        {c.isSuspended ? 'ปลดแบน' : 'ระงับการใช้งาน'}
-                      </button>
-                    </div>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-gray-50/50 border-y border-gray-200">
+                <tr>
+                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">ลูกค้า</th>
+                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">อีเมล</th>
+                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">สิทธิ์</th>
+                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">ยืนยันเมล</th>
+                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">สถานะบัญชี</th>
+                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">การจัดการ</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {filteredUsers.map((c) => (
+                  <tr key={c.id} className="hover:bg-gray-50/50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 font-semibold text-gray-700">
+                          {c.name ? c.name.charAt(0).toUpperCase() : 'U'}
+                        </div>
+                        <div>
+                          <div className="font-semibold text-gray-900">{c.name}</div>
+                          <div className="text-xs text-gray-500">{c.phone || '-'}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-500">{c.email}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <select
+                        value={c.role}
+                        onChange={(e) => handleRoleChange(c.id, e.target.value)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium border focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors cursor-pointer ${
+                          c.role === 'ADMIN' ? 'bg-red-50 text-red-700 border-red-200 focus:ring-red-500' :
+                          c.role === 'MANAGER' ? 'bg-amber-50 text-amber-700 border-amber-200 focus:ring-amber-500' :
+                          'bg-blue-50 text-blue-700 border-blue-200 focus:ring-blue-500'
+                        }`}
+                      >
+                        <option value="CUSTOMER">CUSTOMER</option>
+                        <option value="MANAGER">MANAGER</option>
+                        <option value="ADMIN">ADMIN</option>
+                      </select>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${c.isVerified ? 'bg-emerald-50 text-emerald-700 ring-emerald-600/20' : 'bg-amber-50 text-amber-700 ring-amber-600/20'}`}>
+                        {c.isVerified ? 'Verified' : 'Unverified'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${c.isSuspended ? 'bg-red-50 text-red-700 ring-red-600/20' : 'bg-gray-50 text-gray-600 ring-gray-500/10'}`}>
+                        {c.isSuspended ? 'Suspended' : 'Active'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <div className="flex gap-2 justify-center">
+                        <button
+                          onClick={() => handleToggleVerify(c.id, c.isVerified)}
+                          className="rounded-md border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:ring-2 focus:ring-gray-900 transition-colors shadow-sm"
+                        >
+                          {c.isVerified ? 'ยกเลิกยืนยัน' : 'ยืนยัน'}
+                        </button>
+                        <button
+                          onClick={() => handleToggleSuspend(c.id, c.isSuspended)}
+                          className={`rounded-md border bg-white px-2.5 py-1 text-xs font-medium focus:z-10 focus:ring-2 transition-colors shadow-sm ${c.isSuspended ? 'border-emerald-200 text-emerald-700 hover:bg-emerald-50 focus:ring-emerald-500' : 'border-red-200 text-red-700 hover:bg-red-50 focus:ring-red-500'}`}
+                        >
+                          {c.isSuspended ? 'ปลดแบน' : 'ระงับบัญชี'}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>
   )
 }
+
 
 // ─── Analytics ───────────────────────────────────────────────────────────────
 export function Analytics() {
@@ -459,8 +467,13 @@ export function Analytics() {
     fetchAnalytics()
   }, [])
 
-  if (loading) return <LoadingCard text="กำลังโหลดข้อมูล Analytics..." />
-  if (error) return <ErrorCard text={error} />
+  if (loading) return (
+    <div className="flex items-center justify-center py-20 text-gray-500">
+      <span className="material-symbols-outlined animate-spin text-2xl mr-2">progress_activity</span>
+      กำลังโหลดข้อมูล Analytics...
+    </div>
+  )
+  if (error) return <div className="text-center py-20 text-red-600">{error}</div>
 
   const sales = data?.sales || {}
   const ordersReport = data?.orders || {}
@@ -474,11 +487,11 @@ export function Analytics() {
   const statusBreakdown = ordersReport.statusBreakdown || []
   const totalOrdersAll = statusBreakdown.reduce((sum, s) => sum + (s._count || 0), 0) || 1
   const statusColors = {
-    DELIVERED: '#4A7C59',
-    CONFIRMED: '#2C6FAC',
-    SHIPPED: '#A0724A',
-    PENDING: '#C17B2A',
-    CANCELLED: '#B94040',
+    DELIVERED: '#10B981', // emerald-500
+    CONFIRMED: '#3B82F6', // blue-500
+    SHIPPED: '#F59E0B', // amber-500
+    PENDING: '#6B7280', // gray-500
+    CANCELLED: '#EF4444', // red-500
   }
   const statusLabels = {
     DELIVERED: 'สำเร็จ',
@@ -497,7 +510,7 @@ export function Analytics() {
   })
   const categoryEntries = Object.entries(categoryMap).sort((a, b) => b[1] - a[1]).slice(0, 5)
   const maxCatVal = Math.max(...categoryEntries.map((c) => c[1]), 1)
-  const catColors = ['#A0724A', '#4A7C59', '#2C6FAC', '#C17B2A', '#B94040']
+  const catColors = ['#111827', '#4B5563', '#6B7280', '#9CA3AF', '#D1D5DB']
 
   // Donut chart segments
   let donutOffset = 0
@@ -507,87 +520,102 @@ export function Analytics() {
     const dashArray = `${(pct * circumference).toFixed(1)} ${((1 - pct) * circumference).toFixed(1)}`
     const dashOffset = -(donutOffset * circumference)
     donutOffset += pct
-    return { ...s, dashArray, dashOffset, pct, color: statusColors[s.status] || '#DDD0C4' }
+    return { ...s, dashArray, dashOffset, pct, color: statusColors[s.status] || '#E5E7EB' }
   })
 
   return (
-    <>
-      <div className="kpi-grid" style={{ marginBottom: 16 }}>
-        <div className="kpi-card revenue">
-          <div className="kpi-label">รายได้รวมปีนี้</div>
-          <div className="kpi-value">
+    <div className="space-y-6">
+      <div className="grid gap-4 sm:grid-cols-3">
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">รายได้รวมปีนี้</div>
+          <div className="text-3xl font-bold text-gray-900">
             {totalRevenue.toLocaleString('th-TH', { style: 'currency', currency: 'THB', maximumFractionDigits: 0 })}
           </div>
-          <span className="kpi-badge up">ข้อมูลจริงจาก DB</span>
+          <div className="mt-3">
+            <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+              ข้อมูลจริงจาก DB
+            </span>
+          </div>
         </div>
-        <div className="kpi-card orders">
-          <div className="kpi-label">ออเดอร์ทั้งหมด (ปีนี้)</div>
-          <div className="kpi-value">{totalOrders.toLocaleString()}</div>
-          <span className="kpi-badge up">ข้อมูลจริงจาก DB</span>
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">ออเดอร์ทั้งหมด (ปีนี้)</div>
+          <div className="text-3xl font-bold text-gray-900">{totalOrders.toLocaleString()}</div>
+          <div className="mt-3">
+            <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+              ข้อมูลจริงจาก DB
+            </span>
+          </div>
         </div>
-        <div className="kpi-card customers">
-          <div className="kpi-label">มูลค่าเฉลี่ยต่อออเดอร์</div>
-          <div className="kpi-value">
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">มูลค่าเฉลี่ยต่อออเดอร์</div>
+          <div className="text-3xl font-bold text-gray-900">
             {avgOrderValue.toLocaleString('th-TH', { style: 'currency', currency: 'THB', maximumFractionDigits: 0 })}
           </div>
-          <span className="kpi-badge up">ข้อมูลจริงจาก DB</span>
+          <div className="mt-3">
+            <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+              ข้อมูลจริงจาก DB
+            </span>
+          </div>
         </div>
       </div>
 
-      <div className="ana-grid">
+      <div className="grid gap-6 lg:grid-cols-2">
         {/* Category breakdown */}
-        <div className="card">
-          <div className="card-title" style={{ marginBottom: 16 }}>ยอดขายตามประเภทสินค้า</div>
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="text-lg font-semibold text-gray-900 mb-6">ยอดขายตามประเภทสินค้า</div>
           {categoryEntries.length === 0 ? (
-            <div style={{ color: 'var(--tm)', fontSize: 13 }}>ยังไม่มีข้อมูลยอดขาย</div>
+            <div className="text-sm text-gray-500">ยังไม่มีข้อมูลยอดขาย</div>
           ) : (
-            categoryEntries.map(([cat, sold], i) => {
-              const pct = Math.round((sold / maxCatVal) * 100)
-              return (
-                <div key={cat} className="progress-row">
-                  <div className="progress-lbl">{cat}</div>
-                  <div className="progress-bar">
-                    <div className="progress-fill" style={{ width: `${pct}%`, background: catColors[i] }} />
+            <div className="space-y-4">
+              {categoryEntries.map(([cat, sold], i) => {
+                const pct = Math.round((sold / maxCatVal) * 100)
+                return (
+                  <div key={cat} className="flex items-center gap-3">
+                    <div className="text-sm text-gray-600 w-24 truncate">{cat}</div>
+                    <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, background: catColors[i] }} />
+                    </div>
+                    <div className="text-sm font-medium text-gray-900 min-w-[40px] text-right">{sold} ชิ้น</div>
                   </div>
-                  <div className="progress-val">{sold} ชิ้น</div>
-                </div>
-              )
-            })
+                )
+              })}
+            </div>
           )}
         </div>
 
         {/* Order status donut */}
-        <div className="card">
-          <div className="card-title" style={{ marginBottom: 16 }}>สถานะออเดอร์</div>
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="text-lg font-semibold text-gray-900 mb-6">สถานะออเดอร์</div>
           {statusBreakdown.length === 0 ? (
-            <div style={{ color: 'var(--tm)', fontSize: 13 }}>ยังไม่มีข้อมูลออเดอร์</div>
+            <div className="text-sm text-gray-500">ยังไม่มีข้อมูลออเดอร์</div>
           ) : (
-            <div className="donut-wrap">
-              <svg width="110" height="110" viewBox="0 0 110 110">
-                <circle cx="55" cy="55" r="40" fill="none" stroke="#F2EBE2" strokeWidth="18" />
+            <div className="flex items-center gap-8">
+              <svg width="120" height="120" viewBox="0 0 110 110" className="drop-shadow-sm">
+                <circle cx="55" cy="55" r="40" fill="none" stroke="#F3F4F6" strokeWidth="16" />
                 {donutSegments.map((seg, i) => (
                   <circle
                     key={i}
                     cx="55" cy="55" r="40"
                     fill="none"
                     stroke={seg.color}
-                    strokeWidth="18"
+                    strokeWidth="16"
                     strokeDasharray={seg.dashArray}
                     strokeDashoffset={seg.dashOffset}
                     transform="rotate(-90 55 55)"
+                    className="transition-all duration-1000"
                   />
                 ))}
-                <text x="55" y="51" textAnchor="middle" fontSize="16" fontWeight="600" fill="#2A1F14">
+                <text x="55" y="51" textAnchor="middle" fontSize="16" fontWeight="700" fill="#111827">
                   {ordersReport.totalOrders || 0}
                 </text>
-                <text x="55" y="64" textAnchor="middle" fontSize="10" fill="#7A6355">ออเดอร์</text>
+                <text x="55" y="65" textAnchor="middle" fontSize="11" fontWeight="500" fill="#6B7280">ออเดอร์</text>
               </svg>
-              <div style={{ flex: 1 }}>
+              <div className="flex-1 space-y-3">
                 {statusBreakdown.map((s) => (
-                  <div key={s.status} className="legend-item">
-                    <div className="legend-dot" style={{ background: statusColors[s.status] || '#DDD0C4' }} />
-                    <div className="legend-lbl">{statusLabels[s.status] || s.status}</div>
-                    <div className="legend-val">{Math.round(((s._count || 0) / totalOrdersAll) * 100)}%</div>
+                  <div key={s.status} className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: statusColors[s.status] || '#E5E7EB' }} />
+                    <div className="text-sm text-gray-600">{statusLabels[s.status] || s.status}</div>
+                    <div className="text-sm font-semibold text-gray-900 ml-auto">{Math.round(((s._count || 0) / totalOrdersAll) * 100)}%</div>
                   </div>
                 ))}
               </div>
@@ -597,48 +625,54 @@ export function Analytics() {
       </div>
 
       {/* Top Products Table */}
-      <div className="card">
-        <div className="card-head">
-          <div className="card-title">สินค้าขายดีสูงสุด (Top 10)</div>
+      <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+        <div className="border-b border-gray-200 px-6 py-5">
+          <div className="text-lg font-semibold text-gray-900">สินค้าขายดีสูงสุด (Top 10)</div>
         </div>
         {topProducts.length === 0 ? (
-          <div style={{ color: 'var(--tm)', padding: 16 }}>ยังไม่มีข้อมูลยอดขาย</div>
+          <div className="text-gray-500 p-6 text-center">ยังไม่มีข้อมูลยอดขาย</div>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>สินค้า</th>
-                <th>หมวดหมู่</th>
-                <th>ราคา</th>
-                <th>ยอดขาย (ชิ้น)</th>
-                <th>รายได้รวม</th>
-                <th>Stock คงเหลือ</th>
-              </tr>
-            </thead>
-            <tbody>
-              {topProducts.map((p, i) => (
-                <tr key={p.id}>
-                  <td style={{ color: 'var(--tm)', fontWeight: 600 }}>{i + 1}</td>
-                  <td style={{ fontWeight: 500 }}>{p.name}</td>
-                  <td><span className="tag reg">{p.category}</span></td>
-                  <td>{Number(p.price).toLocaleString('th-TH', { style: 'currency', currency: 'THB' })}</td>
-                  <td style={{ textAlign: 'center', fontWeight: 600, color: '#A0724A' }}>{p.totalSold}</td>
-                  <td style={{ fontWeight: 500 }}>
-                    {Number(p.revenue).toLocaleString('th-TH', { style: 'currency', currency: 'THB', maximumFractionDigits: 0 })}
-                  </td>
-                  <td style={{ textAlign: 'center' }}>
-                    <span className={`badge ${p.stock === 0 ? 'cancel' : p.stock <= 5 ? 'pending' : 'done'}`}>
-                      {p.stock}
-                    </span>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-gray-50/50 border-b border-gray-200">
+                <tr>
+                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">สินค้า</th>
+                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">หมวดหมู่</th>
+                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">ราคา</th>
+                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">ยอดขาย (ชิ้น)</th>
+                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">รายได้รวม</th>
+                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Stock คงเหลือ</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {topProducts.map((p, i) => (
+                  <tr key={p.id} className="hover:bg-gray-50/50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-500 font-semibold">{i + 1}</td>
+                    <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{p.name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                        {p.category}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right">{Number(p.price).toLocaleString('th-TH', { style: 'currency', currency: 'THB' })}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center font-bold text-gray-900">{p.totalSold}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right font-medium text-gray-900">
+                      {Number(p.revenue).toLocaleString('th-TH', { style: 'currency', currency: 'THB', maximumFractionDigits: 0 })}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${p.stock === 0 ? 'bg-red-50 text-red-700 ring-red-600/20' : p.stock <= 5 ? 'bg-amber-50 text-amber-700 ring-amber-600/20' : 'bg-emerald-50 text-emerald-700 ring-emerald-600/20'}`}>
+                        {p.stock}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
-    </>
+    </div>
   )
 }
 

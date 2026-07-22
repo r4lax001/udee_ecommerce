@@ -101,7 +101,7 @@ const RegisterPage = () => {
     try {
       const data = await authService.register(formData)
       if (data.success && data.user) {
-        login(data.user)
+        login(data.token, data.user)
         showToast('สร้างบัญชีสำเร็จ!')
         setTimeout(() => navigate('/'), 1500)
       } else {

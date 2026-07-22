@@ -67,11 +67,11 @@ const LoginPage = () => {
     setLoading(true)
     try {
       const data = await authService.login(formData)
-      if (data.requiresVerification) {
+      if (data.needsVerification || data.requiresVerification) {
         setNeedsVerification(true)
         showToast('กรุณาตรวจสอบอีเมลของคุณเพื่อรับรหัสยืนยัน')
       } else if (data.success && data.user) {
-        login(data.user)
+        login(data.token, data.user)
         showToast('ยินดีต้อนรับกลับมา!')
         setTimeout(() => navigate('/profile'), 1500)
       } else {
@@ -116,9 +116,9 @@ const LoginPage = () => {
     setError('')
     setVerifying(true)
     try {
-      const data = await authService.verifyEmail(formData.email, code)
+      const data = await authService.verifyOtp(formData.email, code)
       if (data.success && data.user) {
-        login(data.user)
+        login(data.token, data.user)
         showToast('ยืนยันอีเมลสำเร็จ!')
         setTimeout(() => navigate('/profile'), 1500)
       } else {
@@ -135,7 +135,7 @@ const LoginPage = () => {
     setResending(true)
     setError('')
     try {
-      const data = await authService.resendVerification(formData.email)
+      const data = await authService.resendOtp(formData.email)
       if (data.success) {
         showToast('ส่งรหัสใหม่ไปยังอีเมลของคุณแล้ว')
         setOtp(['', '', '', '', '', ''])

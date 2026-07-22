@@ -3,16 +3,16 @@ import api from './api';
 /**
  * Register a new customer
  */
-export const register = async (name, email, password, phone, address) => {
-  const response = await api.post('/auth/register', { name, email, password, phone, address });
+export const register = async (data) => {
+  const response = await api.post('/auth/register', data);
   return response.data;
 };
 
 /**
  * Authenticate customer or admin
  */
-export const login = async (email, password) => {
-  const response = await api.post('/auth/login', { email, password });
+export const login = async (data) => {
+  const response = await api.post('/auth/login', data);
   return response.data;
 };
 
