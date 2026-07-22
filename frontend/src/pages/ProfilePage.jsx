@@ -14,7 +14,7 @@ const isValidPostalCode = (code) => /^\d{5}$/.test(code.trim())
 const formatDate = (dateStr) => {
   if (!dateStr) return '-'
   const date = new Date(dateStr)
-  return date.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })
+  return date.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' })
 }
 
 const formatAddress = (addr) => {
@@ -39,17 +39,17 @@ const Toast = ({ message, type = 'success', onClose }) => (
     animate={{ opacity: 1, y: 0, scale: 1 }}
     exit={{ opacity: 0, y: -20, scale: 0.9 }}
     transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-    className={`fixed top-6 right-6 z-[100] flex items-center gap-3 rounded-2xl px-6 py-4 shadow-2xl text-sm font-medium max-w-sm backdrop-blur-xl ${
+    className={`fixed top-6 right-6 z-[100] flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg text-sm font-medium max-w-sm border ${
       type === 'success'
-        ? 'bg-gradient-to-r from-[#3D2B1F] to-[#5D4B3F] text-white border border-[#FFC698]/30'
-        : 'bg-gradient-to-r from-[#FFDBD6] to-[#FFE5E0] text-[#7F1A18] border border-[#BA1A1A]/30'
+        ? 'bg-white text-[#111111] border-[#EAEAEA]'
+        : 'bg-[#FEF2F2] text-[#991B1B] border-[#FCA5A5]'
     }`}
   >
-    <span className="material-symbols-outlined text-lg">
+    <span className="material-symbols-outlined text-lg" style={{ color: type === 'success' ? '#10B981' : '#EF4444' }}>
       {type === 'success' ? 'check_circle' : 'error'}
     </span>
     <span className="flex-1">{message}</span>
-    <button onClick={onClose} className="ml-2 opacity-70 hover:opacity-100 transition-opacity">
+    <button onClick={onClose} className="ml-2 text-[#888888] hover:text-[#111111] transition-colors focus-visible:outline-none">
       <span className="material-symbols-outlined text-base">close</span>
     </button>
   </motion.div>
@@ -90,25 +90,25 @@ const EditProfileModal = ({ user, onClose, onSave }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm px-4"
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
       <motion.div
-        initial={{ scale: 0.92, opacity: 0, y: 20 }}
+        initial={{ scale: 0.96, opacity: 0, y: 10 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.92, opacity: 0, y: 20 }}
-        transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-        className="bg-white rounded-[2rem] shadow-2xl p-8 w-full max-w-md"
+        exit={{ scale: 0.96, opacity: 0, y: 10 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+        className="bg-white rounded-2xl shadow-xl border border-[#EAEAEA] p-6 w-full max-w-md"
       >
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-[#3D2B1F]">แก้ไขข้อมูลส่วนตัว</h3>
-          <button onClick={onClose} className="text-[#81756E] hover:text-[#3D2B1F] transition-colors">
-            <span className="material-symbols-outlined">close</span>
+          <h3 className="text-lg font-semibold text-[#111111]">แก้ไขข้อมูลส่วนตัว</h3>
+          <button onClick={onClose} className="text-[#888888] hover:text-[#111111] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] rounded">
+            <span className="material-symbols-outlined text-[20px]">close</span>
           </button>
         </div>
 
         {error && (
-          <div className="mb-4 flex items-center gap-2 rounded-xl bg-[#FFDBD6] px-4 py-3 text-sm text-[#7F1A18]">
+          <div className="mb-4 flex items-center gap-2 rounded-lg bg-[#FEF2F2] border border-[#FCA5A5] px-4 py-3 text-sm text-[#991B1B]">
             <span className="material-symbols-outlined text-base">error</span>
             <span>{error}</span>
           </div>
@@ -116,48 +116,41 @@ const EditProfileModal = ({ user, onClose, onSave }) => {
 
         <div className="space-y-4">
           <div>
-            <label className="mb-1.5 block text-sm font-semibold text-[#4F453F]">ชื่อ-นามสกุล</label>
+            <label className="mb-1.5 block text-xs font-semibold text-[#666666] uppercase tracking-wide">ชื่อ-นามสกุล</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="ชื่อ-นามสกุล"
-              className="w-full rounded-xl border-2 border-[#D2C4BC] bg-white px-4 py-3 text-[#1D1B1A] outline-none transition-all focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20"
+              className="w-full rounded-lg border border-[#EAEAEA] bg-white px-3 py-2 text-sm text-[#111111] outline-none transition-all focus:border-[#111111] focus:ring-1 focus:ring-[#111111]"
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-sm font-semibold text-[#4F453F]">เบอร์โทรศัพท์</label>
+            <label className="mb-1.5 block text-xs font-semibold text-[#666666] uppercase tracking-wide">เบอร์โทรศัพท์</label>
             <input
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="08x-xxx-xxxx"
-              className="w-full rounded-xl border-2 border-[#D2C4BC] bg-white px-4 py-3 text-[#1D1B1A] outline-none transition-all focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20"
+              className="w-full rounded-lg border border-[#EAEAEA] bg-white px-3 py-2 text-sm text-[#111111] outline-none transition-all focus:border-[#111111] focus:ring-1 focus:ring-[#111111]"
             />
           </div>
         </div>
 
-        <div className="mt-6 flex gap-3">
+        <div className="mt-6 flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="flex-1 rounded-xl border-2 border-[#D2C4BC] py-3 text-sm font-semibold text-[#4F453F] hover:bg-[#F8F3EB] transition"
+            className="rounded-lg px-4 py-2 text-sm font-semibold text-[#666666] hover:bg-[#F9F9F9] hover:text-[#111111] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]"
           >
             ยกเลิก
           </button>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+          <button
             onClick={handleSubmit}
             disabled={loading}
-            className="flex-1 rounded-xl bg-gradient-to-r from-[#3D2B1F] to-[#5D4B3F] py-3 text-sm font-semibold text-white shadow-lg disabled:opacity-50 transition"
+            className="rounded-lg bg-[#111111] px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#333333] transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#111111]"
           >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <motion.span animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="material-symbols-outlined text-base">refresh</motion.span>
-                กำลังบันทึก...
-              </span>
-            ) : 'บันทึก'}
-          </motion.button>
+            {loading ? 'กำลังบันทึก...' : 'บันทึก'}
+          </button>
         </div>
       </motion.div>
     </motion.div>
@@ -208,39 +201,39 @@ const EditAddressModal = ({ address, onClose, onSave }) => {
     }
   }
 
-  const inputClass = "w-full rounded-xl border-2 border-[#D2C4BC] bg-white px-4 py-2.5 text-sm text-[#1D1B1A] outline-none transition-all focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20"
-  const labelClass = "mb-1.5 block text-xs font-semibold text-[#4F453F]"
+  const inputClass = "w-full rounded-lg border border-[#EAEAEA] bg-white px-3 py-2 text-sm text-[#111111] outline-none transition-all focus:border-[#111111] focus:ring-1 focus:ring-[#111111]"
+  const labelClass = "mb-1.5 block text-xs font-semibold text-[#666666] uppercase tracking-wide"
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm px-4 py-8"
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
       <motion.div
-        initial={{ scale: 0.92, opacity: 0, y: 20 }}
+        initial={{ scale: 0.96, opacity: 0, y: 10 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.92, opacity: 0, y: 20 }}
-        transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-        className="bg-white rounded-[2rem] shadow-2xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto"
+        exit={{ scale: 0.96, opacity: 0, y: 10 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+        className="bg-white rounded-2xl shadow-xl border border-[#EAEAEA] p-6 w-full max-w-lg max-h-full overflow-y-auto"
       >
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-[#3D2B1F]">{address?.id ? 'แก้ไขที่อยู่' : 'เพิ่มที่อยู่ใหม่'}</h3>
-          <button onClick={onClose} className="text-[#81756E] hover:text-[#3D2B1F] transition-colors">
-            <span className="material-symbols-outlined">close</span>
+          <h3 className="text-lg font-semibold text-[#111111]">{address?.id ? 'แก้ไขที่อยู่' : 'เพิ่มที่อยู่ใหม่'}</h3>
+          <button onClick={onClose} className="text-[#888888] hover:text-[#111111] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] rounded">
+            <span className="material-symbols-outlined text-[20px]">close</span>
           </button>
         </div>
 
         {error && (
-          <div className="mb-4 flex items-center gap-2 rounded-xl bg-[#FFDBD6] px-4 py-3 text-sm text-[#7F1A18]">
+          <div className="mb-4 flex items-center gap-2 rounded-lg bg-[#FEF2F2] border border-[#FCA5A5] px-4 py-3 text-sm text-[#991B1B]">
             <span className="material-symbols-outlined text-base">error</span>
             <span>{error}</span>
           </div>
         )}
 
-        <div className="space-y-3">
+        <div className="space-y-4">
           <div>
             <label className={labelClass}>บ้านเลขที่/อาคาร/ชั้น *</label>
             <input type="text" value={houseNo} onChange={(e) => setHouseNo(e.target.value)} placeholder="เช่น 123/45 อาคาร A ชั้น 5" className={inputClass} />
@@ -282,24 +275,17 @@ const EditAddressModal = ({ address, onClose, onSave }) => {
           </div>
         </div>
 
-        <div className="mt-6 flex gap-3">
-          <button onClick={onClose} className="flex-1 rounded-xl border-2 border-[#D2C4BC] py-3 text-sm font-semibold text-[#4F453F] hover:bg-[#F8F3EB] transition">
+        <div className="mt-6 flex justify-end gap-3 pt-4 border-t border-[#EAEAEA]">
+          <button onClick={onClose} className="rounded-lg px-4 py-2 text-sm font-semibold text-[#666666] hover:bg-[#F9F9F9] hover:text-[#111111] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]">
             ยกเลิก
           </button>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+          <button
             onClick={handleSubmit}
             disabled={loading}
-            className="flex-1 rounded-xl bg-gradient-to-r from-[#3D2B1F] to-[#5D4B3F] py-3 text-sm font-semibold text-white shadow-lg disabled:opacity-50 transition"
+            className="rounded-lg bg-[#111111] px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#333333] transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#111111]"
           >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <motion.span animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="material-symbols-outlined text-base">refresh</motion.span>
-                กำลังบันทึก...
-              </span>
-            ) : 'บันทึก'}
-          </motion.button>
+            {loading ? 'กำลังบันทึก...' : 'บันทึก'}
+          </button>
         </div>
       </motion.div>
     </motion.div>
@@ -310,16 +296,16 @@ const EditAddressModal = ({ address, onClose, onSave }) => {
 
 const StatusBadge = ({ status }) => {
   const map = {
-    PENDING:    { label: 'รอดำเนินการ',   cls: 'bg-yellow-100 text-yellow-800' },
-    CONFIRMED:  { label: 'ยืนยันแล้ว',     cls: 'bg-blue-100 text-blue-800' },
-    PROCESSING: { label: 'กำลังเตรียม',    cls: 'bg-purple-100 text-purple-800' },
-    SHIPPED:    { label: 'จัดส่งแล้ว',     cls: 'bg-indigo-100 text-indigo-800' },
-    DELIVERED:  { label: 'ส่งถึงแล้ว',     cls: 'bg-green-100 text-green-800' },
-    CANCELLED:  { label: 'ยกเลิก',         cls: 'bg-red-100 text-red-800' },
+    PENDING:    { label: 'รอดำเนินการ',   cls: 'bg-[#F9FAFB] text-[#4B5563] border-[#E5E7EB]' },
+    CONFIRMED:  { label: 'ยืนยันแล้ว',     cls: 'bg-[#EFF6FF] text-[#1D4ED8] border-[#BFDBFE]' },
+    PROCESSING: { label: 'กำลังเตรียม',    cls: 'bg-[#F5F3FF] text-[#6D28D9] border-[#DDD6FE]' },
+    SHIPPED:    { label: 'จัดส่งแล้ว',     cls: 'bg-[#EEF2FF] text-[#4338CA] border-[#C7D2FE]' },
+    DELIVERED:  { label: 'ส่งถึงแล้ว',     cls: 'bg-[#ECFDF5] text-[#047857] border-[#A7F3D0]' },
+    CANCELLED:  { label: 'ยกเลิก',         cls: 'bg-[#FEF2F2] text-[#B91C1C] border-[#FECACA]' },
   }
-  const s = map[status] || { label: status, cls: 'bg-gray-100 text-gray-700' }
+  const s = map[status] || { label: status, cls: 'bg-[#F3F4F6] text-[#374151] border-[#E5E7EB]' }
   return (
-    <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${s.cls}`}>
+    <span className={`inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-medium border ${s.cls}`}>
       {s.label}
     </span>
   )
@@ -333,14 +319,13 @@ const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState('dashboard')
   const { user: authUser, isAuthenticated, updateUser } = useAuth()
 
-  // State
   const [addresses, setAddresses] = useState([])
   const [orders, setOrders] = useState([])
   const [loadingAddresses, setLoadingAddresses] = useState(false)
   const [loadingOrders, setLoadingOrders] = useState(false)
   const [toast, setToast] = useState(null)
   const [showEditProfile, setShowEditProfile] = useState(false)
-  const [editingAddress, setEditingAddress] = useState(null) // null = closed, {} = new, {id,...} = edit
+  const [editingAddress, setEditingAddress] = useState(null)
   const [showAddressModal, setShowAddressModal] = useState(false)
 
   const showToast = useCallback((message, type = 'success') => {
@@ -348,7 +333,6 @@ const ProfilePage = () => {
     setTimeout(() => setToast(null), 4000)
   }, [])
 
-  // Load addresses
   useEffect(() => {
     if (!isAuthenticated) return
     setLoadingAddresses(true)
@@ -358,7 +342,6 @@ const ProfilePage = () => {
       .finally(() => setLoadingAddresses(false))
   }, [isAuthenticated])
 
-  // Load orders
   useEffect(() => {
     if (!isAuthenticated) return
     setLoadingOrders(true)
@@ -370,14 +353,14 @@ const ProfilePage = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center bg-[#FAF6F1] px-6 text-[#1D1B1A]">
-        <span className="material-symbols-outlined text-6xl text-[#D2C4BC] mb-4">lock</span>
-        <h2 className="text-2xl font-bold text-[#3D2B1F] mb-2">กรุณาเข้าสู่ระบบก่อน</h2>
-        <p className="text-sm text-[#81756E] mb-6 text-center max-w-md">
-          คุณต้องเข้าสู่ระบบสมาชิก UDEE เพื่อเข้าถึงข้อมูลส่วนตัว รายการโปรด และประวัติการสั่งซื้อของคุณ
+      <div className="min-h-[60vh] flex flex-col items-center justify-center bg-white px-6 text-[#111111]">
+        <span className="material-symbols-outlined text-4xl text-[#CCCCCC] mb-4">lock</span>
+        <h2 className="text-xl font-semibold text-[#111111] mb-2 tracking-tight">Access Restricted</h2>
+        <p className="text-sm text-[#666666] mb-6 text-center max-w-sm">
+          Please sign in to access your profile, order history, and saved addresses.
         </p>
-        <Link to="/login" className="rounded-xl bg-[#3D2B1F] px-6 py-3 font-semibold text-white hover:opacity-90 active:scale-95 transition">
-          เข้าสู่ระบบสมาชิก
+        <Link to="/login" className="rounded-lg bg-[#111111] px-6 py-2.5 font-medium text-white text-sm hover:bg-[#333333] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#111111]">
+          Sign In
         </Link>
       </div>
     )
@@ -407,7 +390,7 @@ const ProfilePage = () => {
     { id: 'dashboard', label: 'ภาพรวมบัญชี', icon: 'dashboard' },
     { id: 'profile',   label: 'ข้อมูลส่วนตัว', icon: 'person' },
     { id: 'address',   label: 'ที่อยู่จัดส่ง',  icon: 'location_on' },
-    { id: 'orders',    label: 'ประวัติการสั่งซื้อ', icon: 'shopping_bag' },
+    { id: 'orders',    label: 'ประวัติการสั่งซื้อ', icon: 'receipt_long' },
     { id: 'settings',  label: 'การตั้งค่า',    icon: 'settings' },
   ]
 
@@ -415,15 +398,15 @@ const ProfilePage = () => {
   const totalSpent = orders.reduce((sum, o) => sum + Number(o.total || 0), 0)
 
   const stats = [
-    { label: 'ออเดอร์ทั้งหมด', value: orders.length.toString(), icon: 'shopping_cart' },
+    { label: 'ออเดอร์ทั้งหมด', value: orders.length.toString(), icon: 'shopping_bag' },
     { label: 'ส่งถึงแล้ว',    value: deliveredCount.toString(), icon: 'local_shipping' },
-    { label: 'ที่อยู่จัดส่ง',  value: addresses.length.toString(), icon: 'location_on' },
+    { label: 'ที่อยู่จัดส่ง',  value: addresses.length.toString(), icon: 'home' },
     { label: 'ยอดรวมทั้งหมด', value: `฿${totalSpent.toLocaleString()}`, icon: 'payments' },
   ]
 
   return (
     <motion.main
-      className="min-h-screen bg-[#FAF6F1] text-[#1D1B1A]"
+      className="min-h-screen bg-[#F9F9F9] text-[#111111] pb-16"
       initial={reduceMotion ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={transition}
@@ -434,153 +417,110 @@ const ProfilePage = () => {
 
       <AnimatePresence>
         {showEditProfile && (
-          <EditProfileModal
-            user={user}
-            onClose={() => setShowEditProfile(false)}
-            onSave={handleProfileSaved}
-          />
+          <EditProfileModal user={user} onClose={() => setShowEditProfile(false)} onSave={handleProfileSaved} />
         )}
       </AnimatePresence>
 
       <AnimatePresence>
         {showAddressModal && (
-          <EditAddressModal
-            address={editingAddress}
-            onClose={() => { setShowAddressModal(false); setEditingAddress(null) }}
-            onSave={handleAddressSaved}
-          />
+          <EditAddressModal address={editingAddress} onClose={() => { setShowAddressModal(false); setEditingAddress(null) }} onSave={handleAddressSaved} />
         )}
       </AnimatePresence>
 
-      <section className="max-w-7xl mx-auto px-6 py-16">
-        {/* Header Card */}
-        <motion.div
-          className="mb-10 rounded-[2rem] bg-gradient-to-r from-[#3D2B1F] to-[#5a4e46] p-10 text-white shadow-[0_24px_70px_rgba(61,43,31,0.15)]"
-          initial={reduceMotion ? false : { y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={transition}
-        >
-          <div className="flex flex-col gap-6 md:flex-row md:items-center md:gap-10">
-            <motion.div className="h-24 w-24 overflow-hidden rounded-full border-4 border-white/30 bg-white/10 shadow-xl" whileHover={{ scale: 1.05 }}>
-              <div className="flex h-full w-full items-center justify-center bg-[#A0724A]/20">
-                <span className="material-symbols-outlined text-4xl text-white/80">person</span>
-              </div>
-            </motion.div>
-            <div className="flex-1">
-              <p className="text-sm uppercase tracking-[0.28em] text-[#F4E7D9]">บัญชีของฉัน</p>
-              <h1 className="mt-2 text-3xl md:text-4xl font-semibold">{user?.name || '-'}</h1>
-              <p className="mt-1 text-[#E7D7C9]">{user?.email || '-'}</p>
-              <p className="mt-1 text-sm text-[#F4E7D9]/80">
-                สมาชิกตั้งแต่ {formatDate(user?.createdAt)}
-              </p>
-            </div>
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => setShowEditProfile(true)}
-              className="flex items-center gap-2 rounded-2xl bg-white px-6 py-3 font-semibold text-[#3D2B1F] shadow-lg hover:bg-[#F8F3EB] transition"
-            >
-              <span className="material-symbols-outlined text-base">edit</span>
-              แก้ไขโปรไฟล์
-            </motion.button>
+      {/* Hero Header */}
+      <div className="bg-white border-b border-[#EAEAEA] pt-12 pb-8 px-6">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-6">
+          <div className="h-20 w-20 rounded-full bg-[#F0F0F0] border border-[#EAEAEA] flex items-center justify-center shrink-0">
+             <span className="material-symbols-outlined text-3xl text-[#888888]">person</span>
           </div>
-        </motion.div>
+          <div className="flex-1 text-center md:text-left">
+            <h1 className="text-2xl font-semibold tracking-tight text-[#111111]">{user?.name || '-'}</h1>
+            <p className="text-sm text-[#666666] mt-1">{user?.email || '-'}</p>
+          </div>
+          <button
+            onClick={() => setShowEditProfile(true)}
+            className="flex items-center gap-2 rounded-lg border border-[#EAEAEA] bg-white px-4 py-2 text-sm font-medium text-[#111111] hover:bg-[#F9F9F9] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#111111]"
+          >
+            <span className="material-symbols-outlined text-[18px]">edit</span>
+            Edit Profile
+          </button>
+        </div>
+      </div>
 
-        {/* Stats */}
-        <motion.div
-          className="mb-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
-          initial={reduceMotion ? false : { y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ ...transition, delay: 0.1 }}
-        >
+      <div className="max-w-7xl mx-auto px-6 py-10">
+        
+        {/* Stats Row */}
+        <div className="mb-10 grid gap-4 grid-cols-2 lg:grid-cols-4">
           {stats.map((stat, index) => (
             <motion.div
               key={stat.label}
-              className="rounded-[1.5rem] bg-white p-6 shadow-[0_12px_30px_rgba(61,43,31,0.07)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_60px_-24px_rgba(61,43,31,0.2)]"
-              initial={reduceMotion ? false : { y: 20, opacity: 0 }}
+              className="rounded-xl bg-white p-5 border border-[#EAEAEA] shadow-[0_2px_10px_rgb(0,0,0,0.02)]"
+              initial={reduceMotion ? false : { y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ ...transition, delay: 0.15 + index * 0.05 }}
+              transition={{ ...transition, delay: index * 0.05 }}
             >
-              <div className="flex items-center justify-between">
+              <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm text-[#81756e]">{stat.label}</p>
-                  <p className="mt-3 text-2xl font-semibold text-[#3D2B1F]">{stat.value}</p>
+                  <p className="text-xs font-semibold text-[#888888] uppercase tracking-wider">{stat.label}</p>
+                  <p className="mt-2 text-xl font-semibold text-[#111111]">{stat.value}</p>
                 </div>
-                <span className="material-symbols-outlined text-4xl text-[#A0724A]/40">{stat.icon}</span>
+                <span className="material-symbols-outlined text-[20px] text-[#CCCCCC]">{stat.icon}</span>
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
 
-        <div className="grid gap-8 lg:grid-cols-[260px_1fr]">
-          {/* Sidebar */}
-          <motion.aside
-            className="space-y-6"
-            initial={reduceMotion ? false : { x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ ...transition, delay: 0.2 }}
-          >
-            <div className="rounded-[2rem] bg-white p-5 shadow-[0_12px_30px_rgba(61,43,31,0.08)]">
-              <nav className="space-y-2">
-                {tabs.map((tab) => (
-                  <motion.button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3.5 text-left text-sm font-semibold transition ${
-                      activeTab === tab.id
-                        ? 'bg-[#3D2B1F] text-white'
-                        : 'text-[#3D2B1F] hover:bg-[#F8F3EB]'
-                    }`}
-                    whileHover={{ scale: activeTab !== tab.id ? 1.02 : 1 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <span className="material-symbols-outlined text-xl">{tab.icon}</span>
-                    {tab.label}
-                  </motion.button>
-                ))}
-              </nav>
-            </div>
-          </motion.aside>
+        <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
+          {/* Sidebar Nav */}
+          <aside className="space-y-1">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] ${
+                  activeTab === tab.id
+                    ? 'bg-[#111111] text-white'
+                    : 'text-[#666666] hover:bg-white hover:text-[#111111]'
+                }`}
+              >
+                <span className={`material-symbols-outlined text-[18px] ${activeTab === tab.id ? 'text-white' : 'text-[#888888]'}`}>{tab.icon}</span>
+                {tab.label}
+              </button>
+            ))}
+          </aside>
 
-          {/* Main Content */}
-          <motion.div
-            className="space-y-8"
-            initial={reduceMotion ? false : { x: 20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ ...transition, delay: 0.25 }}
-          >
+          {/* Main Content Area */}
+          <div className="bg-white rounded-2xl border border-[#EAEAEA] shadow-[0_2px_20px_rgb(0,0,0,0.02)] min-h-[400px]">
             <AnimatePresence mode="wait">
+              
               {/* ── Dashboard ── */}
               {activeTab === 'dashboard' && (
                 <motion.div
                   key="dashboard"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={transition}
-                  className="rounded-[2rem] bg-white p-8 shadow-[0_12px_30px_rgba(61,43,31,0.08)]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="p-8"
                 >
-                  <h2 className="text-2xl font-semibold text-[#3D2B1F] mb-6">ออเดอร์ล่าสุด</h2>
+                  <h2 className="text-lg font-semibold text-[#111111] mb-6">Recent Orders</h2>
                   {loadingOrders ? (
-                    <div className="flex items-center justify-center py-10">
-                      <motion.span animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="material-symbols-outlined text-3xl text-[#A0724A]">refresh</motion.span>
-                    </div>
+                    <div className="py-12 flex justify-center"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[#EAEAEA] border-t-[#111111]" /></div>
                   ) : orders.length === 0 ? (
-                    <div className="text-center py-10">
-                      <span className="material-symbols-outlined text-5xl text-[#D2C4BC] block mb-3">shopping_bag</span>
-                      <p className="text-[#81756E]">ยังไม่มีออเดอร์</p>
+                    <div className="text-center py-12">
+                      <p className="text-sm text-[#666666]">You haven't placed any orders yet.</p>
                     </div>
                   ) : (
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {orders.slice(0, 3).map((order) => (
-                        <div key={order.id} className="flex items-center justify-between rounded-2xl border border-[#E8E1DF] p-5 hover:bg-[#FAF6F1] transition">
+                        <div key={order.id} className="flex items-center justify-between rounded-xl border border-[#EAEAEA] p-4 hover:shadow-sm transition-shadow">
                           <div>
-                            <p className="font-semibold text-[#3D2B1F]">#{order.orderNumber || `ORD-${order.id}`}</p>
-                            <p className="text-sm text-[#81756e] mt-0.5">{formatDate(order.createdAt)}</p>
+                            <p className="text-sm font-semibold text-[#111111] font-mono">#{order.orderNumber || `ORD-${order.id}`}</p>
+                            <p className="text-xs text-[#888888] mt-1">{formatDate(order.createdAt)}</p>
                           </div>
-                          <div className="text-right flex flex-col items-end gap-1.5">
-                            <p className="text-base font-semibold text-[#A0724A]">฿{Number(order.total || 0).toLocaleString()}</p>
+                          <div className="text-right flex flex-col items-end gap-2">
+                            <p className="text-sm font-semibold text-[#111111]">฿{Number(order.total || 0).toLocaleString()}</p>
                             <StatusBadge status={order.status} />
                           </div>
                         </div>
@@ -594,46 +534,38 @@ const ProfilePage = () => {
               {activeTab === 'profile' && (
                 <motion.div
                   key="profile"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={transition}
-                  className="rounded-[2rem] bg-white p-8 shadow-[0_12px_30px_rgba(61,43,31,0.08)]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="p-8"
                 >
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-semibold text-[#3D2B1F]">ข้อมูลส่วนตัว</h2>
-                    <motion.button
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
+                  <div className="flex items-center justify-between mb-8 pb-4 border-b border-[#EAEAEA]">
+                    <h2 className="text-lg font-semibold text-[#111111]">Personal Information</h2>
+                    <button
                       onClick={() => setShowEditProfile(true)}
-                      className="flex items-center gap-2 rounded-xl border-2 border-[#D2C4BC] px-4 py-2 text-sm font-semibold text-[#3D2B1F] hover:bg-[#F8F3EB] transition"
+                      className="text-sm font-medium text-[#666666] underline hover:text-[#111111] focus-visible:outline-none"
                     >
-                      <span className="material-symbols-outlined text-base">edit</span>
-                      แก้ไข
-                    </motion.button>
+                      Edit
+                    </button>
                   </div>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    {[
-                      { label: 'ชื่อ-นามสกุล', value: user?.name, icon: 'badge' },
-                      { label: 'อีเมล', value: user?.email, icon: 'email' },
-                      { label: 'เบอร์โทรศัพท์', value: user?.phone || '-', icon: 'phone' },
-                      { label: 'สถานะบัญชี', value: user?.isVerified ? 'ยืนยันแล้ว ✓' : 'ยังไม่ยืนยัน', icon: 'verified_user' },
-                    ].map((field) => (
-                      <div key={field.label} className="rounded-2xl bg-[#F8F3EB] p-5">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="material-symbols-outlined text-base text-[#A0724A]">{field.icon}</span>
-                          <p className="text-xs text-[#81756e] font-medium">{field.label}</p>
-                        </div>
-                        <p className="text-base font-semibold text-[#3D2B1F] mt-1">{field.value || '-'}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-4 rounded-2xl bg-[#F8F3EB] p-5">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="material-symbols-outlined text-base text-[#A0724A]">calendar_today</span>
-                      <p className="text-xs text-[#81756e] font-medium">สมาชิกตั้งแต่</p>
+                  <div className="grid gap-6 max-w-2xl">
+                    <div className="grid grid-cols-3 items-center border-b border-[#EAEAEA] pb-4">
+                      <span className="text-sm text-[#666666]">Name</span>
+                      <span className="col-span-2 text-sm font-medium text-[#111111]">{user?.name || '-'}</span>
                     </div>
-                    <p className="text-base font-semibold text-[#3D2B1F] mt-1">{formatDate(user?.createdAt)}</p>
+                    <div className="grid grid-cols-3 items-center border-b border-[#EAEAEA] pb-4">
+                      <span className="text-sm text-[#666666]">Email</span>
+                      <span className="col-span-2 text-sm font-medium text-[#111111]">{user?.email || '-'}</span>
+                    </div>
+                    <div className="grid grid-cols-3 items-center border-b border-[#EAEAEA] pb-4">
+                      <span className="text-sm text-[#666666]">Phone</span>
+                      <span className="col-span-2 text-sm font-medium text-[#111111]">{user?.phone || '-'}</span>
+                    </div>
+                    <div className="grid grid-cols-3 items-center pb-4">
+                      <span className="text-sm text-[#666666]">Member since</span>
+                      <span className="col-span-2 text-sm font-medium text-[#111111]">{formatDate(user?.createdAt)}</span>
+                    </div>
                   </div>
                 </motion.div>
               )}
@@ -642,76 +574,48 @@ const ProfilePage = () => {
               {activeTab === 'address' && (
                 <motion.div
                   key="address"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={transition}
-                  className="rounded-[2rem] bg-white p-8 shadow-[0_12px_30px_rgba(61,43,31,0.08)]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="p-8"
                 >
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-semibold text-[#3D2B1F]">ที่อยู่จัดส่ง</h2>
-                    <motion.button
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
+                  <div className="flex items-center justify-between mb-8 pb-4 border-b border-[#EAEAEA]">
+                    <h2 className="text-lg font-semibold text-[#111111]">Saved Addresses</h2>
+                    <button
                       onClick={() => { setEditingAddress({}); setShowAddressModal(true) }}
-                      className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#3D2B1F] to-[#5D4B3F] px-4 py-2.5 text-sm font-semibold text-white shadow-md hover:opacity-90 transition"
+                      className="text-sm font-medium text-[#111111] flex items-center gap-1 hover:underline focus-visible:outline-none"
                     >
-                      <span className="material-symbols-outlined text-base">add_location_alt</span>
-                      เพิ่มที่อยู่
-                    </motion.button>
+                      <span className="material-symbols-outlined text-[16px]">add</span> Add New
+                    </button>
                   </div>
 
                   {loadingAddresses ? (
-                    <div className="flex items-center justify-center py-10">
-                      <motion.span animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="material-symbols-outlined text-3xl text-[#A0724A]">refresh</motion.span>
-                    </div>
+                    <div className="py-12 flex justify-center"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[#EAEAEA] border-t-[#111111]" /></div>
                   ) : addresses.length === 0 ? (
                     <div className="text-center py-12">
-                      <span className="material-symbols-outlined text-6xl text-[#D2C4BC] block mb-3">location_off</span>
-                      <p className="text-[#81756E] mb-4">ยังไม่มีที่อยู่จัดส่ง</p>
-                      <motion.button
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.97 }}
-                        onClick={() => { setEditingAddress({}); setShowAddressModal(true) }}
-                        className="inline-flex items-center gap-2 rounded-xl bg-[#3D2B1F] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition"
-                      >
-                        <span className="material-symbols-outlined text-base">add</span>
-                        เพิ่มที่อยู่จัดส่ง
-                      </motion.button>
+                      <p className="text-sm text-[#666666] mb-4">No addresses saved yet.</p>
                     </div>
                   ) : (
-                    <div className="space-y-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
                       {addresses.map((addr, idx) => (
-                        <motion.div
-                          key={addr.id}
-                          initial={{ opacity: 0, y: 8 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: idx * 0.05 }}
-                          className="relative rounded-2xl border-2 border-[#E8E1DF] p-6 hover:border-[#A0724A]/30 transition group"
-                        >
+                        <div key={addr.id} className="relative rounded-xl border border-[#EAEAEA] p-5 hover:border-[#CCCCCC] hover:shadow-sm transition-all group">
                           {idx === 0 && (
-                            <span className="absolute top-4 right-4 inline-flex items-center gap-1 rounded-full bg-[#3D2B1F] px-3 py-1 text-xs font-semibold text-white">
-                              <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>home</span>
-                              ที่อยู่หลัก
+                            <span className="absolute top-4 right-4 text-[10px] uppercase tracking-wider font-semibold text-[#666666] bg-[#F5F5F5] px-2 py-1 rounded">
+                              Default
                             </span>
                           )}
-                          <div className="flex items-start gap-3">
-                            <span className="material-symbols-outlined text-xl text-[#A0724A] mt-0.5">location_on</span>
-                            <div className="flex-1 pr-20">
-                              <p className="font-semibold text-[#3D2B1F]">{addr.houseNo}</p>
-                              <p className="text-sm text-[#81756E] mt-1 leading-relaxed">{formatAddress(addr)}</p>
-                            </div>
+                          <div className="mb-4">
+                            <p className="text-sm font-semibold text-[#111111] mb-1">{addr.houseNo}</p>
+                            <p className="text-xs leading-relaxed text-[#666666] pr-12">{formatAddress(addr)}</p>
                           </div>
-                          <div className="mt-4 flex gap-2">
-                            <button
-                              onClick={() => { setEditingAddress(addr); setShowAddressModal(true) }}
-                              className="flex items-center gap-1.5 rounded-lg border border-[#D2C4BC] px-3 py-1.5 text-xs font-semibold text-[#4F453F] hover:bg-[#F8F3EB] transition"
-                            >
-                              <span className="material-symbols-outlined text-sm">edit</span>
-                              แก้ไข
-                            </button>
-                          </div>
-                        </motion.div>
+                          <button
+                            onClick={() => { setEditingAddress(addr); setShowAddressModal(true) }}
+                            className="text-xs font-medium text-[#666666] hover:text-[#111111] underline focus-visible:outline-none"
+                          >
+                            Edit
+                          </button>
+                        </div>
                       ))}
                     </div>
                   )}
@@ -722,53 +626,42 @@ const ProfilePage = () => {
               {activeTab === 'orders' && (
                 <motion.div
                   key="orders"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={transition}
-                  className="rounded-[2rem] bg-white p-8 shadow-[0_12px_30px_rgba(61,43,31,0.08)]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="p-8"
                 >
-                  <h2 className="text-2xl font-semibold text-[#3D2B1F] mb-6">ประวัติการสั่งซื้อ</h2>
+                  <h2 className="text-lg font-semibold text-[#111111] mb-6 pb-4 border-b border-[#EAEAEA]">Order History</h2>
                   {loadingOrders ? (
-                    <div className="flex items-center justify-center py-10">
-                      <motion.span animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="material-symbols-outlined text-3xl text-[#A0724A]">refresh</motion.span>
-                    </div>
+                    <div className="py-12 flex justify-center"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[#EAEAEA] border-t-[#111111]" /></div>
                   ) : orders.length === 0 ? (
                     <div className="text-center py-12">
-                      <span className="material-symbols-outlined text-6xl text-[#D2C4BC] block mb-3">shopping_bag</span>
-                      <p className="text-[#81756E] mb-4">ยังไม่มีประวัติการสั่งซื้อ</p>
-                      <Link to="/" className="inline-flex items-center gap-2 rounded-xl bg-[#3D2B1F] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition">
-                        <span className="material-symbols-outlined text-base">storefront</span>
-                        ไปช็อปปิ้ง
-                      </Link>
+                      <p className="text-sm text-[#666666] mb-4">No orders found.</p>
+                      <Link to="/products" className="text-sm font-medium text-[#111111] underline">Browse Products</Link>
                     </div>
                   ) : (
-                    <div className="space-y-4">
-                      {orders.map((order, idx) => (
-                        <motion.div
-                          key={order.id}
-                          initial={{ opacity: 0, y: 8 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: idx * 0.04 }}
-                          className="rounded-2xl border border-[#E8E1DF] p-5 hover:bg-[#FAF6F1] transition"
-                        >
-                          <div className="flex items-start justify-between gap-4">
-                            <div className="flex-1">
-                              <p className="font-semibold text-[#3D2B1F]">#{order.orderNumber || `ORD-${order.id}`}</p>
-                              <p className="text-sm text-[#81756e] mt-0.5">{formatDate(order.createdAt)}</p>
-                              {order.items && order.items.length > 0 && (
-                                <p className="text-xs text-[#81756E] mt-1.5">
-                                  {order.items.length} รายการ
-                                </p>
-                              )}
-                            </div>
-                            <div className="text-right flex flex-col items-end gap-2">
-                              <p className="text-lg font-semibold text-[#A0724A]">฿{Number(order.total || 0).toLocaleString()}</p>
-                              <StatusBadge status={order.status} />
-                            </div>
-                          </div>
-                        </motion.div>
-                      ))}
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="border-b border-[#EAEAEA]">
+                            <th className="py-3 px-4 text-xs font-semibold uppercase tracking-wider text-[#666666]">Order</th>
+                            <th className="py-3 px-4 text-xs font-semibold uppercase tracking-wider text-[#666666]">Date</th>
+                            <th className="py-3 px-4 text-xs font-semibold uppercase tracking-wider text-[#666666]">Status</th>
+                            <th className="py-3 px-4 text-xs font-semibold uppercase tracking-wider text-[#666666] text-right">Total</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-[#EAEAEA]">
+                          {orders.map((order) => (
+                            <tr key={order.id} className="hover:bg-[#F9F9F9] transition-colors">
+                              <td className="py-4 px-4 text-sm font-mono text-[#111111]">#{order.orderNumber || `ORD-${order.id}`}</td>
+                              <td className="py-4 px-4 text-sm text-[#666666]">{formatDate(order.createdAt)}</td>
+                              <td className="py-4 px-4"><StatusBadge status={order.status} /></td>
+                              <td className="py-4 px-4 text-sm font-medium text-[#111111] text-right">฿{Number(order.total || 0).toLocaleString()}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   )}
                 </motion.div>
@@ -778,34 +671,39 @@ const ProfilePage = () => {
               {activeTab === 'settings' && (
                 <motion.div
                   key="settings"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={transition}
-                  className="rounded-[2rem] bg-white p-8 shadow-[0_12px_30px_rgba(61,43,31,0.08)]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="p-8"
                 >
-                  <h2 className="text-2xl font-semibold text-[#3D2B1F] mb-6">การตั้งค่า</h2>
-                  <div className="space-y-3">
+                  <h2 className="text-lg font-semibold text-[#111111] mb-6 pb-4 border-b border-[#EAEAEA]">Preferences</h2>
+                  <div className="max-w-xl space-y-4">
                     {[
-                      { label: 'การแจ้งเตือนอีเมล', icon: 'notifications', value: 'เปิดใช้งาน' },
-                      { label: 'ภาษา', icon: 'language', value: 'ภาษาไทย' },
-                      { label: 'ความเป็นส่วนตัว', icon: 'lock', value: 'ส่วนตัว' },
-                    ].map((setting) => (
-                      <div key={setting.label} className="flex items-center justify-between rounded-2xl bg-[#F8F3EB] px-5 py-4">
-                        <div className="flex items-center gap-3">
-                          <span className="material-symbols-outlined text-[#A0724A]">{setting.icon}</span>
-                          <p className="text-sm font-semibold text-[#3D2B1F]">{setting.label}</p>
+                      { label: 'Email Notifications', desc: 'Receive order updates and offers', enabled: true },
+                      { label: 'SMS Notifications', desc: 'Receive delivery updates via SMS', enabled: false },
+                    ].map((setting, i) => (
+                      <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-[#EAEAEA]">
+                        <div>
+                          <p className="text-sm font-semibold text-[#111111]">{setting.label}</p>
+                          <p className="text-xs text-[#666666] mt-0.5">{setting.desc}</p>
                         </div>
-                        <span className="text-sm text-[#81756E]">{setting.value}</span>
+                        <button 
+                          className={`relative h-6 w-11 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 ${setting.enabled ? 'bg-[#111111]' : 'bg-[#EAEAEA]'}`}
+                          aria-label={`Toggle ${setting.label}`}
+                        >
+                          <span className={`absolute top-1 left-1 h-4 w-4 rounded-full bg-white transition-transform ${setting.enabled ? 'translate-x-5' : 'translate-x-0'}`} />
+                        </button>
                       </div>
                     ))}
                   </div>
                 </motion.div>
               )}
+
             </AnimatePresence>
-          </motion.div>
+          </div>
         </div>
-      </section>
+      </div>
     </motion.main>
   )
 }

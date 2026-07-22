@@ -17,7 +17,7 @@ const AppLayout = () => {
       <div className="flex min-h-[calc(100vh-180px)] flex-col">
         <motion.div
           key={location.pathname}
-          className="flex-1 mx-auto w-[100%] py-6 "
+          className="flex-1 mx-auto w-[100%]  "
           initial={reduceMotion ? false : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           exit={reduceMotion ? {} : { opacity: 0, y: -8 }}

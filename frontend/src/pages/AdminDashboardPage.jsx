@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { getDashboardStats } from '../services/admin'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Customers, Analytics } from './admin/AdminPages'
 import Settings from './admin/AdminSettings'
@@ -363,22 +364,8 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="flex items-center gap-2.5">
-            {/* Search */}
-            <div className="relative hidden sm:block">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-[#9CA3AF]">
-                search
-              </span>
-              <input
-                type="text"
-                placeholder="ค้นหา..."
-                className="w-52 rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] py-2 pl-9 pr-4 text-sm text-[#111827] outline-none placeholder:text-[#9CA3AF] focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20 transition"
-              />
-            </div>
-            {/* Notification */}
-            <button className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-[#E5E7EB] bg-white text-[#6B7280] hover:bg-[#F9FAFB] transition">
-              <span className="material-symbols-outlined text-[20px]">notifications</span>
-              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
-            </button>
+
+
             {/* Go to store */}
             <Link
               to="/"
@@ -432,30 +419,43 @@ export default function AdminDashboardPage() {
 
 // ─── Dashboard main view (improved premium design) ────────────────────────────
 function DashboardView({ reduceMotion, transition, onNavigate }) {
-  const BAR_DATA = [42, 58, 35, 67, 89, 74, 95, 82, 61, 78, 55, 90]
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const stats = await getDashboardStats()
+        setData(stats)
+      } catch (err) {
+        setError('ไม่สามารถโหลดข้อมูล Dashboard ได้')
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
+
+  if (loading) return <div className="flex h-64 items-center justify-center text-[#9CA3AF]">กำลังโหลดข้อมูล...</div>
+  if (error) return <div className="flex h-64 items-center justify-center text-red-500">{error}</div>
+
+  const BAR_DATA = data.monthlySales || Array(12).fill(0)
   const MONTHS  = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.']
-  const maxVal  = Math.max(...BAR_DATA)
+  const maxVal  = Math.max(...BAR_DATA, 1) // prevent division by zero
 
+  const kpi = data.kpi || {}
   const METRICS = [
-    { label:'รายได้วันนี้',  value:'฿42,800',  change:'+16% vs เมื่อวาน', icon:'payments',     bg:'#FEF4EA', fg:'#A0724A', accent:'from-[#A0724A] to-[#3D2B1F]' },
-    { label:'ยอดออเดอร์',   value:'124',      change:'+8% vs เมื่อวาน',  icon:'shopping_bag', bg:'#EAF3DE', fg:'#4A7C59', accent:'from-[#4A7C59] to-[#2d5939]' },
-    { label:'ลูกค้าใหม่',   value:'48',       change:'+12% vs เมื่อวาน', icon:'person_add',   bg:'#E6F1FB', fg:'#2C6FAC', accent:'from-[#2C6FAC] to-[#1a4870]' },
-    { label:'สินค้าคงเหลือ', value:'1,234',  change:'-4% vs เมื่อวาน',  icon:'inventory',    bg:'#FAEEDA', fg:'#C17B2A', accent:'from-[#C17B2A] to-[#8B5410]' },
+    { label:'รายได้วันนี้',  value:`฿${Number(kpi.revenueToday || 0).toLocaleString('th-TH')}`,  change:`${kpi.revenueChange || '0%'} vs เมื่อวาน`, icon:'payments',     bg:'#FEF4EA', fg:'#A0724A', accent:'from-[#A0724A] to-[#3D2B1F]' },
+    { label:'ยอดออเดอร์',   value:kpi.ordersToday || 0,      change:`${kpi.ordersChange || '0%'} vs เมื่อวาน`,  icon:'shopping_bag', bg:'#EAF3DE', fg:'#4A7C59', accent:'from-[#4A7C59] to-[#2d5939]' },
+    { label:'ลูกค้าใหม่',   value:kpi.newCustomers || 0,       change:`${kpi.customersChange || '0%'} vs เมื่อวาน`, icon:'person_add',   bg:'#E6F1FB', fg:'#2C6FAC', accent:'from-[#2C6FAC] to-[#1a4870]' },
+    { label:'สินค้าคงเหลือ', value:Number(kpi.totalStock || 0).toLocaleString('th-TH'), change:'',  icon:'inventory',    bg:'#FAEEDA', fg:'#C17B2A', accent:'from-[#C17B2A] to-[#8B5410]' },
   ]
 
-  const RECENT_ORDERS = [
-    { id:'ORD-001', customer:'สมชาย ใจดี',     amount:'฿45,900', status:'Completed', date:'2 ชม. ที่แล้ว' },
-    { id:'ORD-002', customer:'วิภา สุขสันต์',  amount:'฿28,500', status:'Processing', date:'5 ชม. ที่แล้ว' },
-    { id:'ORD-003', customer:'นฤมล รักษ์ดี',   amount:'฿67,200', status:'Pending',    date:'1 วันที่แล้ว' },
-    { id:'ORD-004', customer:'กิตติ เก่งการค้า', amount:'฿34,100', status:'Completed', date:'2 วันที่แล้ว' },
-    { id:'ORD-005', customer:'มานี มีสุข',      amount:'฿52,800', status:'Shipped',    date:'3 วันที่แล้ว' },
-  ]
-
-  const NOTIFS = [
-    { icon:'shopping_cart', title:'คำสั่งซื้อใหม่ 25 รายการ', time:'1 ชั่วโมงที่แล้ว', urgent:false },
-    { icon:'warning',       title:'สต็อกสินค้าใกล้หมด',      time:'3 ชั่วโมงที่แล้ว', urgent:true  },
-    { icon:'person_add',    title:'ลูกค้าใหม่ 5 คนวันนี้',   time:'วานนี้',           urgent:false },
-  ]
+  const RECENT_ORDERS = data.recentOrders || []
+  const NOTIFS = data.notifications || []
+  const TOP_PRODUCTS = data.topProducts || []
 
   const statusCls = (s) => {
     if (s === 'Completed')  return 'bg-green-50  text-green-700  border border-green-200'

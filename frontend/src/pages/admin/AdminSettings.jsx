@@ -9,9 +9,9 @@ const SETTINGS_NAV = [
   { id: 'set-security', icon: 'ti-shield', label: 'ความปลอดภัย' },
 ];
 
-function SaveButton() {
+function SaveButton({ onClick }) {
   return (
-    <button className="btn-save">
+    <button className="btn-save" onClick={onClick}>
       <i className="ti ti-device-floppy" aria-hidden="true"></i>บันทึกการเปลี่ยนแปลง
     </button>
   );
@@ -40,8 +40,14 @@ export default function Settings() {
   });
   const [freeShip, setFreeShip] = useState(true);
   const [twoFactor, setTwoFactor] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   const flipNotif = (key) => setNotifToggles((s) => ({ ...s, [key]: !s[key] }));
+
+  const handleSave = () => {
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
 
   return (
     <div className="settings-grid">
@@ -128,7 +134,7 @@ export default function Settings() {
                 </button>
               </div>
             </div>
-            <SaveButton />
+            <SaveButton onClick={handleSave} />
           </div>
         )}
 
@@ -168,7 +174,7 @@ export default function Settings() {
                 onToggle={() => flipNotif('dailyReport')}
               />
             </div>
-            <SaveButton />
+            <SaveButton onClick={handleSave} />
           </div>
         )}
 
@@ -196,7 +202,7 @@ export default function Settings() {
                 <input className="form-input" defaultValue="บริษัท UDEE จำกัด" />
               </div>
             </div>
-            <SaveButton />
+            <SaveButton onClick={handleSave} />
           </div>
         )}
 
@@ -222,7 +228,7 @@ export default function Settings() {
                 onToggle={() => setFreeShip((v) => !v)}
               />
             </div>
-            <SaveButton />
+            <SaveButton onClick={handleSave} />
           </div>
         )}
 
@@ -246,7 +252,7 @@ export default function Settings() {
                 <input className="form-input" defaultValue="admin@udee.co.th" />
               </div>
             </div>
-            <SaveButton />
+            <SaveButton onClick={handleSave} />
           </div>
         )}
 
@@ -276,10 +282,34 @@ export default function Settings() {
                 onToggle={() => setTwoFactor((v) => !v)}
               />
             </div>
-            <SaveButton />
+            <SaveButton onClick={handleSave} />
           </div>
         )}
       </div>
+
+      {/* Toast Notification */}
+      {showToast && (
+        <div style={{
+          position: 'fixed',
+          bottom: '24px',
+          right: '24px',
+          background: '#4A7C59',
+          color: 'white',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          zIndex: 9999,
+          fontSize: '14px',
+          fontWeight: 500,
+          animation: 'fadeIn 0.3s ease-out'
+        }}>
+          <i className="ti ti-circle-check" style={{ fontSize: '18px' }}></i>
+          บันทึกการตั้งค่าสำเร็จ!
+        </div>
+      )}
     </div>
   );
 }

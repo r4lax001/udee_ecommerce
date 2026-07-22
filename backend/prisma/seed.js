@@ -97,7 +97,7 @@ async function main() {
   const defaultPassword = await bcrypt.hash('Password123', 12)
   const usersToCreate = [
     {
-      name: 'System Admin',
+      name: 'AdminV2',
       email: 'admin@udee.co.th',
       password: defaultPassword,
       phone: '0899999999',
@@ -105,7 +105,7 @@ async function main() {
       isVerified: true
     },
     {
-      name: 'Store Manager',
+      name: 'ManagerV2',
       email: 'manager@udee.co.th',
       password: defaultPassword,
       phone: '0888888888',
@@ -113,7 +113,7 @@ async function main() {
       isVerified: true
     },
     {
-      name: 'John Customer',
+      name: 'UserV2',
       email: 'customer@udee.co.th',
       password: defaultPassword,
       phone: '0877777777',

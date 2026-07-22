@@ -13,6 +13,7 @@ import orderRouter from './routes/order.js'
 import addressRouter from './routes/address.js'
 import reportRouter from './routes/report.js'
 import uploadRouter from './routes/upload.js'
+import notificationRouter from './routes/notification.js'
 
 dotenv.config()
 
@@ -51,6 +52,7 @@ app.use('/api/orders', orderRouter)
 app.use('/api/addresses', addressRouter)
 app.use('/api/reports', reportRouter)
 app.use('/api/upload', uploadRouter)
+app.use('/api/notifications', notificationRouter)
 
 app.get('/', (req, res) => {
   res.json({ message: 'Udee API is running' })

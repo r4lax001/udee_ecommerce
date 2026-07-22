@@ -48,3 +48,13 @@ export const adminOnly = (req, res, next) => {
   }
   next();
 };
+
+/**
+ * Middleware to restrict access to ADMIN or MANAGER users.
+ */
+export const adminOrManager = (req, res, next) => {
+  if (!req.user || (req.user.role !== 'ADMIN' && req.user.role !== 'MANAGER')) {
+    return res.status(403).json({ success: false, message: 'สำหรับผู้ดูแลระบบหรือผู้จัดการเท่านั้น' });
+  }
+  next();
+};

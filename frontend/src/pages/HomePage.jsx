@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import Tilt from 'react-parallax-tilt'
@@ -6,7 +6,7 @@ import ClickSparkButton from '../components/ClickSparkButton'
 import { homePageData } from '../data/homePageData'
 import { getProducts } from '../services/products'
 import { formatPrice } from '../utils/format'
-import { useEffect, useMemo } from 'react'
+import { useCart } from '../contexts'
 
 const HomePage = ({
   hero = homePageData.hero,
@@ -20,6 +20,9 @@ const HomePage = ({
   const [products, setProducts] = useState([])
   const [loadingProducts, setLoadingProducts] = useState(true)
   const transition = { duration: reduceMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] }
+
+  const { addItem } = useCart()
+  const [favorites, setFavorites] = useState(new Set())
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -70,8 +73,8 @@ const HomePage = ({
   const dynamicRecommended = useMemo(() => {
     if (loadingProducts || products.length === 0) return recommendedProducts
 
-    // Select some products to recommend (e.g., first 8)
-    return products.slice(0, 8).map(p => {
+    // Select some products to recommend (e.g., first 4)
+    return products.slice(0, 4).map(p => {
       const hasReviews = Number(p.reviews) > 0
       const ratingText = p.rating && p.rating !== '0' && p.rating !== 'ยังไม่มีรีวิว'
         ? p.rating
@@ -79,12 +82,13 @@ const HomePage = ({
       return {
         id: p.id,
         name: p.title || p.name,
-        price: formatPrice(p.price),
-        originalPrice: p.originalPrice ? formatPrice(p.originalPrice) : null,
+        price: p.price,
+        originalPrice: p.originalPrice,
         image: p.image,
         rating: ratingText,
         reviews: hasReviews ? Number(p.reviews) : 0,
         badge: p.badge || (p.soldOut ? 'สินค้าหมด' : null),
+        soldOut: p.soldOut
       }
     })
   }, [recommendedProducts, products, loadingProducts])
@@ -93,10 +97,35 @@ const HomePage = ({
     setLoadedImages(prev => ({ ...prev, [key]: true }))
   }
 
-  return (
+  const toggleFavorite = (e, productId) => {
+    e.stopPropagation()
+    setFavorites(prev => {
+      const next = new Set(prev)
+      if (next.has(productId)) next.delete(productId)
+      else next.add(productId)
+      return next
+    })
+  }
 
+  const handleAddToCart = (e, product) => {
+    e.stopPropagation()
+    const originalProduct = products.find(p => p.id === product.id) || product
+    addItem({
+      productId: originalProduct.id,
+      name: originalProduct.title || originalProduct.name,
+      image: originalProduct.image || originalProduct.gallery?.[0] || '',
+      price: originalProduct.price,
+      qty: 1,
+      variant: originalProduct.variants?.[0] || null,
+      color: originalProduct.colors?.[0] || null,
+      material: originalProduct.materialOptions?.[0] || null,
+    })
+    navigate('/cart')
+  }
+
+  return (
     <motion.main
-      className="bg-[#FAF6F1]  text-[#1D1B1A] overflow-x-hidden"
+      className="bg-[#FAF6F1] text-[#1D1B1A] overflow-x-hidden"
       style={{ fontFamily: 'Kanit, Inter, Prompt, Mitr, sans-serif' }}
       initial={reduceMotion ? false : { opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
@@ -339,84 +368,71 @@ const HomePage = ({
                     navigate(`/product-detail/${product.id}`)
                   }
                 }}
-                className="group overflow-hidden rounded-3xl bg-white cursor-pointer perspective shadow-sm transition-all duration-500 hover:shadow-xl hover:border hover:border-[#A0724A]"
+                className="group flex flex-col cursor-pointer bg-white rounded-xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-4 border border-transparent hover:border-[#EAEAEA] p-3"
                 role="article"
                 aria-label={`${product.name}, ราคา ${product.price}, คะแนน ${product.rating} จาก ${product.reviews} รีวิว`}
                 initial={reduceMotion ? false : { opacity: 0, y: 24, rotateX: 10 }}
                 whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, rotateX: 0 }}
                 viewport={{ once: true, amount: 0.15 }}
                 transition={{ ...transition, delay: index * 0.05 }}
-                whileHover={reduceMotion ? {} : { y: -16, scale: 1.05, rotateX: 0 }}
-                whileTap={{ scale: 0.97 }}
               >
-                <div className="relative h-48 overflow-hidden bg-[#F2EBE2]">
+                <div className="w-full aspect-[4/5] bg-[#F9F9F9] rounded-lg mb-4 overflow-hidden relative">
                   {product.badge && (
-                    <motion.span
-                      className="absolute top-3 left-3 z-10 bg-[#A0724A] text-white text-xs font-semibold px-3 py-1 rounded-full"
-                      initial={reduceMotion ? false : { opacity: 0, scale: 0.9, y: -10 }}
-                      whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
-                      viewport={{ once: true, amount: 0.2 }}
-                      transition={{ ...transition, delay: index * 0.05 + 0.1 }}
-                    >
+                    <span className="absolute left-2 top-2 z-10 rounded bg-[#ff0000] px-2 py-1 text-[9px] font-bold uppercase tracking-widest text-white">
                       {product.badge}
-                    </motion.span>
+                    </span>
                   )}
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-t from-[#3D2B1F]/20 to-transparent z-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                  />
-                  <motion.img
+                  <img
                     src={product.image}
                     alt={product.name}
-                    className={`h-full w-full object-cover transition-opacity duration-300 ${loadedImages[`product-${product.id}`] ? 'opacity-100' : 'opacity-0'}`}
+                    className={`h-full w-full object-cover transition-transform duration-700 group-hover:scale-105 ${loadedImages[`product-${product.id}`] ? 'opacity-100' : 'opacity-0'}`}
                     onLoad={() => handleImageLoad(`product-${product.id}`)}
-                    whileHover={reduceMotion ? {} : { scale: 1.1 }}
-                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                   />
                   {!loadedImages[`product-${product.id}`] && (
                     <div className="absolute inset-0 bg-[#F2EBE2] animate-pulse" />
                   )}
                 </div>
-                <div className="p-5">
-                  <motion.h3
-                    className="text-lg font-semibold text-[#3D2B1F] mb-2 line-clamp-2 group-hover:text-[#A0724A] transition-colors"
-                    initial={reduceMotion ? false : { opacity: 0, y: 8 }}
-                    whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    transition={{ ...transition, delay: index * 0.05 + 0.1 }}
-                  >
-                    {product.name}
-                  </motion.h3>
-                  <motion.div
-                    className="flex items-center gap-1 mb-2"
-                    initial={reduceMotion ? false : { opacity: 0, y: 8 }}
-                    whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    transition={{ ...transition, delay: index * 0.05 + 0.15 }}
-                  >
-                    <span className="text-yellow-500">★</span>
-                    <span className="text-sm text-[#5a4e46]">{product.rating}</span>
-                    {product.rating !== 'ยังไม่มีรีวิว' && Number(product.reviews) > 0 && (
-                      <span className="text-xs text-[#5a4e46]">({product.reviews})</span>
+                
+                <div className="flex flex-col flex-1 px-1">
+                  <div className="flex items-start justify-between">
+                    <h3 className="text-sm font-semibold text-[#111111] leading-snug line-clamp-1 pr-4">
+                      {product.name}
+                    </h3>
+                  </div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <p className="text-sm font-medium text-[#111111]">{formatPrice(product.price)}</p>
+                    {product.originalPrice && (
+                      <p className="text-xs text-[#888888] line-through">{formatPrice(product.originalPrice)}</p>
                     )}
-                  </motion.div>
-                  <motion.div
-                    className="flex items-center gap-2"
-                    initial={reduceMotion ? false : { opacity: 0, y: 8 }}
-                    whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    transition={{ ...transition, delay: index * 0.05 + 0.2 }}
-                  >
-                    <span className="text-lg font-bold text-[#3D2B1F]">{product.price}</span>
-                    <motion.span
-                      className="text-sm text-[#5a4e46] line-through"
-                      initial={reduceMotion ? false : { opacity: 0 }}
-                      whileInView={reduceMotion ? { opacity: 1 } : { opacity: 0.7 }}
-                      viewport={{ once: true, amount: 0.2 }}
-                      transition={{ ...transition, delay: index * 0.05 + 0.25 }}
+                  </div>
+                  
+                  <div className="mt-4 pt-4 border-t border-[#EAEAEA] flex gap-2">
+                    <button
+                      disabled={product.soldOut}
+                      onClick={(e) => handleAddToCart(e, product)}
+                      className={`flex-1 rounded-lg py-2.5 text-xs font-semibold transition-colors flex items-center justify-center gap-2 ${product.soldOut
+                          ? 'bg-[#F0F0F0] text-[#AAAAAA] cursor-not-allowed'
+                          : 'bg-[#111111] text-white hover:bg-[#333333]'
+                        }`}
                     >
-                      {product.originalPrice}
-                    </motion.span>
-                  </motion.div>
+                      <span className="material-symbols-outlined text-[16px]">shopping_cart</span>
+                      {product.soldOut ? 'Sold Out' : 'Add to Cart'}
+                    </button>
+                    <button
+                      onClick={(e) => toggleFavorite(e, product.id)}
+                      className={`flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-lg border-1 transition-colors border border-transparent ${favorites.has(product.id)
+                          ? 'text-red-500 bg-white border-red-500'
+                          : 'text-[#666666] border-[#EAEAEA] hover:text-red-500 hover:border-red-500'
+                        }`}
+                    >
+                      <span
+                        className="material-symbols-outlined text-[18px]"
+                        style={{ fontVariationSettings: favorites.has(product.id) ? "'FILL' 1" : "'FILL' 0" }}
+                      >
+                        favorite
+                      </span>
+                    </button>
+                  </div>
                 </div>
               </motion.article>
             ))}
@@ -424,7 +440,6 @@ const HomePage = ({
         </div>
       </section>
     </motion.main>
-
   )
 }
 

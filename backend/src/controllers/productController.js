@@ -76,6 +76,18 @@ export async function createProduct(req, res) {
         images: true
       }
     })
+
+    // Notify ALL users about new product
+    await prisma.notification.create({
+      data: {
+        userId: null,
+        role: 'ALL',
+        title: `สินค้าใหม่: ${product.name}`,
+        message: `มีสินค้าใหม่มาลงขายในราคา ฿${product.price.toLocaleString()}`,
+        type: 'INFO'
+      }
+    })
+
     res.status(201).json(product)
   } catch (error) {
     res.status(500).json({ error: error.message })
@@ -157,7 +169,12 @@ export async function deleteProduct(req, res) {
       where: { productId }
     })
 
-    // 3. Delete the product itself
+    // 3. Delete associated order items (เพื่อไม่ให้ติด Foreign Key Error เวลามีคนสั่งซื้อไปแล้ว)
+    await prisma.orderItem.deleteMany({
+      where: { productId }
+    })
+
+    // 4. Delete the product itself
     await prisma.product.delete({
       where: { id: productId }
     })

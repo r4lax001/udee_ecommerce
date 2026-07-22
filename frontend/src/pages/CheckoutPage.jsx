@@ -299,19 +299,19 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
 
   if (isCartEmpty) {
     return (
-      <main className="min-h-screen bg-[#F2EBE2] px-6 py-16 text-[#1D1B1A]">
-        <section className="mx-auto max-w-3xl rounded-3xl bg-white p-10 text-center shadow-[0_2px_8px_rgba(61,43,31,0.08)]">
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-[#FEF4EA] text-[#A0724A]">
-            <span className="material-symbols-outlined text-4xl">
+      <main className="min-h-screen bg-[#FAF6F1] px-4 sm:px-6 py-16 text-[#1D1B1A]">
+        <section className="mx-auto max-w-xl rounded-2xl bg-white p-10 text-center shadow-sm border border-[#E8E1DF]">
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#E8E1DF] bg-white text-[#81756e] shadow-sm">
+            <span className="material-symbols-outlined text-2xl">
               shopping_cart
             </span>
           </div>
 
-          <h1 className="text-3xl font-semibold text-[#3D2B1F]">
-            ยังไม่มีสินค้าในตะกร้า
+          <h1 className="text-xl font-semibold tracking-tight text-[#3D2B1F]">
+            ตะกร้าของคุณว่างเปล่า
           </h1>
 
-          <p className="mt-4 text-sm text-[#5a4e46]">
+          <p className="mt-2 text-sm text-[#81756e]">
             กรุณาเลือกสินค้าใส่ตะกร้าก่อนเข้าสู่ขั้นตอนชำระเงิน
           </p>
 
@@ -319,7 +319,7 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
             <button
               type="button"
               onClick={() => navigate("/products")}
-              className="rounded-2xl bg-[#3D2B1F] px-8 py-3 font-semibold text-white transition hover:opacity-90"
+              className="inline-flex items-center justify-center rounded-xl bg-[#3D2B1F] px-6 py-2.5 text-sm font-medium text-white transition-all hover:bg-[#2A1F14] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3D2B1F] focus-visible:ring-offset-2"
             >
               ไปเลือกสินค้า
             </button>
@@ -327,7 +327,7 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
             <button
               type="button"
               onClick={() => navigate("/cart")}
-              className="rounded-2xl border border-[#3D2B1F] px-8 py-3 font-semibold text-[#3D2B1F] transition hover:bg-[#F3ECEA]"
+              className="inline-flex items-center justify-center rounded-xl border border-[#E8E1DF] bg-white px-6 py-2.5 text-sm font-medium text-[#3D2B1F] transition-all hover:bg-[#FAF6F1] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3D2B1F] focus-visible:ring-offset-2"
             >
               กลับไปตะกร้า
             </button>
@@ -339,374 +339,381 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
 
   return (
     <motion.main
-      className="min-h-screen bg-[#F2EBE2] text-[#1D1B1A]"
+      className="min-h-screen bg-[#FAF6F1] text-[#1D1B1A] selection:bg-[#3D2B1F] selection:text-white"
       initial={reduceMotion ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={transition}
     >
-      <section className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-8 space-y-8">
-            <motion.div
-              className="rounded-3xl bg-white p-10 shadow-[0_2px_8px_rgba(61,43,31,0.08)]"
-              initial={reduceMotion ? false : { y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={transition}
-            >
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <h1 className="text-3xl font-semibold text-[#3D2B1F]">
-                    {checkout.title}
-                  </h1>
-                  <p className="text-sm text-[#5a4e46] mt-2">
-                    เลือกขั้นตอนแล้วกรอกข้อมูลให้ครบถ้วน
-                  </p>
-                </div>
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 py-12 lg:py-16">
+        <div className="grid gap-8 lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_380px] items-start">
+          <div className="flex flex-col space-y-6">
+            <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between pb-4 border-b border-[#E8E1DF]">
+              <div>
+                <h1 className="text-2xl font-semibold tracking-tight text-[#3D2B1F]">
+                  {checkout.title}
+                </h1>
+                <p className="text-sm text-[#81756e] mt-1">
+                  กรุณากรอกข้อมูลให้ครบถ้วนเพื่อดำเนินการต่อ
+                </p>
+              </div>
 
-                <div className="flex flex-wrap gap-3">
-                  {checkout.steps.map((step, index) => (
+              <div className="flex items-center gap-2">
+                {[1, 2, 3].map((step) => (
+                  <div key={step} className="flex items-center gap-2">
                     <span
-                      key={step}
-                      className={`rounded-full px-4 py-2 text-sm font-medium ${
-                        index + 1 === currentStep
+                      className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium transition-colors ${
+                        step === currentStep
                           ? "bg-[#3D2B1F] text-white"
-                          : "bg-[#F3ECEA] text-[#5a4e46]"
+                          : step < currentStep
+                            ? "bg-[#E8E1DF] text-[#3D2B1F]"
+                            : "bg-transparent border border-[#E8E1DF] text-[#a89f98]"
                       }`}
                     >
-                      {step}
+                      {step < currentStep ? <span className="material-symbols-outlined text-[14px]">check</span> : step}
                     </span>
-                  ))}
-                </div>
+                    {step < 3 && <div className={`h-px w-4 ${step < currentStep ? 'bg-[#E8E1DF]' : 'bg-[#E8E1DF]/50'}`} />}
+                  </div>
+                ))}
               </div>
-            </motion.div>
+            </header>
 
             {error && (
-              <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700">
+              <div className="rounded-xl border border-red-200 bg-red-50/50 px-4 py-3 text-sm font-medium text-red-600 flex items-start gap-2">
+                <span className="material-symbols-outlined text-[18px]">error</span>
                 {error}
               </div>
             )}
 
             {currentStep === 1 ? (
-              <div className="rounded-3xl bg-white p-10 shadow-[0_2px_8px_rgba(61,43,31,0.08)]">
-                <h2 className="text-2xl font-semibold mb-8 text-[#3D2B1F]">
+              <motion.div 
+                className="rounded-2xl bg-white p-6 sm:p-8 shadow-sm border border-[#E8E1DF]"
+                initial={reduceMotion ? false : { y: 10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+              >
+                <h2 className="text-lg font-semibold tracking-tight text-[#3D2B1F] mb-6">
                   ข้อมูลการจัดส่ง
                 </h2>
 
-                <div className="grid gap-6 md:grid-cols-2">
+                <div className="grid gap-5 md:grid-cols-2">
                   {[
                     { label: "ชื่อ-นามสกุล", name: "name", type: "text" },
                     { label: "เบอร์โทรศัพท์", name: "phone", type: "tel" },
                     {
-                      label: "ที่อยู่",
+                      label: "ที่อยู่ (บ้านเลขที่, ถนน, ซอย)",
                       name: "address",
                       type: "text",
                       full: true,
                     },
-                    { label: "จังหวัด", name: "city", type: "text" },
                     { label: "เขต/อำเภอ", name: "district", type: "text" },
+                    { label: "จังหวัด", name: "city", type: "text" },
                     { label: "รหัสไปรษณีย์", name: "zip", type: "text" },
                   ].map((field) => (
-                    <label
+                    <div
                       key={field.name}
-                      className={`${field.full ? "md:col-span-2" : ""} flex flex-col gap-2`}
+                      className={`${field.full ? "md:col-span-2" : ""} flex flex-col gap-1.5`}
                     >
-                      <span className="text-sm font-medium text-[#81756E]">
+                      <label htmlFor={`shipping-${field.name}`} className="text-[13px] font-medium text-[#5a4e46]">
                         {field.label}
-                      </span>
-
+                      </label>
                       <input
+                        id={`shipping-${field.name}`}
                         type={field.type}
                         name={field.name}
                         value={shippingInfo[field.name]}
                         onChange={handleShippingChange}
-                        className="rounded-2xl border border-[#D2C4BC] bg-[#F9F2F0] px-4 py-3 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20"
+                        className="rounded-xl border border-[#E8E1DF] bg-white px-3.5 py-2.5 text-sm text-[#1D1B1A] outline-none transition-all hover:border-[#D2C4BC] focus:border-[#3D2B1F] focus:ring-1 focus:ring-[#3D2B1F]"
                       />
-                    </label>
+                    </div>
                   ))}
                 </div>
 
-                <div className="mt-10 flex justify-end">
+                <div className="mt-8 flex justify-end border-t border-[#E8E1DF] pt-6">
                   <button
                     type="button"
                     onClick={goToPayment}
-                    className="rounded-2xl bg-[#3D2B1F] px-8 py-3 text-white hover:opacity-90 transition"
+                    className="inline-flex items-center justify-center rounded-xl bg-[#3D2B1F] px-6 py-2.5 text-sm font-medium text-white transition-all hover:bg-[#2A1F14] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3D2B1F] focus-visible:ring-offset-2"
                   >
                     ถัดไป: ชำระเงิน
                   </button>
                 </div>
-              </div>
-            ) : currentStep === 2 ? (
-              <div className="rounded-3xl bg-white p-10 shadow-[0_2px_8px_rgba(61,43,31,0.08)] space-y-10">
-                <div>
-                  <h2 className="text-2xl font-semibold text-[#3D2B1F]">
-                    ช่องทางการชำระเงิน
-                  </h2>
+              </motion.div>            ) : currentStep === 2 ? (
+              <motion.div 
+                className="rounded-2xl bg-white p-6 sm:p-8 shadow-sm border border-[#E8E1DF]"
+                initial={reduceMotion ? false : { y: 10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+              >
+                <h2 className="text-lg font-semibold tracking-tight text-[#3D2B1F] mb-6">
+                  ช่องทางการชำระเงิน
+                </h2>
 
-                  <div className="mt-6 grid gap-6">
-                    <div className="rounded-3xl bg-[#FEF4EA] p-6 border border-[#E8E1DF]">
-                      <p className="font-semibold text-[#3D2B1F]">
-                        โอนผ่านธนาคาร
-                      </p>
-                      <p className="text-sm text-[#5a4e46] mt-3">
-                        ธนาคารกสิกรไทย (K-Bank)
-                      </p>
-                      <p className="text-sm text-[#5a4e46]">
-                        ชื่อบัญชี: บจก. ยูดี เฟอร์นิเจอร์ (UDEE Furniture)
-                      </p>
-
-                      <div className="mt-4 flex items-center justify-between rounded-2xl bg-white p-4 shadow-sm">
-                        <p className="font-semibold">123-4-56789-0</p>
+                <div className="space-y-6">
+                  <div className="rounded-xl border border-[#E8E1DF] bg-white overflow-hidden">
+                    <div className="bg-[#FAF6F1] px-4 py-3 border-b border-[#E8E1DF] flex items-center gap-2">
+                      <span className="material-symbols-outlined text-[18px] text-[#3D2B1F]">account_balance</span>
+                      <p className="font-semibold text-sm text-[#3D2B1F]">โอนผ่านธนาคาร</p>
+                    </div>
+                    <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="text-sm text-[#5a4e46] space-y-1">
+                        <p className="font-medium text-[#3D2B1F]">ธนาคารกสิกรไทย (K-Bank)</p>
+                        <p>บจก. ยูดี เฟอร์นิเจอร์ (UDEE Furniture)</p>
+                      </div>
+                      <div className="flex items-center gap-3 rounded-lg bg-[#FAF6F1] px-3 py-2 border border-[#E8E1DF]">
+                        <p className="font-mono text-[13px] font-semibold text-[#3D2B1F] tracking-wide">123-4-56789-0</p>
+                        <div className="h-4 w-px bg-[#D2C4BC]" />
                         <button
                           type="button"
-                          onClick={() =>
-                            navigator.clipboard.writeText("123-4-56789-0")
-                          }
-                          className="text-[#A0724A] font-medium"
+                          onClick={() => navigator.clipboard.writeText("123-4-56789-0")}
+                          className="text-[12px] font-semibold text-[#81756e] hover:text-[#3D2B1F] transition-colors focus-visible:outline-none"
                         >
                           คัดลอก
                         </button>
                       </div>
                     </div>
+                  </div>
 
-                    <div className="rounded-3xl p-6 border border-[#E8E1DF]">
-                      <div className="grid gap-6 md:grid-cols-2">
-                        <label className="flex flex-col gap-2 text-sm text-[#81756E]">
-                          วันที่โอน
-                          <input
-                            type="date"
-                            name="transferDate"
-                            value={paymentInfo.transferDate}
-                            onChange={handlePaymentChange}
-                            className="rounded-2xl border border-[#D2C4BC] bg-[#F9F2F0] px-4 py-3 outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20"
-                          />
-                        </label>
-
-                        <label className="flex flex-col gap-2 text-sm text-[#81756E]">
-                          จำนวนเงิน (บาท)
-                          <input
-                            type="number"
-                            name="amount"
-                            value={paymentInfo.amount}
-                            onChange={handlePaymentChange}
-                            placeholder={String(total)}
-                            className="rounded-2xl border border-[#D2C4BC] bg-[#F9F2F0] px-4 py-3 outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20"
-                          />
-                        </label>
-                      </div>
-
-                      <label className="mt-6 flex flex-col gap-2 text-sm text-[#81756E]">
-                        อัปโหลดสลิปเพื่ออ่าน QR Code
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleSlipUpload}
-                          className="rounded-2xl border border-[#D2C4BC] bg-[#F9F2F0] px-4 py-3 outline-none"
-                        />
+                  <div className="grid gap-5 md:grid-cols-2 pt-2">
+                    <div className="flex flex-col gap-1.5">
+                      <label htmlFor="transferDate" className="text-[13px] font-medium text-[#5a4e46]">
+                        วันที่โอน
                       </label>
+                      <input
+                        id="transferDate"
+                        type="date"
+                        name="transferDate"
+                        value={paymentInfo.transferDate}
+                        onChange={handlePaymentChange}
+                        className="rounded-xl border border-[#E8E1DF] bg-white px-3.5 py-2.5 text-sm text-[#1D1B1A] outline-none transition-all hover:border-[#D2C4BC] focus:border-[#3D2B1F] focus:ring-1 focus:ring-[#3D2B1F]"
+                      />
+                    </div>
 
-                      {paymentInfo.slipPreview && (
-                        <div className="mt-6 grid gap-4 md:grid-cols-[160px_1fr]">
-                          <div className="overflow-hidden rounded-2xl border border-[#E8E1DF] bg-white">
-                            <img
-                              src={paymentInfo.slipPreview}
-                              alt="ตัวอย่างสลิป"
-                              className="h-48 w-full object-cover"
-                            />
-                          </div>
-
-                          <div
-                            className={`rounded-2xl p-4 text-sm ${
-                              paymentInfo.qrStatus === "success"
-                                ? "bg-green-50 text-green-700"
-                                : paymentInfo.qrStatus === "failed"
-                                  ? "bg-red-50 text-red-700"
-                                  : "bg-[#FFF1E7] text-[#5a4e46]"
-                            }`}
-                          >
-                            <p className="font-semibold">
-                              สถานะการอ่าน QR Slip
-                            </p>
-                            <p className="mt-2">{paymentInfo.qrMessage}</p>
-
-                            {paymentInfo.qrPayload && (
-                              <div className="mt-3 rounded-xl bg-white/70 p-3">
-                                <p className="font-medium text-[#3D2B1F]">
-                                  QR Payload
-                                </p>
-                                <p className="mt-1 break-all text-xs">
-                                  {paymentInfo.qrPayload}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      {!paymentInfo.slipPreview &&
-                        paymentInfo.qrStatus === "reading" && (
-                          <p className="mt-4 text-sm text-[#5a4e46]">
-                            กำลังอ่าน QR Code จากสลิป...
-                          </p>
-                        )}
+                    <div className="flex flex-col gap-1.5">
+                      <label htmlFor="amount" className="text-[13px] font-medium text-[#5a4e46]">
+                        จำนวนเงิน (บาท)
+                      </label>
+                      <input
+                        id="amount"
+                        type="number"
+                        name="amount"
+                        value={paymentInfo.amount}
+                        onChange={handlePaymentChange}
+                        placeholder={String(total)}
+                        className="rounded-xl border border-[#E8E1DF] bg-white px-3.5 py-2.5 text-sm text-[#1D1B1A] outline-none transition-all hover:border-[#D2C4BC] focus:border-[#3D2B1F] focus:ring-1 focus:ring-[#3D2B1F]"
+                      />
                     </div>
                   </div>
+
+                  <div className="flex flex-col gap-1.5 pt-2">
+                    <label className="text-[13px] font-medium text-[#5a4e46]">
+                      อัปโหลดสลิปเพื่อยืนยัน
+                    </label>
+                    <div className="relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#E8E1DF] bg-[#FAF6F1] px-6 py-8 text-center transition-colors hover:border-[#D2C4BC] focus-within:border-[#3D2B1F] focus-within:bg-white focus-within:ring-1 focus-within:ring-[#3D2B1F]">
+                      <span className="material-symbols-outlined text-3xl text-[#a89f98] mb-2">upload_file</span>
+                      <p className="text-sm font-medium text-[#3D2B1F]">คลิกเพื่ออัปโหลด หรือลากไฟล์มาวางที่นี่</p>
+                      <p className="mt-1 text-xs text-[#81756e]">รองรับไฟล์ JPG, PNG</p>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleSlipUpload}
+                        className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                      />
+                    </div>
+                  </div>
+
+                  {paymentInfo.slipPreview && (
+                    <div className="flex flex-col sm:flex-row gap-4 p-4 rounded-xl border border-[#E8E1DF] bg-white shadow-sm items-start">
+                      <div className="h-24 w-24 shrink-0 overflow-hidden rounded-lg border border-[#E8E1DF] bg-[#FAF6F1]">
+                        <img
+                          src={paymentInfo.slipPreview}
+                          alt="ตัวอย่างสลิป"
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          {paymentInfo.qrStatus === "success" ? (
+                            <span className="material-symbols-outlined text-[16px] text-[#4A7C59]">check_circle</span>
+                          ) : paymentInfo.qrStatus === "failed" ? (
+                            <span className="material-symbols-outlined text-[16px] text-red-600">error</span>
+                          ) : (
+                            <span className="material-symbols-outlined text-[16px] text-[#A0724A] animate-pulse">hourglass_bottom</span>
+                          )}
+                          <p className={`text-sm font-semibold ${
+                            paymentInfo.qrStatus === "success" ? "text-[#4A7C59]" :
+                            paymentInfo.qrStatus === "failed" ? "text-red-600" :
+                            "text-[#A0724A]"
+                          }`}>
+                            {paymentInfo.qrStatus === "success" ? "อ่านข้อมูลสำเร็จ" :
+                             paymentInfo.qrStatus === "failed" ? "พบข้อผิดพลาด" :
+                             "กำลังประมวลผล..."}
+                          </p>
+                        </div>
+                        <p className="text-xs text-[#5a4e46] leading-relaxed line-clamp-2">
+                          {paymentInfo.qrMessage}
+                        </p>
+                        {paymentInfo.qrPayload && (
+                          <p className="mt-2 text-[10px] font-mono text-[#a89f98] truncate bg-[#FAF6F1] px-2 py-1 rounded">
+                            {paymentInfo.qrPayload}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                <div className="flex justify-between gap-4">
+                <div className="mt-8 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 border-t border-[#E8E1DF] pt-6">
                   <button
                     type="button"
-                    onClick={() => {
-                      setError("");
-                      setCurrentStep(1);
-                    }}
-                    className="rounded-2xl border border-[#3D2B1F] px-8 py-3 text-[#3D2B1F] hover:bg-[#F3ECEA] transition"
+                    onClick={() => { setError(""); setCurrentStep(1); }}
+                    className="inline-flex items-center justify-center rounded-xl border border-[#E8E1DF] bg-white px-6 py-2.5 text-sm font-medium text-[#3D2B1F] transition-all hover:bg-[#FAF6F1] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3D2B1F]"
                   >
                     ย้อนกลับ
                   </button>
-
                   <button
                     type="button"
                     onClick={goToConfirm}
-                    className="rounded-2xl bg-[#3D2B1F] px-8 py-3 text-white hover:opacity-90 transition"
+                    className="inline-flex items-center justify-center rounded-xl bg-[#3D2B1F] px-6 py-2.5 text-sm font-medium text-white transition-all hover:bg-[#2A1F14] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3D2B1F]"
                   >
-                    ถัดไป: ตรวจสอบคำสั่งซื้อ
+                    ถัดไป: ยืนยันคำสั่งซื้อ
                   </button>
                 </div>
-              </div>
+              </motion.div>
             ) : (
-              <div className="rounded-3xl bg-white p-10 shadow-[0_2px_8px_rgba(61,43,31,0.08)]">
-                <h2 className="text-2xl font-semibold text-[#3D2B1F]">
+              <motion.div 
+                className="rounded-2xl bg-white p-6 sm:p-8 shadow-sm border border-[#E8E1DF]"
+                initial={reduceMotion ? false : { y: 10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+              >
+                <h2 className="text-lg font-semibold tracking-tight text-[#3D2B1F] mb-6">
                   ตรวจสอบและยืนยันคำสั่งซื้อ
                 </h2>
 
-                <div className="mt-8 grid gap-6 md:grid-cols-2">
-                  <div className="rounded-3xl border border-[#E8E1DF] bg-[#F9F2F0] p-6">
-                    <h3 className="font-semibold text-[#3D2B1F]">
-                      ข้อมูลจัดส่ง
-                    </h3>
-
-                    <div className="mt-4 space-y-2 text-sm text-[#5a4e46]">
-                      <p>ชื่อ: {shippingInfo.name}</p>
-                      <p>เบอร์โทร: {shippingInfo.phone}</p>
-                      <p>ที่อยู่: {shippingInfo.address}</p>
-                      <p>
-                        {shippingInfo.district}, {shippingInfo.city}{" "}
-                        {shippingInfo.zip}
-                      </p>
+                <div className="grid gap-5 md:grid-cols-2">
+                  <div className="rounded-xl border border-[#E8E1DF] bg-white p-5 shadow-sm">
+                    <div className="flex items-center gap-2 mb-3 pb-3 border-b border-[#E8E1DF]">
+                      <span className="material-symbols-outlined text-[18px] text-[#81756e]">local_shipping</span>
+                      <h3 className="font-semibold text-sm text-[#3D2B1F]">ข้อมูลจัดส่ง</h3>
                     </div>
+                    <dl className="space-y-2 text-[13px] text-[#5a4e46]">
+                      <div className="flex justify-between gap-4"><dt className="text-[#81756e]">ชื่อ</dt><dd className="font-medium text-[#3D2B1F] text-right">{shippingInfo.name}</dd></div>
+                      <div className="flex justify-between gap-4"><dt className="text-[#81756e]">โทร</dt><dd className="font-medium text-[#3D2B1F] text-right">{shippingInfo.phone}</dd></div>
+                      <div className="flex justify-between gap-4"><dt className="text-[#81756e]">ที่อยู่</dt><dd className="font-medium text-[#3D2B1F] text-right">{shippingInfo.address}, {shippingInfo.district}, {shippingInfo.city} {shippingInfo.zip}</dd></div>
+                    </dl>
                   </div>
 
-                  <div className="rounded-3xl border border-[#E8E1DF] bg-[#F9F2F0] p-6">
-                    <h3 className="font-semibold text-[#3D2B1F]">
-                      ข้อมูลการชำระเงิน
-                    </h3>
-
-                    <div className="mt-4 space-y-2 text-sm text-[#5a4e46]">
-                      <p>วันที่โอน: {paymentInfo.transferDate}</p>
-                      <p>จำนวนเงิน: {formatPrice(paymentInfo.amount || 0)}</p>
-                      <p>สลิป: {paymentInfo.slipName || "-"}</p>
-                      <p>
-                        สถานะ QR:{" "}
-                        {paymentInfo.qrStatus === "success"
-                          ? "อ่าน QR สำเร็จ"
-                          : "ยังไม่ผ่านการอ่าน QR"}
-                      </p>
-                      <p>สถานะการชำระเงิน: รอตรวจสอบโดยผู้จัดการ</p>
+                  <div className="rounded-xl border border-[#E8E1DF] bg-white p-5 shadow-sm">
+                    <div className="flex items-center gap-2 mb-3 pb-3 border-b border-[#E8E1DF]">
+                      <span className="material-symbols-outlined text-[18px] text-[#81756e]">payments</span>
+                      <h3 className="font-semibold text-sm text-[#3D2B1F]">ข้อมูลการชำระเงิน</h3>
                     </div>
+                    <dl className="space-y-2 text-[13px] text-[#5a4e46]">
+                      <div className="flex justify-between gap-4"><dt className="text-[#81756e]">วันที่โอน</dt><dd className="font-medium text-[#3D2B1F] text-right">{paymentInfo.transferDate}</dd></div>
+                      <div className="flex justify-between gap-4"><dt className="text-[#81756e]">จำนวนเงิน</dt><dd className="font-medium text-[#3D2B1F] text-right">{formatPrice(paymentInfo.amount || 0)}</dd></div>
+                      <div className="flex justify-between gap-4"><dt className="text-[#81756e]">การยืนยัน</dt><dd className="font-medium text-[#4A7C59] text-right flex items-center justify-end gap-1"><span className="material-symbols-outlined text-[14px]">verified</span> QR สมบูรณ์</dd></div>
+                    </dl>
                   </div>
                 </div>
 
-                <div className="mt-8 rounded-3xl bg-[#FEF4EA] p-6 text-sm text-[#5a4e46]">
-                  หลังจากยืนยันคำสั่งซื้อ ระบบจะสร้างเลขออเดอร์
-                  และบันทึกข้อมูลสลิปพร้อม QR Payload เพื่อรอผู้จัดการตรวจสอบ
+                <div className="mt-6 rounded-xl bg-[#FAF6F1] p-4 text-[13px] text-[#5a4e46] border border-[#E8E1DF] flex items-start gap-3">
+                  <span className="material-symbols-outlined text-[18px] text-[#A0724A] shrink-0 mt-0.5">info</span>
+                  <p>หลังจากยืนยันคำสั่งซื้อ ระบบจะสร้างเลขออเดอร์และบันทึกข้อมูลสลิปเพื่อรอผู้จัดการตรวจสอบความถูกต้อง</p>
                 </div>
 
-                <div className="mt-10 flex justify-between gap-4">
+                <div className="mt-8 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 border-t border-[#E8E1DF] pt-6">
                   <button
                     type="button"
-                    onClick={() => {
-                      setError("");
-                      setCurrentStep(2);
-                    }}
-                    className="rounded-2xl border border-[#3D2B1F] px-8 py-3 text-[#3D2B1F] hover:bg-[#F3ECEA] transition"
+                    onClick={() => { setError(""); setCurrentStep(2); }}
+                    className="inline-flex items-center justify-center rounded-xl border border-[#E8E1DF] bg-white px-6 py-2.5 text-sm font-medium text-[#3D2B1F] transition-all hover:bg-[#FAF6F1] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3D2B1F]"
                   >
                     ย้อนกลับ
                   </button>
-
                   <button
                     type="button"
                     onClick={handleCreateOrder}
-                    className="rounded-2xl bg-[#3D2B1F] px-8 py-3 text-white hover:opacity-90 transition"
+                    className="inline-flex items-center justify-center rounded-xl bg-[#3D2B1F] px-6 py-2.5 text-sm font-medium text-white transition-all hover:bg-[#2A1F14] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3D2B1F]"
                   >
                     ยืนยันคำสั่งซื้อ
                   </button>
                 </div>
-              </div>
+              </motion.div>
             )}
           </div>
 
-          <aside className="lg:col-span-4 sticky top-24 self-start space-y-8">
-            <div className="rounded-3xl bg-white p-8 shadow-[0_2px_8px_rgba(61,43,31,0.08)] border border-[#E8E1DF]">
-              <h3 className="text-2xl font-semibold text-[#3D2B1F] mb-6">
+          <aside className="sticky top-24 flex flex-col gap-4">
+            <div className="rounded-2xl bg-white p-5 shadow-sm border border-[#E8E1DF]">
+              <h3 className="text-base font-semibold tracking-tight text-[#3D2B1F] mb-4">
                 สรุปคำสั่งซื้อ
               </h3>
 
-              {cartCheckoutData.products.map((product) => (
-                <div
-                  key={`${product.name}-${product.qty}`}
-                  className="flex gap-4 border-b border-[#E8E1DF] pb-4 mb-4"
-                >
-                  <div className="h-20 w-20 overflow-hidden rounded-2xl bg-[#F3ECEA]">
-                    <img
-                      className="h-full w-full object-cover"
-                      src={product.image}
-                      alt={product.name}
-                    />
+              <ul className="flex flex-col m-0 p-0 list-none mb-4 space-y-3">
+                {cartCheckoutData.products.map((product) => (
+                  <li
+                    key={`${product.name}-${product.qty}`}
+                    className="flex gap-3"
+                  >
+                    <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-[#E8E1DF] bg-white">
+                      <img
+                        className="h-full w-full object-cover"
+                        src={product.image}
+                        alt={product.name}
+                      />
+                      <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#5a4e46] text-[10px] font-bold text-white shadow-sm ring-2 ring-white">
+                        {product.qty}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-1 flex-col justify-center min-w-0">
+                      <p className="font-medium text-sm text-[#3D2B1F] truncate">{product.name}</p>
+                      <p className="text-[13px] font-medium text-[#81756e]">
+                        {product.price}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              <dl className="space-y-2.5 text-[13px] text-[#5a4e46]">
+                <div className="flex items-center justify-between">
+                  <dt>รวมรายการสินค้า</dt>
+                  <dd className="font-medium text-[#3D2B1F]">{formatPrice(cartCheckoutData.totals.subtotal)}</dd>
+                </div>
+
+                {cartCheckoutData.totals.discount > 0 && (
+                  <div className="flex items-center justify-between text-[#4A7C59]">
+                    <dt>ส่วนลด</dt>
+                    <dd className="font-semibold">-{formatPrice(cartCheckoutData.totals.discount)}</dd>
                   </div>
+                )}
 
-                  <div className="flex-1">
-                    <p className="font-medium text-[#3D2B1F]">{product.name}</p>
-                    <p className="text-sm text-[#81756E]">
-                      จำนวน: {product.qty}
-                    </p>
-                  </div>
-
-                  <p className="font-semibold text-[#A0724A]">
-                    {product.price}
-                  </p>
-                </div>
-              ))}
-
-              <div className="space-y-3 text-sm text-[#5a4e46]">
-                <div className="flex justify-between">
-                  <span>รวมรายการสินค้า</span>
-                  <span>{formatPrice(cartCheckoutData.totals.subtotal)}</span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span>ส่วนลด</span>
-                  <span className="text-[#A0724A]">
-                    -{formatPrice(cartCheckoutData.totals.discount)}
-                  </span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span>ค่าจัดส่ง</span>
-                  <span>
+                <div className="flex items-center justify-between">
+                  <dt>ค่าจัดส่ง</dt>
+                  <dd className="font-medium text-[#3D2B1F]">
                     {cartCheckoutData.totals.shipping === 0
                       ? "ฟรี"
                       : formatPrice(cartCheckoutData.totals.shipping)}
-                  </span>
+                  </dd>
                 </div>
-              </div>
 
-              <div className="mt-4 border-t border-[#E8E1DF] pt-4 flex justify-between text-lg font-bold text-[#3D2B1F]">
-                <span>ยอดสุทธิ</span>
-                <span>{formatPrice(total)}</span>
-              </div>
+                <div className="pt-3 mt-3 border-t border-[#E8E1DF] flex items-center justify-between">
+                  <dt className="text-sm font-semibold text-[#3D2B1F]">ยอดสุทธิ</dt>
+                  <dd className="text-lg font-bold tracking-tight text-[#3D2B1F]">{formatPrice(total)}</dd>
+                </div>
+              </dl>
+            </div>
 
-              <div className="mt-6 rounded-2xl bg-[#FFF1E7] p-4 text-sm text-[#5a4e46]">
-                บริการจัดส่งและประกอบหน้างานฟรี พร้อมรับประกันคุณภาพจาก UDEE
+            {/* Trust Badges section for premium feel */}
+            <div className="rounded-2xl border border-[#E8E1DF] bg-white p-4 shadow-sm space-y-3">
+              <div className="flex items-center gap-2.5 text-xs text-[#5a4e46]">
+                <span className="material-symbols-outlined text-[16px] text-[#4A7C59]">lock</span>
+                <span>ข้อมูลของคุณถูกเข้ารหัสและปลอดภัย 100% (SSL)</span>
+              </div>
+              <div className="flex items-center gap-2.5 text-xs text-[#5a4e46]">
+                <span className="material-symbols-outlined text-[16px] text-[#A0724A]">workspace_premium</span>
+                <span>รับประกันคุณภาพสินค้า UDEE นาน 1 ปี</span>
+              </div>
+              <div className="flex items-center gap-2.5 text-xs text-[#5a4e46]">
+                <span className="material-symbols-outlined text-[16px] text-[#3D2B1F]">local_shipping</span>
+                <span>บริการจัดส่งและประกอบหน้างานฟรี</span>
               </div>
             </div>
           </aside>

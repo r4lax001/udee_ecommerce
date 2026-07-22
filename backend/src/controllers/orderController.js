@@ -83,6 +83,32 @@ export async function createOrder(req, res) {
       })
     })
 
+    // Emit notifications
+    await prisma.notification.createMany({
+      data: [
+        {
+          userId: req.user.id,
+          title: `สั่งซื้อสำเร็จ (ออเดอร์ #${order.id})`,
+          message: `คำสั่งซื้อของคุณได้รับเข้าระบบเรียบร้อยแล้ว ยอดรวม ฿${order.total.toLocaleString()}`,
+          type: 'SUCCESS'
+        },
+        {
+          userId: null,
+          role: 'ADMIN',
+          title: `มีคำสั่งซื้อใหม่ #${order.id}`,
+          message: `ลูกค้าได้ทำการสั่งซื้อสินค้า ยอดรวม ฿${order.total.toLocaleString()}`,
+          type: 'INFO'
+        },
+        {
+          userId: null,
+          role: 'MANAGER',
+          title: `มีคำสั่งซื้อใหม่ #${order.id}`,
+          message: `ลูกค้าได้ทำการสั่งซื้อสินค้า ยอดรวม ฿${order.total.toLocaleString()}`,
+          type: 'INFO'
+        }
+      ]
+    })
+
     res.status(201).json(order)
   } catch (error) {
     res.status(400).json({ error: error.message })
@@ -97,6 +123,17 @@ export async function updateOrderStatus(req, res) {
       return res.status(400).json({ error: 'Invalid order id or status' })
     }
     const order = await prisma.order.update({ where: { id: orderId }, data: { status: req.body.status } })
+    
+    // Notify customer about status change
+    await prisma.notification.create({
+      data: {
+        userId: order.userId,
+        title: `อัปเดตสถานะออเดอร์ #${order.id}`,
+        message: `คำสั่งซื้อของคุณถูกเปลี่ยนสถานะเป็น ${req.body.status}`,
+        type: 'INFO'
+      }
+    })
+
     res.json(order)
   } catch (error) {
     res.status(error.code === 'P2025' ? 404 : 500).json({ error: error.code === 'P2025' ? 'Order not found' : 'Unable to update order' })

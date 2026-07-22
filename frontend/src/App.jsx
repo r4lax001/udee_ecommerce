@@ -18,6 +18,7 @@ const AdminOrdersPage = lazy(() => import("./pages/AdminOrdersPage"));
 const AdminDashboardPage = lazy(() => import("./pages/AdminDashboardPage"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const CartPage = lazy(() => import("./pages/CartPage"));
+const ContactPage = lazy(() => import("./pages/ContactPage"));
 
 function LoadingFallback() {
   const reduceMotion = useReducedMotion();
@@ -96,6 +97,7 @@ function App() {
 
               <Route path="cart" element={<CartPage />} />
               <Route path="cart-v2" element={<CartPage />} />
+              <Route path="contact" element={<ContactPage />} />
             </Route>
 
             <Route path="admin-dashboard" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />

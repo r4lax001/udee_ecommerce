@@ -1,18 +1,18 @@
 import { useEffect, useState, useMemo } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import ClickSparkButton from '../components/ClickSparkButton'
 import { getProducts } from '../services/products'
 import { formatPrice } from '../utils/format'
+import { useCart } from '../contexts'
 
 const CategoriesPage = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const reduceMotion = useReducedMotion()
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [sortBy, setSortBy] = useState('ยอดนิยม')
   const [priceValue, setPriceValue] = useState(100000)
+
+  // Filter States
   const [selectedSizes, setSelectedSizes] = useState([])
   const [selectedColors, setSelectedColors] = useState([])
   const [selectedMaterials, setSelectedMaterials] = useState([])
@@ -20,7 +20,9 @@ const CategoriesPage = () => {
     searchParams.get('category') ? [searchParams.get('category')] : []
   )
   const [currentPage, setCurrentPage] = useState(1)
-  const transition = { duration: reduceMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] }
+
+  const { addItem } = useCart()
+  const [favorites, setFavorites] = useState(new Set())
 
   const maxPrice = useMemo(() => {
     if (!products.length) return 100000
@@ -28,12 +30,10 @@ const CategoriesPage = () => {
     return Math.max(100000, highest)
   }, [products])
 
-  // Reset page to 1 when filters change
   useEffect(() => {
     setCurrentPage(1)
   }, [sortBy, priceValue, selectedSizes, selectedColors, selectedMaterials, selectedCategories])
 
-  // Update selected category if URL parameter changes
   useEffect(() => {
     const category = searchParams.get('category')
     if (category) {
@@ -61,6 +61,7 @@ const CategoriesPage = () => {
     }
   }, [])
 
+  // Derived Filter Options
   const availableCategories = useMemo(() => {
     const defaultCats = ['โต๊ะทำงาน', 'โต๊ะกินข้าว', 'โต๊ะตกแต่ง']
     const fromProducts = products.map(p => p.category).filter(Boolean)
@@ -91,47 +92,50 @@ const CategoriesPage = () => {
     )
   }
 
+  const toggleFavorite = (e, productId) => {
+    e.stopPropagation()
+    setFavorites(prev => {
+      const next = new Set(prev)
+      if (next.has(productId)) next.delete(productId)
+      else next.add(productId)
+      return next
+    })
+  }
+
+  const handleAddToCart = (e, product) => {
+    e.stopPropagation()
+    addItem({
+      productId: product.id,
+      name: product.title || product.name,
+      image: product.image || product.gallery?.[0] || '',
+      price: product.price,
+      qty: 1,
+      variant: product.variants?.[0] || null,
+      color: product.colors?.[0] || null,
+      material: product.materialOptions?.[0] || null,
+    })
+    navigate('/cart')
+  }
+
+  const clearAllFilters = () => {
+    setSelectedSizes([])
+    setSelectedColors([])
+    setSelectedMaterials([])
+    setSelectedCategories([])
+    setPriceValue(maxPrice)
+  }
+
+  // Filter & Sort Logic
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
-      // 1. Filter out empty templates
       if (!product.title || product.price < 0) return false
-
-      // 2. Filter by category
-      if (selectedCategories.length > 0) {
-        if (!selectedCategories.includes(product.category)) {
-          return false
-        }
-      }
-
-      // 3. Filter by price
-      if (product.price > priceValue) {
-        return false
-      }
-
-      // 4. Filter by size
-      if (selectedSizes.length > 0) {
-        if (!selectedSizes.includes(product.size)) {
-          return false
-        }
-      }
-
-      // 5. Filter by color
-      if (selectedColors.length > 0) {
-        const hasColor = selectedColors.some((c) => product.colors?.includes(c))
-        if (!hasColor) return false
-      }
-
-      // 6. Filter by material
-      if (selectedMaterials.length > 0) {
-        const hasMaterial = selectedMaterials.some((m) => {
-          if (Array.isArray(product.material)) {
-            return product.material.includes(m)
-          }
-          return product.material === m
-        })
-        if (!hasMaterial) return false
-      }
-
+      if (selectedCategories.length > 0 && !selectedCategories.includes(product.category)) return false
+      if (product.price > priceValue) return false
+      if (selectedSizes.length > 0 && !selectedSizes.includes(product.size)) return false
+      if (selectedColors.length > 0 && !selectedColors.some((c) => product.colors?.includes(c))) return false
+      if (selectedMaterials.length > 0 && !selectedMaterials.some((m) => {
+        return Array.isArray(product.material) ? product.material.includes(m) : product.material === m
+      })) return false
       return true
     })
   }, [products, selectedCategories, priceValue, selectedSizes, selectedColors, selectedMaterials])
@@ -150,7 +154,6 @@ const CategoriesPage = () => {
         return b.id - a.id
       })
     } else {
-      // Default: 'ยอดนิยม' - secondary sort by ID desc so new products show at top of same sold count
       list.sort((a, b) => {
         const soldDiff = (b.sold || 0) - (a.sold || 0)
         if (soldDiff !== 0) return soldDiff
@@ -168,132 +171,133 @@ const CategoriesPage = () => {
     return sortedProducts.slice(startIndex, startIndex + itemsPerPage)
   }, [sortedProducts, currentPage])
 
+  const activeFilterCount = selectedCategories.length + selectedSizes.length + selectedColors.length + selectedMaterials.length + (priceValue < maxPrice ? 1 : 0)
+
   return (
-    <motion.main
-      className="bg-[#FAF6F1] text-[#1D1B1A] overflow-x-hidden"
-      style={{ fontFamily: 'Kanit, Inter, Prompt, Mitr, sans-serif' }}
-      initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={transition}
-    >
-      <section className="py-12">
-        <div className="max-w-[1400px] mx-auto px-6">
-          <motion.div
-            className="mb-10 rounded-[2rem] bg-white p-8 shadow-[0_24px_70px_rgba(61,43,31,0.08)]"
-            initial={reduceMotion ? false : { opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ ...transition, delay: 0.05 }}
-          >
-            <p className="text-sm text-[#5a4e46]">หน้าแรก / โต๊ะทั้งหมด</p>
-            <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-              <div className="space-y-3">
-                <p className="text-sm uppercase tracking-[0.3em] text-[#A0724A]">โต๊ะทั้งหมด</p>
-                <h1 className="text-4xl font-semibold text-[#3D2B1F] sm:text-5xl">โต๊ะที่ใช่ในทุกไซส์และสไตล์</h1>
-                <p className="max-w-2xl text-base leading-8 text-[#5a4e46]">
-                  ค้นพบโต๊ะคุณภาพพรีเมียม ออกแบบเพื่อความอบอุ่นและฟังก์ชันการใช้งานในบ้านของคุณ
-                </p>
-              </div>
-              <div className="flex items-center rounded-3xl border border-[#E8E1DF] bg-[#F8F3EB] p-4">
-                <span className="text-sm text-[#5a4e46]">เรียงตาม</span>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="ml-4 rounded-2xl border border-[#E8E1DF] bg-white px-4 py-2 text-sm text-[#3D2B1F] outline-none"
-                >
-                  <option>ยอดนิยม</option>
-                  <option>ราคา: ต่ำไปสูง</option>
-                  <option>ราคา: สูงไปต่ำ</option>
-                  <option>สินค้าใหม่</option>
-                </select>
-              </div>
+    <main className="bg-[#faf6f1] text-[#111111] min-h-screen selection:bg-[#111111] selection:text-white pb-24" style={{ fontFamily: 'Kanit, Inter, Prompt, Mitr, sans-serif' }}>
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-12 pt-10 pb-6">
+        <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-[#EAEAEA] pb-8">
+          <div>
+            <nav className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.15em] uppercase text-[#888888] mb-6">
+              <span className="cursor-pointer hover:text-[#111111] transition-colors" onClick={() => navigate('/')}>Home</span>
+              <span>/</span>
+              <span className="text-[#111111]">Products</span>
+            </nav>
+            <h1 className="text-5xl font-semibold tracking-tight text-[#111111]">
+              Shop All
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-6">
+            <p className="text-xs font-medium text-[#888888]">
+              {loading ? '...' : `${sortedProducts.length} Items`}
+            </p>
+            <div className="relative">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="appearance-none bg-[#F9F9F9] border border-[#EAEAEA] rounded-md text-xs font-medium text-[#111111] pl-3 pr-8 py-2 outline-none cursor-pointer hover:border-[#CCCCCC] transition-colors"
+              >
+                <option>ยอดนิยม</option>
+                <option>ราคา: ต่ำไปสูง</option>
+                <option>ราคา: สูงไปต่ำ</option>
+                <option>สินค้าใหม่</option>
+              </select>
+              <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-[14px] pointer-events-none text-[#111111]">
+                expand_more
+              </span>
             </div>
-          </motion.div>
+          </div>
+        </header>
 
-          <div className="grid gap-8 xl:grid-cols-[320px_1fr]">
-            <motion.aside
-              className="space-y-6 rounded-[2rem] bg-white p-6 shadow-[0_24px_70px_rgba(61,43,31,0.08)]"
-              initial={reduceMotion ? false : { opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ...transition, delay: 0.1 }}
-            >
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-[#3D2B1F]">ตัวกรอง</h2>
+        <div className="flex flex-col lg:flex-row gap-10 xl:gap-16">
+
+          {/* ── Left Sidebar (Highlighted with #FAF6F1) ── */}
+          <aside className="w-full lg:w-64 shrink-0 space-y-8 bg-[#FAF6F1] px-6 rounded-2xl h-max">
+            <div className="flex items-center justify-between mb-2">
+              {/* <h2 className="text-sm font-bold tracking-wide text-[#111111] uppercase">Filters</h2> */}
+              {activeFilterCount > 0 && (
                 <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedSizes([])
-                    setSelectedColors([])
-                    setSelectedMaterials([])
-                    setSelectedCategories([])
-                    setPriceValue(maxPrice)
-                  }}
-                  className="text-sm font-medium text-[#A0724A] hover:text-[#3D2B1F] transition"
+                  onClick={clearAllFilters}
+                  className="text-[10px] font-semibold uppercase tracking-wider text-[#888888] hover:text-[#111111] transition-colors"
                 >
-                  ล้างตัวกรอง
+                  Clear All
                 </button>
-              </div>
+              )}
+            </div>
 
-              <div className="space-y-3 rounded-[1.5rem] border border-[#E8E1DF] bg-[#FAF6F1] p-4">
-                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#A0724A]">ประเภทโต๊ะ</p>
-                {availableCategories.map((item) => (
-                  <label key={item} className="flex cursor-pointer items-center gap-3 rounded-2xl border border-transparent px-3 py-3 transition hover:border-[#A0724A]/30">
-                    <input
-                      type="checkbox"
-                      checked={selectedCategories.includes(item)}
-                      onChange={() => toggleItem(item, selectedCategories, setSelectedCategories)}
-                      className="h-4 w-4 accent-[#A0724A]"
-                    />
-                    <span className="text-sm text-[#3D2B1F]">{item}</span>
-                  </label>
-                ))}
-              </div>
+            <div className="space-y-4">
+              {availableCategories.length > 0 && (
+                <div className="bg-white p-4 rounded-xl shadow-sm border border-[#E8E1DF]">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-[#111111] mb-4">Category</h3>
+                  <ul className="space-y-3">
+                    {availableCategories.map((item) => (
+                      <li key={item}>
+                        <label className="flex items-center gap-3 cursor-pointer group">
+                          <input
+                            type="checkbox"
+                            checked={selectedCategories.includes(item)}
+                            onChange={() => toggleItem(item, selectedCategories, setSelectedCategories)}
+                            className="appearance-none h-4 w-4 border border-[#CCCCCC] checked:bg-[#111111] checked:border-[#111111] rounded-[4px] transition-colors cursor-pointer relative focus:ring-2 focus:ring-offset-1 focus:ring-[#111111]"
+                          />
+                          <span className="text-sm text-[#444444] group-hover:text-[#111111] transition-colors">{item}</span>
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
-              <div className="space-y-3 rounded-[1.5rem] border border-[#E8E1DF] bg-[#FAF6F1] p-4">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#A0724A]">ช่วงราคา</p>
-                  <span className="text-sm text-[#5a4e46]">฿0 - ฿{priceValue.toLocaleString()}</span>
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-[#E8E1DF]">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-[#111111]">Price</h3>
+                  <span className="text-xs text-[#888888]">฿{priceValue.toLocaleString()}</span>
                 </div>
                 <input
                   type="range"
                   min="0"
                   max={maxPrice}
-                  step="100"
+                  step="500"
                   value={priceValue}
                   onChange={(e) => setPriceValue(Number(e.target.value))}
-                  className="w-full accent-[#A0724A]"
+                  className="w-full h-1 bg-[#EAEAEA] rounded-full appearance-none cursor-pointer accent-[#111111]"
                 />
               </div>
 
               {availableSizes.length > 0 && (
-                <div className="space-y-3 rounded-[1.5rem] border border-[#E8E1DF] bg-[#FAF6F1] p-4">
-                  <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#A0724A]">ขนาด</p>
-                  {availableSizes.map((size) => (
-                    <label key={size} className="flex cursor-pointer items-center gap-3 rounded-2xl border border-transparent px-3 py-3 transition hover:border-[#A0724A]/30">
-                      <input
-                        type="checkbox"
-                        checked={selectedSizes.includes(size)}
-                        onChange={() => toggleItem(size, selectedSizes, setSelectedSizes)}
-                        className="h-4 w-4 accent-[#A0724A]"
-                      />
-                      <span className="text-sm text-[#3D2B1F]">{size}</span>
-                    </label>
-                  ))}
+                <div className="bg-white p-4 rounded-xl shadow-sm border border-[#E8E1DF]">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-[#111111] mb-4">Size</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {availableSizes.map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => toggleItem(size, selectedSizes, setSelectedSizes)}
+                        className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] ${selectedSizes.includes(size)
+                            ? 'border-[#111111] bg-[#111111] text-white'
+                            : 'border-[#EAEAEA] text-[#444444] hover:border-[#CCCCCC]'
+                          }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
 
               {availableColors.length > 0 && (
-                <div className="space-y-3 rounded-[1.5rem] border border-[#E8E1DF] bg-[#FAF6F1] p-4">
-                  <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#A0724A]">สี</p>
+                <div className="bg-white p-4 rounded-xl shadow-sm border border-[#E8E1DF]">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-[#111111] mb-4">Color</h3>
                   <div className="flex flex-wrap gap-3">
                     {availableColors.map((color) => (
                       <button
-                        type="button"
                         key={color}
                         onClick={() => toggleItem(color, selectedColors, setSelectedColors)}
-                        className={`flex h-10 w-10 items-center justify-center rounded-full border ${selectedColors.includes(color) ? 'border-[#A0724A] scale-110 shadow-md' : 'border-[#E8E1DF] hover:scale-105'}`}
+                        className={`relative flex h-7 w-7 items-center justify-center rounded-full border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#111111] ${selectedColors.includes(color)
+                            ? 'border-[#111111] shadow-sm ring-1 ring-[#111111] ring-offset-2'
+                            : 'border-[#EAEAEA] hover:border-[#111111]'
+                          }`}
                         style={{ backgroundColor: color }}
-                        title={color}
-                        aria-label={color}
+                        aria-label={`Color ${color}`}
                       />
                     ))}
                   </div>
@@ -301,143 +305,167 @@ const CategoriesPage = () => {
               )}
 
               {availableMaterials.length > 0 && (
-                <div className="space-y-3 rounded-[1.5rem] border border-[#E8E1DF] bg-[#FAF6F1] p-4">
-                  <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#A0724A]">วัสดุ</p>
-                  {availableMaterials.map((material) => (
-                    <label key={material} className="flex cursor-pointer items-center gap-3 rounded-2xl border border-transparent px-3 py-3 transition hover:border-[#A0724A]/30">
-                      <input
-                        type="checkbox"
-                        checked={selectedMaterials.includes(material)}
-                        onChange={() => toggleItem(material, selectedMaterials, setSelectedMaterials)}
-                        className="h-4 w-4 accent-[#A0724A]"
-                      />
-                      <span className="text-sm text-[#3D2B1F]">{material}</span>
-                    </label>
-                  ))}
+                <div className="bg-white p-4 rounded-xl shadow-sm border border-[#E8E1DF]">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-[#111111] mb-4">Material</h3>
+                  <ul className="space-y-3">
+                    {availableMaterials.map((material) => (
+                      <li key={material}>
+                        <label className="flex items-center gap-3 cursor-pointer group">
+                          <input
+                            type="checkbox"
+                            checked={selectedMaterials.includes(material)}
+                            onChange={() => toggleItem(material, selectedMaterials, setSelectedMaterials)}
+                            className="appearance-none h-4 w-4 border border-[#CCCCCC] checked:bg-[#111111] checked:border-[#111111] rounded-[4px] transition-colors cursor-pointer relative focus:ring-2 focus:ring-offset-1 focus:ring-[#111111]"
+                          />
+                          <span className="text-sm text-[#444444] group-hover:text-[#111111] transition-colors">{material}</span>
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
-            </motion.aside>
+            </div>
+          </aside>
 
-            <div className="space-y-6">
-              <motion.div
-                className="grid gap-6 md:grid-cols-2 xl:grid-cols-3"
-                initial={reduceMotion ? false : { opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ ...transition, delay: 0.14 }}
-              >
-                {loading && (
-                  Array.from({ length: 6 }).map((_, index) => (
-                    <div key={index} className="animate-pulse overflow-hidden rounded-[2rem] bg-white shadow-[0_12px_30px_rgba(61,43,31,0.08)]">
-                      <div className="h-72 bg-[#F2EBE2]" />
-                      <div className="space-y-3 p-6">
-                        <div className="h-4 w-24 rounded bg-[#F2EBE2]" />
-                        <div className="h-6 w-2/3 rounded bg-[#F2EBE2]" />
-                        <div className="h-10 w-full rounded-full bg-[#F2EBE2]" />
-                      </div>
-                    </div>
-                  ))
-                )}
-
-                {!loading && paginatedProducts.map((product, index) => (
-                  <motion.article
-                    key={product.id}
-                    onClick={(e) => {
-                      if (!e.target.closest('button') && !e.target.closest('a')) {
-                        navigate(`/product-detail/${product.id}`)
-                      }
-                    }}
-                    className="group flex flex-col h-full overflow-hidden rounded-[2rem] bg-white shadow-[0_12px_30px_rgba(61,43,31,0.08)] transition-all duration-500 hover:-translate-y-1"
-                    initial={reduceMotion ? false : { opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ ...transition, delay: 0.16 + index * 0.04 }}
-                  >
-                    <div className="relative overflow-hidden rounded-t-[2rem]">
-                      {product.badge && (
-                        <span className="absolute left-4 top-4 z-10 rounded-full bg-[#FF0000] px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-white shadow-lg shadow-black/10">
-                          {product.badge}
-                        </span>
-                      )}
-                      <img
-                        src={product.image}
-                        alt={product.title}
-                        className="h-72 w-full object-cover transition duration-500 group-hover:scale-105"
-                      />
-                    </div>
-                    <div className="flex flex-col flex-grow justify-between p-6">
-                      <div>
-                        <div className="flex items-start justify-between gap-4">
-                          <p className="text-xs uppercase tracking-[0.24em] text-[#A0724A]">{product.subtitle}</p>
-                          {product.soldOut && (
-                            <span className="shrink-0 rounded-full bg-[#F2EBE2] px-2.5 py-0.5 text-[10px] font-semibold text-[#5a4e46]">
-                              สินค้าหมด
-                            </span>
-                          )}
-                        </div>
-                        <h3 className="mt-2 text-base font-semibold text-[#3D2B1F] line-clamp-3 h-[4.5rem] overflow-hidden leading-relaxed">
-                          {product.title}
-                        </h3>
-                      </div>
-                      
-                      <div className="flex items-end justify-between gap-4 mt-6 pt-4 border-t border-[#FAF6F1]">
-                        <div>
-                          <p className="text-2xl font-bold text-[#3D2B1F]">{formatPrice(product.price)}</p>
-                          {product.originalPrice && (
-                            <p className="text-xs text-[#81756E] line-through">{formatPrice(product.originalPrice)}</p>
-                          )}
-                        </div>
-                        <ClickSparkButton
-                          as="link"
-                          to="/cart"
-                          className={`rounded-full px-5 py-2.5 text-xs font-semibold text-white transition ${product.soldOut ? 'bg-[#C8C2BB] pointer-events-none' : 'bg-[#3D2B1F] hover:bg-[#1f1913]'}`}
-                        >
-                          เพิ่มในตะกร้า
-                        </ClickSparkButton>
-                      </div>
-                    </div>
-                  </motion.article>
-                ))}
-                {!loading && paginatedProducts.length === 0 && (
-                  <div className="col-span-full py-20 text-center text-[#5a4e46]">
-                    ไม่พบสินค้าที่ตรงตามเงื่อนไขการค้นหา
+          {/* ── Product Grid ── */}
+          <div className="flex-1 min-w-0">
+            <div className="grid gap-x-6 gap-y-12 grid-cols-2 lg:grid-cols-3 py-7 ">
+              {loading && (
+                Array.from({ length: 9 }).map((_, index) => (
+                  <div key={index} className="animate-pulse flex flex-col p-4 rounded-xl border border-[#EAEAEA]">
+                    <div className="w-full aspect-[4/5] bg-[#F5F5F5] rounded-lg mb-4" />
+                    <div className="h-4 w-3/4 bg-[#F5F5F5] rounded mb-2" />
+                    <div className="h-4 w-1/4 bg-[#F5F5F5] rounded" />
                   </div>
-                )}
-              </motion.div>
+                ))
+              )}
 
-              {sortedProducts.length > 0 && (
-                <div className="flex items-center justify-center gap-3 rounded-full bg-white p-4 shadow-[0_12px_30px_rgba(61,43,31,0.08)]">
+              {!loading && paginatedProducts.map((product) => (
+                <article
+                  key={product.id}
+                  onClick={() => navigate(`/product-detail/${product.id}`)}
+                  className="group flex flex-col cursor-pointer bg-white rounded-xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-4 border border-transparent hover:border-[#EAEAEA] p-3"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && navigate(`/product-detail/${product.id}`)}
+                >
+                  <div className="w-full aspect-[4/5] bg-[#F9F9F9] rounded-lg mb-4 overflow-hidden relative">
+                    {product.badge && (
+                      <span className="absolute left-2 top-2 z-10 rounded bg-[#ff0000] px-2 py-1 text-[9px] font-bold uppercase tracking-widest text-white">
+                        {product.badge}
+                      </span>
+                    )}
+                    <img
+                      src={product.image}
+                      alt={product.title}
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  </div>
+
+                  <div className="flex flex-col flex-1 px-1">
+                    <div className="flex items-start justify-between">
+                      <h3 className="text-sm font-semibold text-[#111111] leading-snug line-clamp-1 pr-4">
+                        {product.title}
+                      </h3>
+                    </div>
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="text-sm font-medium text-[#111111]">{formatPrice(product.price)}</p>
+                      {product.originalPrice && (
+                        <p className="text-xs text-[#888888] line-through">{formatPrice(product.originalPrice)}</p>
+                      )}
+                    </div>
+
+                    <div className="mt-4 pt-4 border-t border-[#EAEAEA] flex gap-2">
+                      <button
+                        disabled={product.soldOut}
+                        onClick={(e) => handleAddToCart(e, product)}
+                        className={`flex-1 rounded-lg py-2.5 text-xs font-semibold transition-colors flex items-center justify-center gap-2 ${product.soldOut
+                            ? 'bg-[#F0F0F0] text-[#AAAAAA] cursor-not-allowed'
+                            : 'bg-[#111111] text-white hover:bg-[#333333]'
+                          }`}
+                      >
+                        <span className="material-symbols-outlined text-[16px]">shopping_cart</span>
+                        {product.soldOut ? 'Sold Out' : 'Add to Cart'}
+                      </button>
+                      <button
+                        onClick={(e) => toggleFavorite(e, product.id)}
+                        className={`flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-lg border-1 transition-colors ${favorites.has(product.id)
+                            ? ' text-red-500 bg-white'
+                            : ' text-[#666666] hover:text-red-500'
+                          }`}
+                      >
+                        <span
+                          className="material-symbols-outlined text-[18px]"
+                          style={{ fontVariationSettings: favorites.has(product.id) ? "'FILL' 1" : "'FILL' 0" }}
+                        >
+                          favorite
+                        </span>
+                      </button>
+                    </div>
+
+                  </div>
+                </article>
+              ))}
+
+              {!loading && paginatedProducts.length === 0 && (
+                <div className="col-span-full py-32 flex flex-col items-center justify-center text-center">
+                  <span className="material-symbols-outlined text-4xl text-[#CCCCCC] mb-4">search_off</span>
+                  <p className="text-sm text-[#666666] mb-4">No products found for this selection.</p>
                   <button
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                    className={`h-11 w-11 rounded-full border border-[#E8E1DF] text-[#5a4e46] transition hover:border-[#A0724A] ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    onClick={clearAllFilters}
+                    className="text-xs font-medium underline underline-offset-4 text-[#111111] hover:text-[#666666]"
                   >
-                    ‹
+                    Clear All Filters
                   </button>
+                </div>
+              )}
+            </div>
+
+            {/* ── Pagination ── */}
+            {!loading && sortedProducts.length > itemsPerPage && (
+              <div className="flex flex-wrap items-center justify-center gap-2 pt-8 mt-6 border-t border-[#EAEAEA]">
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  aria-label="Previous Page"
+                  className="flex h-10 w-10 items-center justify-center rounded-md border border-[#EAEAEA] text-[#111111] transition-all hover:border-[#CCCCCC] hover:bg-[#F9F9F9] focus-visible:outline-none disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <span className="material-symbols-outlined text-[18px]">chevron_left</span>
+                </button>
+
+                <div className="flex gap-1">
                   {Array.from({ length: totalPages }).map((_, index) => {
                     const page = index + 1
                     return (
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
-                        className={`h-11 min-w-[44px] rounded-full transition ${page === currentPage ? 'bg-[#3D2B1F] text-white' : 'bg-[#F8F3EB] text-[#5a4e46] hover:bg-[#FAF6F1]'}`}
+                        aria-label={`Page ${page}`}
+                        aria-current={page === currentPage ? 'page' : undefined}
+                        className={`flex h-10 w-10 items-center justify-center rounded-md text-sm font-semibold transition-all focus-visible:outline-none ${page === currentPage
+                            ? 'bg-[#111111] text-white'
+                            : 'text-[#666666] border border-transparent hover:border-[#EAEAEA] hover:bg-[#F9F9F9]'
+                          }`}
                       >
                         {page}
                       </button>
                     )
                   })}
-                  <button
-                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                    className={`h-11 w-11 rounded-full border border-[#E8E1DF] text-[#5a4e46] transition hover:border-[#A0724A] ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  >
-                    ›
-                  </button>
                 </div>
-              )}
-            </div>
+
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  aria-label="Next Page"
+                  className="flex h-10 w-10 items-center justify-center rounded-md border border-[#EAEAEA] text-[#111111] transition-all hover:border-[#CCCCCC] hover:bg-[#F9F9F9] focus-visible:outline-none disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <span className="material-symbols-outlined text-[18px]">chevron_right</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
-      </section>
-    </motion.main>
+      </div>
+    </main>
   )
 }
 

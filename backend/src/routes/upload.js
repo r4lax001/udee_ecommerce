@@ -3,7 +3,7 @@ import multer from 'multer'
 import path from 'path'
 import fs from 'fs'
 import { fileURLToPath } from 'url'
-import { requireAuth, adminOnly } from '../middlewares/auth.js'
+import { requireAuth, adminOrManager } from '../middlewares/auth.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -44,7 +44,7 @@ const upload = multer({
 
 const router = Router()
 
-router.post('/', requireAuth, adminOnly, upload.single('image'), (req, res) => {
+router.post('/', requireAuth, adminOrManager, upload.single('image'), (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ success: false, message: 'กรุณาเลือกไฟล์รูปภาพ' })

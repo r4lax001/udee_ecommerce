@@ -186,148 +186,179 @@ export default function ProductModal({ isOpen, onClose, onSave, product = null }
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="grid grid-cols-2 gap-5">
-              <div className="col-span-2 sm:col-span-1">
-                <label className="block text-sm font-medium text-[#5a4e46] mb-1">ชื่อสินค้า *</label>
-                <input required type="text" name="name" value={formData.name} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20" />
-              </div>
-              <div className="col-span-2 sm:col-span-1">
-                <label className="block text-sm font-medium text-[#5a4e46] mb-1">คำบรรยายสั้น (Subtitle)</label>
-                <input type="text" name="subtitle" value={formData.subtitle} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20" />
-              </div>
-
-              <div className="col-span-2 sm:col-span-1">
-                <label className="block text-sm font-medium text-[#5a4e46] mb-1">ราคา (บาท) *</label>
-                <input required type="number" name="price" value={formData.price} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20" />
-              </div>
-              <div className="col-span-2 sm:col-span-1">
-                <label className="block text-sm font-medium text-[#5a4e46] mb-1">จำนวนสต็อก *</label>
-                <input required type="number" name="stock" value={formData.stock} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20" />
-              </div>
-
-              <div className="col-span-2 sm:col-span-1">
-                <label className="block text-sm font-medium text-[#5a4e46] mb-1">หมวดหมู่ *</label>
-                <select required name="categoryId" value={formData.categoryId} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20">
-                  <option value="">เลือกหมวดหมู่</option>
-                  {categories.map(c => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="col-span-2 sm:col-span-1">
-                <label className="block text-sm font-medium text-[#5a4e46] mb-1">ป้ายกำกับ (Badge)</label>
-                <input type="text" name="badge" placeholder="เช่น NEW, HOT" value={formData.badge} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20" />
-              </div>
-
-              <div className="col-span-2 sm:col-span-1">
-                <label className="block text-sm font-medium text-[#5a4e46] mb-1">ขนาดสินค้า (Size)</label>
-                <input type="text" name="size" placeholder="เช่น 120 x 60 ซม." value={formData.size} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20" />
-              </div>
-              <div className="col-span-2 sm:col-span-1">
-                <label className="block text-sm font-medium text-[#5a4e46] mb-1">วัสดุ (Material)</label>
-                <input type="text" name="material" placeholder="เช่น ไม้โอ๊ค" value={formData.material} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20" />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-[#5a4e46] mb-1">สี (คั่นด้วยลูกน้ำ เช่น #F4EFE7, #000000)</label>
-              <input type="text" name="colors" placeholder="#FFFFFF, #000000" value={formData.colors} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20" />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-[#5a4e46] mb-1">รายละเอียดสินค้า</label>
-              <textarea name="description" rows="3" value={formData.description} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-3 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20"></textarea>
-            </div>
+          <form onSubmit={handleSubmit} className="space-y-8 mt-2">
             
-            <div className="grid grid-cols-2 gap-5">
-              <div className="col-span-2 sm:col-span-1">
-                <label className="block text-sm font-medium text-[#5a4e46] mb-1">Highlights (บรรทัดละ 1 ข้อ)</label>
-                <textarea name="highlights" rows="3" placeholder="โครงสร้างแข็งแรง&#10;ดีไซน์ทันสมัย" value={formData.highlights} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-3 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20"></textarea>
+            {/* ข้อมูลทั่วไป */}
+            <section>
+              <div className="flex items-center gap-2 border-b border-[#E8E1DF] pb-2 mb-4">
+                <span className="material-symbols-outlined text-[#A0724A] text-[20px]">info</span>
+                <h3 className="text-[15px] font-bold text-[#3D2B1F]">ข้อมูลทั่วไป</h3>
               </div>
-              <div className="col-span-2 sm:col-span-1">
-                <label className="block text-sm font-medium text-[#5a4e46] mb-1">ข้อมูลเชิงเทคนิค (บรรทัดละ 1 ข้อ)</label>
-                <textarea name="specs" rows="3" placeholder="ทำจากไม้แท้&#10;ขนาด 120x60 ซม." value={formData.specs} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-3 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20"></textarea>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-[#5a4e46] mb-1">เงื่อนไขการรับประกัน</label>
-              <input type="text" name="warranty" placeholder="เช่น รับประกัน 1 ปี..." value={formData.warranty} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20" />
-            </div>
-
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium text-[#5a4e46]">
-                  รูปภาพสินค้า (อัปโหลดไฟล์ หรือใส่ลิงก์บรรทัดละ 1 รูป)
-                </label>
-                <div>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileUpload}
-                    accept="image/*,.avif,.webp"
-                    className="hidden"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={uploadingImage}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-[#A0724A] bg-[#F8F3EB] px-3 py-1.5 text-xs font-semibold text-[#3D2B1F] hover:bg-[#EFE5D8] transition disabled:opacity-50"
-                  >
-                    <span className="material-symbols-outlined text-[16px]">add_photo_alternate</span>
-                    {uploadingImage ? 'กำลังอัปโหลด...' : 'เลือกไฟล์รูปภาพ (Upload)'}
-                  </button>
+              <div className="grid grid-cols-2 gap-5">
+                <div className="col-span-2 sm:col-span-1">
+                  <label className="block text-sm font-medium text-[#5a4e46] mb-1.5">ชื่อสินค้า <span className="text-red-500">*</span></label>
+                  <input required type="text" name="name" value={formData.name} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#FAF8F5] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:bg-white focus:ring-2 focus:ring-[#A0724A]/20 transition-all" />
+                </div>
+                <div className="col-span-2 sm:col-span-1">
+                  <label className="block text-sm font-medium text-[#5a4e46] mb-1.5">คำบรรยายสั้น (Subtitle)</label>
+                  <input type="text" name="subtitle" value={formData.subtitle} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#FAF8F5] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:bg-white focus:ring-2 focus:ring-[#A0724A]/20 transition-all" />
+                </div>
+                <div className="col-span-2 sm:col-span-1">
+                  <label className="block text-sm font-medium text-[#5a4e46] mb-1.5">หมวดหมู่ <span className="text-red-500">*</span></label>
+                  <select required name="categoryId" value={formData.categoryId} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#FAF8F5] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:bg-white focus:ring-2 focus:ring-[#A0724A]/20 transition-all">
+                    <option value="">เลือกหมวดหมู่</option>
+                    {categories.map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="col-span-2 sm:col-span-1">
+                  <label className="block text-sm font-medium text-[#5a4e46] mb-1.5">ป้ายกำกับ (Badge)</label>
+                  <input type="text" name="badge" placeholder="เช่น NEW, HOT" value={formData.badge} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#FAF8F5] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:bg-white focus:ring-2 focus:ring-[#A0724A]/20 transition-all" />
                 </div>
               </div>
+            </section>
 
-              <textarea 
-                name="images" 
-                rows="3" 
-                placeholder="/images/details/table_id15.avif&#10;https://example.com/image.jpg" 
-                value={formData.images} 
-                onChange={handleChange} 
-                className="w-full rounded-xl border border-[#D2C4BC] bg-[#F8F3EB] px-4 py-3 text-sm outline-none focus:border-[#A0724A] focus:ring-2 focus:ring-[#A0724A]/20 font-mono"
-              />
-
-              {/* Image Preview Grid */}
-              {imageList.length > 0 && (
-                <div className="mt-3">
-                  <p className="text-xs font-medium text-[#81756E] mb-2">ตัวอย่างรูปภาพ ({imageList.length} รูป):</p>
-                  <div className="grid grid-cols-4 gap-3">
-                    {imageList.map((url, idx) => (
-                      <div key={idx} className="relative group rounded-xl border border-[#E5E7EB] bg-[#FAF8F5] overflow-hidden p-1">
-                        <img 
-                          src={url} 
-                          alt={`Product Preview ${idx + 1}`} 
-                          className="h-20 w-full object-cover rounded-lg"
-                          onError={(e) => {
-                            e.target.src = 'https://via.placeholder.com/150?text=Invalid+Image'
-                          }}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveImage(idx)}
-                          className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-md hover:bg-red-600 transition"
-                          title="ลบรูปนี้"
-                        >
-                          <span className="material-symbols-outlined text-[14px]">close</span>
-                        </button>
-                        <span className="absolute bottom-2 left-2 rounded bg-black/60 px-1.5 py-0.5 text-[9px] font-semibold text-white">
-                          {idx === 0 ? 'รูปหลัก' : `รูปที่ ${idx + 1}`}
-                        </span>
-                      </div>
-                    ))}
+            {/* ราคาและสต็อก */}
+            <section>
+              <div className="flex items-center gap-2 border-b border-[#E8E1DF] pb-2 mb-4">
+                <span className="material-symbols-outlined text-[#A0724A] text-[20px]">payments</span>
+                <h3 className="text-[15px] font-bold text-[#3D2B1F]">ราคาและคลังสินค้า</h3>
+              </div>
+              <div className="grid grid-cols-2 gap-5">
+                <div className="col-span-2 sm:col-span-1">
+                  <label className="block text-sm font-medium text-[#5a4e46] mb-1.5">ราคา (บาท) <span className="text-red-500">*</span></label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]">฿</span>
+                    <input required type="number" name="price" value={formData.price} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#FAF8F5] py-2.5 pl-8 pr-4 text-sm outline-none focus:border-[#A0724A] focus:bg-white focus:ring-2 focus:ring-[#A0724A]/20 transition-all" />
                   </div>
                 </div>
-              )}
-            </div>
+                <div className="col-span-2 sm:col-span-1">
+                  <label className="block text-sm font-medium text-[#5a4e46] mb-1.5">จำนวนสต็อก <span className="text-red-500">*</span></label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-[#9CA3AF]">inventory_2</span>
+                    <input required type="number" name="stock" value={formData.stock} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#FAF8F5] py-2.5 pl-10 pr-4 text-sm outline-none focus:border-[#A0724A] focus:bg-white focus:ring-2 focus:ring-[#A0724A]/20 transition-all" />
+                  </div>
+                </div>
+              </div>
+            </section>
 
-            <div className="mt-8 flex justify-end gap-3 pt-4 border-t border-[#E8E1DF]">
-              <button type="button" onClick={onClose} className="rounded-xl px-6 py-2.5 text-sm font-semibold text-[#5a4e46] hover:bg-[#F8F3EB] transition">ยกเลิก</button>
-              <button type="submit" disabled={loading || uploadingImage} className="rounded-xl bg-[#3D2B1F] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#2A1F14] transition disabled:opacity-50 flex items-center gap-2">
+            {/* ข้อมูลจำเพาะ */}
+            <section>
+              <div className="flex items-center gap-2 border-b border-[#E8E1DF] pb-2 mb-4">
+                <span className="material-symbols-outlined text-[#A0724A] text-[20px]">straighten</span>
+                <h3 className="text-[15px] font-bold text-[#3D2B1F]">คุณสมบัติและขนาด</h3>
+              </div>
+              <div className="grid grid-cols-2 gap-5">
+                <div className="col-span-2 sm:col-span-1">
+                  <label className="block text-sm font-medium text-[#5a4e46] mb-1.5">ขนาดสินค้า (Size)</label>
+                  <input type="text" name="size" placeholder="เช่น 120 x 60 ซม." value={formData.size} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#FAF8F5] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:bg-white focus:ring-2 focus:ring-[#A0724A]/20 transition-all" />
+                </div>
+                <div className="col-span-2 sm:col-span-1">
+                  <label className="block text-sm font-medium text-[#5a4e46] mb-1.5">วัสดุ (Material)</label>
+                  <input type="text" name="material" placeholder="เช่น ไม้โอ๊ค" value={formData.material} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#FAF8F5] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:bg-white focus:ring-2 focus:ring-[#A0724A]/20 transition-all" />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-[#5a4e46] mb-1.5">สี (ระบุเป็นรหัสสี คั่นด้วยลูกน้ำ เช่น #F4EFE7, #000000)</label>
+                  <input type="text" name="colors" placeholder="#FFFFFF, #000000" value={formData.colors} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#FAF8F5] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:bg-white focus:ring-2 focus:ring-[#A0724A]/20 transition-all font-mono" />
+                </div>
+              </div>
+            </section>
+
+            {/* รายละเอียดสินค้า */}
+            <section>
+              <div className="flex items-center gap-2 border-b border-[#E8E1DF] pb-2 mb-4">
+                <span className="material-symbols-outlined text-[#A0724A] text-[20px]">description</span>
+                <h3 className="text-[15px] font-bold text-[#3D2B1F]">รายละเอียดเพิ่มเติม</h3>
+              </div>
+              <div className="space-y-5">
+                <div>
+                  <label className="block text-sm font-medium text-[#5a4e46] mb-1.5">รายละเอียดสินค้า (Description)</label>
+                  <textarea name="description" rows="3" value={formData.description} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#FAF8F5] px-4 py-3 text-sm outline-none focus:border-[#A0724A] focus:bg-white focus:ring-2 focus:ring-[#A0724A]/20 transition-all"></textarea>
+                </div>
+                <div className="grid grid-cols-2 gap-5">
+                  <div className="col-span-2 sm:col-span-1">
+                    <label className="block text-sm font-medium text-[#5a4e46] mb-1.5">จุดเด่น (Highlights) <span className="text-xs text-[#9CA3AF] font-normal">(บรรทัดละ 1 ข้อ)</span></label>
+                    <textarea name="highlights" rows="3" placeholder="โครงสร้างแข็งแรง&#10;ดีไซน์ทันสมัย" value={formData.highlights} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#FAF8F5] px-4 py-3 text-sm outline-none focus:border-[#A0724A] focus:bg-white focus:ring-2 focus:ring-[#A0724A]/20 transition-all"></textarea>
+                  </div>
+                  <div className="col-span-2 sm:col-span-1">
+                    <label className="block text-sm font-medium text-[#5a4e46] mb-1.5">ข้อมูลเชิงเทคนิค (Specs) <span className="text-xs text-[#9CA3AF] font-normal">(บรรทัดละ 1 ข้อ)</span></label>
+                    <textarea name="specs" rows="3" placeholder="ทำจากไม้แท้&#10;ขนาด 120x60 ซม." value={formData.specs} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#FAF8F5] px-4 py-3 text-sm outline-none focus:border-[#A0724A] focus:bg-white focus:ring-2 focus:ring-[#A0724A]/20 transition-all"></textarea>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#5a4e46] mb-1.5">เงื่อนไขการรับประกัน</label>
+                  <input type="text" name="warranty" placeholder="เช่น รับประกัน 1 ปี..." value={formData.warranty} onChange={handleChange} className="w-full rounded-xl border border-[#D2C4BC] bg-[#FAF8F5] px-4 py-2.5 text-sm outline-none focus:border-[#A0724A] focus:bg-white focus:ring-2 focus:ring-[#A0724A]/20 transition-all" />
+                </div>
+              </div>
+            </section>
+
+            {/* รูปภาพสินค้า */}
+            <section>
+              <div className="flex items-center justify-between border-b border-[#E8E1DF] pb-2 mb-4">
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[#A0724A] text-[20px]">image</span>
+                  <h3 className="text-[15px] font-bold text-[#3D2B1F]">รูปภาพสินค้า</h3>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-[#D2C4BC] bg-[#FAF8F5] rounded-2xl hover:bg-[#F3EFE9] transition-colors cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                  <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept="image/*,.avif,.webp" className="hidden" />
+                  <span className="material-symbols-outlined text-4xl text-[#A0724A] mb-2">add_photo_alternate</span>
+                  <p className="text-sm font-semibold text-[#3D2B1F]">
+                    {uploadingImage ? 'กำลังอัปโหลด...' : 'คลิกเพื่อเลือกไฟล์รูปภาพ'}
+                  </p>
+                  <p className="text-xs text-[#81756E] mt-1">รองรับ JPG, PNG, WEBP, AVIF (ขนาดไม่เกิน 10MB)</p>
+                </div>
+
+                <div className="mt-2">
+                  <label className="block text-xs font-medium text-[#81756E] mb-1">หรือระบุ URL รูปภาพ (บรรทัดละ 1 ลิงก์)</label>
+                  <textarea 
+                    name="images" 
+                    rows="2" 
+                    placeholder="https://example.com/image.jpg" 
+                    value={formData.images} 
+                    onChange={handleChange} 
+                    className="w-full rounded-xl border border-[#D2C4BC] bg-[#FAF8F5] px-4 py-2 text-xs outline-none focus:border-[#A0724A] focus:bg-white focus:ring-2 focus:ring-[#A0724A]/20 font-mono transition-all"
+                  />
+                </div>
+
+                {imageList.length > 0 && (
+                  <div className="pt-2">
+                    <p className="text-xs font-medium text-[#81756E] mb-3">รูปภาพที่เลือก ({imageList.length} รูป):</p>
+                    <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
+                      {imageList.map((url, idx) => (
+                        <div key={idx} className="relative group rounded-xl border border-[#E5E7EB] bg-white overflow-hidden p-1 shadow-sm hover:shadow-md transition-shadow">
+                          <img 
+                            src={url} 
+                            alt={`Preview ${idx + 1}`} 
+                            className="h-20 w-full object-cover rounded-lg"
+                            onError={(e) => { e.target.src = 'https://via.placeholder.com/150?text=Invalid+Image' }}
+                          />
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); handleRemoveImage(idx); }}
+                            className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500/90 text-white shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                            title="ลบรูปนี้"
+                          >
+                            <span className="material-symbols-outlined text-[14px]">close</span>
+                          </button>
+                          <span className="absolute bottom-2 left-2 rounded-md bg-black/70 px-1.5 py-0.5 text-[9px] font-semibold text-white">
+                            {idx === 0 ? 'รูปหลัก' : `รูปที่ ${idx + 1}`}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </section>
+
+            <div className="sticky bottom-0 -mx-8 -mb-8 mt-8 flex justify-end gap-3 bg-white/90 backdrop-blur-md px-8 py-4 border-t border-[#E8E1DF] rounded-b-3xl">
+              <button type="button" onClick={onClose} className="rounded-xl px-6 py-2.5 text-sm font-semibold text-[#5a4e46] hover:bg-[#F3EFE9] transition">ยกเลิก</button>
+              <button type="submit" disabled={loading || uploadingImage} className="rounded-xl bg-[#3D2B1F] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#2A1F14] transition shadow-md hover:shadow-lg disabled:opacity-50 flex items-center gap-2">
                 {loading && <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>}
-                บันทึกข้อมูล
+                บันทึกข้อมูลสินค้า
               </button>
             </div>
           </form>
