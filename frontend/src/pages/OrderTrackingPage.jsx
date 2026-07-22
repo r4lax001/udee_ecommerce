@@ -3,6 +3,23 @@ import { useNavigate, useParams } from "react-router-dom";
 import { orderTrackingPageData } from "../data/orderTrackingPageData";
 import { getOrderByNumber } from "../services/orders";
 
+const getQrStatusText = (status) => {
+  const statusMap = {
+    success: "อ่าน QR สำเร็จ",
+    failed: "อ่าน QR ไม่สำเร็จ",
+    reading: "กำลังอ่าน QR",
+    idle: "ยังไม่ได้อ่าน QR",
+  };
+
+  return statusMap[status] || "ยังไม่ได้อ่าน QR";
+};
+
+const getQrStatusClass = (status) => {
+  if (status === "success") return "bg-green-50 text-green-700";
+  if (status === "failed") return "bg-red-50 text-red-700";
+  return "bg-[#FFF1E7] text-[#5a4e46]";
+};
+
 const OrderTrackingPage = ({ order: initialOrder }) => {
   const navigate = useNavigate();
   const { orderNumber } = useParams();
@@ -18,12 +35,15 @@ const OrderTrackingPage = ({ order: initialOrder }) => {
 
   const orderItems = useMemo(() => order?.items || [], [order]);
   const orderSteps = useMemo(() => order?.steps || [], [order]);
+
   const orderTotals = order?.totals || {
     subtotal: "฿0",
     shipping: "ฟรี",
     discount: "-฿0",
     total: "฿0",
   };
+
+  const paymentInfo = order?.paymentInfo || null;
 
   const handleSearchOrder = (event) => {
     event.preventDefault();
@@ -122,6 +142,126 @@ const OrderTrackingPage = ({ order: initialOrder }) => {
                       : ""}
                     {order.shippingInfo.zip ? ` ${order.shippingInfo.zip}` : ""}
                   </p>
+                </div>
+              </div>
+            )}
+
+            {paymentInfo && (
+              <div className="rounded-3xl bg-white p-10 shadow-[0_2px_8px_rgba(61,43,31,0.08)]">
+                <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                  <div>
+                    <h2 className="text-2xl font-semibold text-[#3D2B1F]">
+                      ข้อมูลการชำระเงิน
+                    </h2>
+                    <p className="mt-2 text-sm text-[#5a4e46]">
+                      ระบบตรวจสอบเบื้องต้นจาก QR Code ในสลิป
+                      และรอผู้จัดการอนุมัติ
+                    </p>
+                  </div>
+
+                  <span className="inline-flex rounded-full bg-[#FEF4EA] px-4 py-2 text-sm font-semibold text-[#7F5530]">
+                    {paymentInfo.verifyStatusText || "รอตรวจสอบโดยผู้จัดการ"}
+                  </span>
+                </div>
+
+                <div className="mt-8 grid gap-6 lg:grid-cols-[180px_1fr]">
+                  {paymentInfo.slipPreview ? (
+                    <div className="overflow-hidden rounded-2xl border border-[#E8E1DF] bg-[#F9F2F0]">
+                      <img
+                        src={paymentInfo.slipPreview}
+                        alt="สลิปการโอนเงิน"
+                        className="h-56 w-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex h-56 items-center justify-center rounded-2xl border border-[#E8E1DF] bg-[#F9F2F0] text-sm text-[#81756e]">
+                      ไม่มีรูปสลิป
+                    </div>
+                  )}
+
+                  <div className="space-y-4">
+                    <div className="grid gap-4 text-sm text-[#5a4e46] md:grid-cols-2">
+                      <p>
+                        <span className="font-medium text-[#3D2B1F]">
+                          ช่องทาง:
+                        </span>{" "}
+                        {paymentInfo.bankName || "โอนผ่านธนาคาร"}
+                      </p>
+
+                      <p>
+                        <span className="font-medium text-[#3D2B1F]">
+                          ชื่อบัญชี:
+                        </span>{" "}
+                        {paymentInfo.accountName || "-"}
+                      </p>
+
+                      <p>
+                        <span className="font-medium text-[#3D2B1F]">
+                          เลขบัญชี:
+                        </span>{" "}
+                        {paymentInfo.accountNumber || "-"}
+                      </p>
+
+                      <p>
+                        <span className="font-medium text-[#3D2B1F]">
+                          วันที่โอน:
+                        </span>{" "}
+                        {paymentInfo.transferDate || "-"}
+                      </p>
+
+                      <p>
+                        <span className="font-medium text-[#3D2B1F]">
+                          จำนวนเงิน:
+                        </span>{" "}
+                        {paymentInfo.amount
+                          ? `฿${Number(paymentInfo.amount).toLocaleString("th-TH")}`
+                          : "-"}
+                      </p>
+
+                      <p>
+                        <span className="font-medium text-[#3D2B1F]">
+                          ชื่อไฟล์สลิป:
+                        </span>{" "}
+                        {paymentInfo.slipName || "-"}
+                      </p>
+                    </div>
+
+                    <div
+                      className={`rounded-2xl p-4 text-sm ${getQrStatusClass(
+                        paymentInfo.qrStatus,
+                      )}`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <span className="material-symbols-outlined">
+                          {paymentInfo.qrStatus === "success"
+                            ? "qr_code_scanner"
+                            : "warning"}
+                        </span>
+
+                        <div>
+                          <p className="font-semibold">
+                            สถานะ QR Slip:{" "}
+                            {getQrStatusText(paymentInfo.qrStatus)}
+                          </p>
+                          <p className="mt-1">
+                            {paymentInfo.qrMessage ||
+                              "ระบบยังไม่มีข้อมูล QR จากสลิป"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {paymentInfo.qrPayload && (
+                      <div className="rounded-2xl border border-[#E8E1DF] bg-[#F9F2F0] p-4">
+                        <p className="text-sm font-semibold text-[#3D2B1F]">
+                          QR Payload ที่อ่านได้
+                        </p>
+                        <p className="mt-2 break-all text-xs text-[#5a4e46]">
+                          {paymentInfo.qrPayload}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}

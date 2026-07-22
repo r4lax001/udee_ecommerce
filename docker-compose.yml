@@ -1,7 +1,4 @@
-version: '3.8'
-
 services:
-  # MySQL Database
   db:
     image: mysql:8.0
     container_name: udee_db
@@ -14,11 +11,11 @@ services:
     volumes:
       - udee_db_data:/var/lib/mysql
 
-  # Backend
   backend:
     build: ./backend
     container_name: udee_backend
     restart: always
+    working_dir: /app
     ports:
       - "5001:5000"
     environment:
@@ -30,12 +27,13 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
+    command: npm run dev
 
-  # Frontend
   frontend:
     build: ./frontend
     container_name: udee_frontend
     restart: always
+    working_dir: /app
     ports:
       - "5173:5173"
     depends_on:
@@ -43,6 +41,7 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    command: npm run dev -- --host 0.0.0.0
 
 volumes:
   udee_db_data:

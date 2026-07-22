@@ -1,16 +1,14 @@
-import api from './api';
+import api from "./api";
 import { checkoutPageData } from "../data/checkoutPageData";
 import { orderTrackingPageData } from "../data/orderTrackingPageData";
 
 /**
- * ดึงออเดอร์ทั้งหมดของ user ที่ login อยู่ (จาก backend API)
+ * ดึงออเดอร์ทั้งหมดของ user ที่ login อยู่ จาก backend API
  */
 export const getMyOrders = async () => {
-  const response = await api.get('/orders/my');
+  const response = await api.get("/orders/my");
   return response.data;
 };
-
-
 
 const STORAGE_KEY = "udee_orders";
 
@@ -53,7 +51,19 @@ function getThaiOrderDate(date = new Date()) {
   });
 }
 
-function buildSteps(orderStatus = "pending") {
+function getPaymentStatusText(status) {
+  const statusMap = {
+    pending_review: "รอตรวจสอบโดยผู้จัดการ",
+    qr_not_found: "ไม่พบ QR Code ในสลิป",
+    qr_read_error: "อ่าน QR Code ไม่สำเร็จ",
+    approved: "ชำระเงินสำเร็จ",
+    rejected: "สลิปไม่ถูกต้อง",
+  };
+
+  return statusMap[status] || "รอตรวจสอบโดยผู้จัดการ";
+}
+
+function buildSteps(orderStatus = "pending_payment") {
   const steps = [
     {
       label: "รับคำสั่งซื้อ",
@@ -63,11 +73,18 @@ function buildSteps(orderStatus = "pending") {
       status: "received",
     },
     {
-      label: "รอตรวจสอบการชำระเงิน",
-      detail: "ทีมงานกำลังตรวจสอบหลักฐานการชำระเงิน",
+      label: "รอตรวจสอบสลิป",
+      detail: "ระบบอ่าน QR จากสลิปแล้ว และรอผู้จัดการตรวจสอบการชำระเงิน",
+      datetime: "",
+      icon: "qr_code_scanner",
+      status: "payment",
+    },
+    {
+      label: "ชำระเงินสำเร็จ",
+      detail: "ผู้จัดการตรวจสอบและอนุมัติการชำระเงินแล้ว",
       datetime: "",
       icon: "payments",
-      status: "payment",
+      status: "paid",
     },
     {
       label: "กำลังเตรียมสินค้า",
@@ -95,10 +112,12 @@ function buildSteps(orderStatus = "pending") {
   const statusIndex =
     {
       pending: 1,
+      pending_payment: 1,
       paid: 2,
-      packing: 2,
-      shipped: 3,
-      delivered: 4,
+      packing: 3,
+      shipped: 4,
+      delivered: 5,
+      rejected: 1,
     }[orderStatus] ?? 1;
 
   return steps.map((step, index) => ({
@@ -138,6 +157,7 @@ export function createOrder({
   const total = subtotal - discount + shipping;
 
   const orderNumber = createOrderNumber();
+  const paymentVerifyStatus = paymentInfo.verifyStatus || "pending_review";
 
   const order = {
     brand: "UDEE",
@@ -145,8 +165,8 @@ export function createOrder({
     orderNumber,
     orderDate: getThaiOrderDate(),
 
-    status: "pending",
-    statusTag: "รอตรวจสอบชำระเงิน",
+    status: "pending_payment",
+    statusTag: "รอตรวจสอบสลิป",
 
     shippingInfo: {
       name: shippingInfo.name || "",
@@ -158,12 +178,24 @@ export function createOrder({
     },
 
     paymentInfo: {
+      method: "bank_transfer",
+      bankName: "ธนาคารกสิกรไทย (K-Bank)",
+      accountName: "บจก. ยูดี เฟอร์นิเจอร์ (UDEE Furniture)",
+      accountNumber: "123-4-56789-0",
+
       transferDate: paymentInfo.transferDate || "",
       amount: paymentInfo.amount || "",
-      slipName: paymentInfo.slip?.name || "",
+      slipName: paymentInfo.slipName || paymentInfo.slip?.name || "",
+      slipPreview: paymentInfo.slipPreview || "",
+
+      qrPayload: paymentInfo.qrPayload || "",
+      qrStatus: paymentInfo.qrStatus || "idle",
+      qrMessage: paymentInfo.qrMessage || "",
+      verifyStatus: paymentVerifyStatus,
+      verifyStatusText: getPaymentStatusText(paymentVerifyStatus),
     },
 
-    steps: buildSteps("pending"),
+    steps: buildSteps("pending_payment"),
 
     items: mapOrderItems(checkout.products || []),
 
@@ -174,7 +206,7 @@ export function createOrder({
       total: formatPrice(total),
     },
 
-    note: "หลังจากตรวจสอบการชำระเงินแล้ว สถานะจะอัปเดตเป็นเตรียมจัดส่ง สามารถใช้เลขคำสั่งซื้อนี้เพื่อติดตามสินค้าได้",
+    note: "ระบบอ่าน QR Code จากสลิปแล้ว และคำสั่งซื้ออยู่ระหว่างรอผู้จัดการตรวจสอบการชำระเงิน สามารถใช้เลขคำสั่งซื้อนี้เพื่อติดตามสถานะได้",
   };
 
   const orders = readOrders();
@@ -198,4 +230,72 @@ export function getOrderByNumber(orderNumber) {
 
 export function getLatestOrder() {
   return readOrders()[0] || orderTrackingPageData;
+}
+
+export function getLocalOrders() {
+  return readOrders();
+}
+
+export function updateOrderPaymentStatus(orderNumber, nextPaymentStatus) {
+  const orders = readOrders();
+
+  const nextOrders = orders.map((order) => {
+    if (order.orderNumber !== orderNumber) return order;
+
+    const nextOrderStatus =
+      nextPaymentStatus === "approved"
+        ? "paid"
+        : nextPaymentStatus === "rejected"
+          ? "rejected"
+          : "pending_payment";
+
+    return {
+      ...order,
+      status: nextOrderStatus,
+      statusTag:
+        nextPaymentStatus === "approved"
+          ? "ชำระเงินสำเร็จ"
+          : nextPaymentStatus === "rejected"
+            ? "สลิปไม่ถูกต้อง"
+            : "รอตรวจสอบสลิป",
+      paymentInfo: {
+        ...order.paymentInfo,
+        verifyStatus: nextPaymentStatus,
+        verifyStatusText: getPaymentStatusText(nextPaymentStatus),
+      },
+      steps: buildSteps(nextOrderStatus),
+    };
+  });
+
+  saveOrders(nextOrders);
+
+  return nextOrders.find((order) => order.orderNumber === orderNumber);
+}
+
+export function updateOrderStatus(orderNumber, nextStatus) {
+  const orders = readOrders();
+
+  const statusTagMap = {
+    pending_payment: "รอตรวจสอบสลิป",
+    paid: "ชำระเงินสำเร็จ",
+    packing: "กำลังเตรียมสินค้า",
+    shipped: "กำลังจัดส่ง",
+    delivered: "จัดส่งสำเร็จ",
+    rejected: "สลิปไม่ถูกต้อง",
+  };
+
+  const nextOrders = orders.map((order) => {
+    if (order.orderNumber !== orderNumber) return order;
+
+    return {
+      ...order,
+      status: nextStatus,
+      statusTag: statusTagMap[nextStatus] || "รอตรวจสอบสลิป",
+      steps: buildSteps(nextStatus),
+    };
+  });
+
+  saveOrders(nextOrders);
+
+  return nextOrders.find((order) => order.orderNumber === orderNumber);
 }

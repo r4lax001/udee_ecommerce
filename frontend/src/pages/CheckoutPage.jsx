@@ -1,11 +1,65 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import jsQR from "jsqr";
 import { checkoutPageData } from "../data/checkoutPageData";
 import { createOrder } from "../services/orders";
 import { useCart } from "../contexts";
 
 const formatPrice = (value) => `฿${Number(value).toLocaleString("th-TH")}`;
+
+const getNumber = (value) => {
+  if (typeof value === "number") return value;
+  return Number(String(value).replace(/[^\d.-]/g, "")) || 0;
+};
+
+const readSlipQrCode = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const image = new Image();
+
+      image.onload = () => {
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+
+        canvas.width = image.width;
+        canvas.height = image.height;
+
+        context.drawImage(image, 0, 0, image.width, image.height);
+
+        const imageData = context.getImageData(
+          0,
+          0,
+          canvas.width,
+          canvas.height,
+        );
+        const qrResult = jsQR(
+          imageData.data,
+          imageData.width,
+          imageData.height,
+        );
+
+        resolve({
+          previewUrl: reader.result,
+          qrPayload: qrResult?.data || "",
+        });
+      };
+
+      image.onerror = () => {
+        reject(new Error("ไม่สามารถอ่านรูปภาพสลิปได้"));
+      };
+
+      image.src = reader.result;
+    };
+
+    reader.onerror = () => {
+      reject(new Error("ไม่สามารถอ่านไฟล์สลิปได้"));
+    };
+
+    reader.readAsDataURL(file);
+  });
 
 const CheckoutPage = ({ checkout = checkoutPageData }) => {
   const reduceMotion = useReducedMotion();
@@ -15,6 +69,17 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
     duration: reduceMotion ? 0 : 0.24,
     ease: [0.22, 1, 0.36, 1],
   };
+
+  const {
+    items,
+    subtotal,
+    discount,
+    shipping,
+    total: cartTotal,
+    clearCart,
+  } = useCart();
+
+  const isCartEmpty = items.length === 0;
 
   const [currentStep, setCurrentStep] = useState(1);
   const [error, setError] = useState("");
@@ -28,21 +93,16 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
     zip: "",
   });
 
-  const {
-    items,
-    subtotal,
-    discount,
-    shipping,
-    total: cartTotal,
-    clearCart,
-  } = useCart();
-
-  const isCartEmpty = items.length === 0;
-
   const [paymentInfo, setPaymentInfo] = useState({
     transferDate: "",
     amount: "",
     slip: null,
+    slipName: "",
+    slipPreview: "",
+    qrPayload: "",
+    qrStatus: "idle",
+    qrMessage: "",
+    verifyStatus: "pending_review",
   });
 
   useEffect(() => {
@@ -65,6 +125,9 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
             ? `฿${item.price.toLocaleString("th-TH")}`
             : item.price,
         image: item.image,
+        variant: item.variant,
+        color: item.color,
+        material: item.material,
       })),
       totals: {
         subtotal,
@@ -76,6 +139,164 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
   );
 
   const total = cartTotal;
+
+  const handleShippingChange = (event) => {
+    const { name, value } = event.target;
+
+    setShippingInfo((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handlePaymentChange = (event) => {
+    const { name, value } = event.target;
+
+    setPaymentInfo((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSlipUpload = async (event) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      setPaymentInfo((prev) => ({
+        ...prev,
+        slip: null,
+        slipName: "",
+        slipPreview: "",
+        qrPayload: "",
+        qrStatus: "idle",
+        qrMessage: "",
+      }));
+      return;
+    }
+
+    setError("");
+
+    setPaymentInfo((prev) => ({
+      ...prev,
+      slip: file,
+      slipName: file.name,
+      qrStatus: "reading",
+      qrMessage: "กำลังอ่าน QR Code จากสลิป...",
+    }));
+
+    try {
+      const result = await readSlipQrCode(file);
+
+      if (!result.qrPayload) {
+        setPaymentInfo((prev) => ({
+          ...prev,
+          slip: file,
+          slipName: file.name,
+          slipPreview: result.previewUrl,
+          qrPayload: "",
+          qrStatus: "failed",
+          qrMessage: "ไม่พบ QR Code ในสลิป กรุณาอัปโหลดรูปสลิปที่ชัดเจน",
+          verifyStatus: "qr_not_found",
+        }));
+        return;
+      }
+
+      setPaymentInfo((prev) => ({
+        ...prev,
+        slip: file,
+        slipName: file.name,
+        slipPreview: result.previewUrl,
+        qrPayload: result.qrPayload,
+        qrStatus: "success",
+        qrMessage: "อ่าน QR Code จากสลิปสำเร็จ รอตรวจสอบโดยผู้จัดการ",
+        verifyStatus: "pending_review",
+      }));
+    } catch {
+      setPaymentInfo((prev) => ({
+        ...prev,
+        slip: file,
+        slipName: file.name,
+        slipPreview: "",
+        qrPayload: "",
+        qrStatus: "failed",
+        qrMessage: "ไม่สามารถอ่านรูปภาพสลิปได้ กรุณาเลือกไฟล์ใหม่",
+        verifyStatus: "qr_read_error",
+      }));
+    }
+  };
+
+  const validateShipping = () => {
+    const requiredFields = [
+      "name",
+      "phone",
+      "address",
+      "city",
+      "district",
+      "zip",
+    ];
+
+    const isComplete = requiredFields.every((field) =>
+      shippingInfo[field].trim(),
+    );
+
+    if (!isComplete) {
+      setError("กรุณากรอกข้อมูลการจัดส่งให้ครบถ้วน");
+      return false;
+    }
+
+    setError("");
+    return true;
+  };
+
+  const validatePayment = () => {
+    if (!paymentInfo.transferDate || !paymentInfo.amount || !paymentInfo.slip) {
+      setError("กรุณากรอกข้อมูลการชำระเงินและอัปโหลดสลิปให้ครบถ้วน");
+      return false;
+    }
+
+    if (getNumber(paymentInfo.amount) !== getNumber(total)) {
+      setError(`จำนวนเงินต้องตรงกับยอดสุทธิ ${formatPrice(total)}`);
+      return false;
+    }
+
+    if (paymentInfo.qrStatus !== "success" || !paymentInfo.qrPayload) {
+      setError(
+        "กรุณาอัปโหลดสลิปที่มี QR Code ชัดเจน เพื่อใช้ตรวจสอบการชำระเงิน",
+      );
+      return false;
+    }
+
+    setError("");
+    return true;
+  };
+
+  const goToPayment = () => {
+    if (!validateShipping()) return;
+    setCurrentStep(2);
+  };
+
+  const goToConfirm = () => {
+    if (!validatePayment()) return;
+    setCurrentStep(3);
+  };
+
+  const handleCreateOrder = () => {
+    if (isCartEmpty) {
+      setError("ไม่สามารถสร้างคำสั่งซื้อได้ เพราะยังไม่มีสินค้าในตะกร้า");
+      setCurrentStep(1);
+      return;
+    }
+
+    const order = createOrder({
+      shippingInfo,
+      paymentInfo,
+      checkout: cartCheckoutData,
+    });
+
+    clearCart();
+    navigate(`/order-tracking/${order.orderNumber}`);
+  };
+
   if (isCartEmpty) {
     return (
       <main className="min-h-screen bg-[#F2EBE2] px-6 py-16 text-[#1D1B1A]">
@@ -115,83 +336,6 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
       </main>
     );
   }
-
-  const handleShippingChange = (event) => {
-    const { name, value } = event.target;
-
-    setShippingInfo((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handlePaymentChange = (event) => {
-    const { name, value } = event.target;
-
-    setPaymentInfo((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const validateShipping = () => {
-    const requiredFields = [
-      "name",
-      "phone",
-      "address",
-      "city",
-      "district",
-      "zip",
-    ];
-    const isComplete = requiredFields.every((field) =>
-      shippingInfo[field].trim(),
-    );
-
-    if (!isComplete) {
-      setError("กรุณากรอกข้อมูลการจัดส่งให้ครบถ้วน");
-      return false;
-    }
-
-    setError("");
-    return true;
-  };
-
-  const validatePayment = () => {
-    if (!paymentInfo.transferDate || !paymentInfo.amount || !paymentInfo.slip) {
-      setError("กรุณากรอกข้อมูลการชำระเงินและอัปโหลดสลิปให้ครบถ้วน");
-      return false;
-    }
-
-    setError("");
-    return true;
-  };
-
-  const goToPayment = () => {
-    if (!validateShipping()) return;
-    setCurrentStep(2);
-  };
-
-  const goToConfirm = () => {
-    if (!validatePayment()) return;
-    setCurrentStep(3);
-  };
-
-  const handleCreateOrder = () => {
-    if (isCartEmpty) {
-      setError("ไม่สามารถสร้างคำสั่งซื้อได้ เพราะยังไม่มีสินค้าในตะกร้า");
-      setCurrentStep(1);
-      return;
-    }
-
-    const order = createOrder({
-      shippingInfo,
-      paymentInfo,
-      checkout: cartCheckoutData,
-    });
-
-    clearCart();
-    navigate(`/order-tracking/${order.orderNumber}`);
-  };
 
   return (
     <motion.main
@@ -351,19 +495,59 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
                       </div>
 
                       <label className="mt-6 flex flex-col gap-2 text-sm text-[#81756E]">
-                        อัปโหลดสลิป
+                        อัปโหลดสลิปเพื่ออ่าน QR Code
                         <input
                           type="file"
                           accept="image/*"
-                          onChange={(event) =>
-                            setPaymentInfo((prev) => ({
-                              ...prev,
-                              slip: event.target.files?.[0] ?? null,
-                            }))
-                          }
+                          onChange={handleSlipUpload}
                           className="rounded-2xl border border-[#D2C4BC] bg-[#F9F2F0] px-4 py-3 outline-none"
                         />
                       </label>
+
+                      {paymentInfo.slipPreview && (
+                        <div className="mt-6 grid gap-4 md:grid-cols-[160px_1fr]">
+                          <div className="overflow-hidden rounded-2xl border border-[#E8E1DF] bg-white">
+                            <img
+                              src={paymentInfo.slipPreview}
+                              alt="ตัวอย่างสลิป"
+                              className="h-48 w-full object-cover"
+                            />
+                          </div>
+
+                          <div
+                            className={`rounded-2xl p-4 text-sm ${
+                              paymentInfo.qrStatus === "success"
+                                ? "bg-green-50 text-green-700"
+                                : paymentInfo.qrStatus === "failed"
+                                  ? "bg-red-50 text-red-700"
+                                  : "bg-[#FFF1E7] text-[#5a4e46]"
+                            }`}
+                          >
+                            <p className="font-semibold">
+                              สถานะการอ่าน QR Slip
+                            </p>
+                            <p className="mt-2">{paymentInfo.qrMessage}</p>
+
+                            {paymentInfo.qrPayload && (
+                              <div className="mt-3 rounded-xl bg-white/70 p-3">
+                                <p className="font-medium text-[#3D2B1F]">
+                                  QR Payload
+                                </p>
+                                <p className="mt-1 break-all text-xs">
+                                  {paymentInfo.qrPayload}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {!paymentInfo.slipPreview &&
+                        paymentInfo.qrStatus === "reading" && (
+                          <p className="mt-4 text-sm text-[#5a4e46]">
+                            กำลังอ่าน QR Code จากสลิป...
+                          </p>
+                        )}
                     </div>
                   </div>
                 </div>
@@ -420,14 +604,21 @@ const CheckoutPage = ({ checkout = checkoutPageData }) => {
                     <div className="mt-4 space-y-2 text-sm text-[#5a4e46]">
                       <p>วันที่โอน: {paymentInfo.transferDate}</p>
                       <p>จำนวนเงิน: {formatPrice(paymentInfo.amount || 0)}</p>
-                      <p>สลิป: {paymentInfo.slip?.name || "-"}</p>
+                      <p>สลิป: {paymentInfo.slipName || "-"}</p>
+                      <p>
+                        สถานะ QR:{" "}
+                        {paymentInfo.qrStatus === "success"
+                          ? "อ่าน QR สำเร็จ"
+                          : "ยังไม่ผ่านการอ่าน QR"}
+                      </p>
+                      <p>สถานะการชำระเงิน: รอตรวจสอบโดยผู้จัดการ</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="mt-8 rounded-3xl bg-[#FEF4EA] p-6 text-sm text-[#5a4e46]">
                   หลังจากยืนยันคำสั่งซื้อ ระบบจะสร้างเลขออเดอร์
-                  และพาไปหน้าติดตามคำสั่งซื้อทันที
+                  และบันทึกข้อมูลสลิปพร้อม QR Payload เพื่อรอผู้จัดการตรวจสอบ
                 </div>
 
                 <div className="mt-10 flex justify-between gap-4">
