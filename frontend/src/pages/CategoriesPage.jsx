@@ -67,6 +67,24 @@ const CategoriesPage = () => {
     return Array.from(new Set([...defaultCats, ...fromProducts]))
   }, [products])
 
+  const availableSizes = useMemo(() => {
+    const sizes = products.map(p => p.size?.trim()).filter(Boolean)
+    return Array.from(new Set(sizes)).sort()
+  }, [products])
+
+  const availableColors = useMemo(() => {
+    const colors = products.flatMap(p => p.colors || []).map(c => c.trim()).filter(Boolean)
+    return Array.from(new Set(colors))
+  }, [products])
+
+  const availableMaterials = useMemo(() => {
+    const materials = products.flatMap(p => {
+      if (Array.isArray(p.material)) return p.material
+      return p.material ? [p.material] : []
+    }).map(m => m.trim()).filter(Boolean)
+    return Array.from(new Set(materials))
+  }, [products])
+
   const toggleItem = (item, current, setCurrent) => {
     setCurrent((prev) =>
       prev.includes(item) ? prev.filter((value) => value !== item) : [...prev, item]
@@ -92,15 +110,9 @@ const CategoriesPage = () => {
 
       // 4. Filter by size
       if (selectedSizes.length > 0) {
-        const match = selectedSizes.some((s) => {
-          const cleanS = s.replace(/\s+/g, '')
-          const cleanP = (product.size || '').replace(/\s+/g, '')
-          if (cleanS.includes('120') && (cleanP.includes('120') || product.title.includes('120'))) return true
-          if (cleanS.includes('140') && (cleanP.includes('140') || product.title.includes('140'))) return true
-          if (cleanS.includes('160') && (cleanP.includes('160') || product.title.includes('160'))) return true
+        if (!selectedSizes.includes(product.size)) {
           return false
-        })
-        if (!match) return false
+        }
       }
 
       // 5. Filter by color
@@ -252,56 +264,58 @@ const CategoriesPage = () => {
                 />
               </div>
 
-              <div className="space-y-3 rounded-[1.5rem] border border-[#E8E1DF] bg-[#FAF6F1] p-4">
-                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#A0724A]">ขนาด</p>
-                {['120 x 60 ซม.', '140 x 70 ซม.', '160 x 80 ซม.'].map((size) => (
-                  <label key={size} className="flex cursor-pointer items-center gap-3 rounded-2xl border border-transparent px-3 py-3 transition hover:border-[#A0724A]/30">
-                    <input
-                      type="checkbox"
-                      checked={selectedSizes.includes(size)}
-                      onChange={() => toggleItem(size, selectedSizes, setSelectedSizes)}
-                      className="h-4 w-4 accent-[#A0724A]"
-                    />
-                    <span className="text-sm text-[#3D2B1F]">{size}</span>
-                  </label>
-                ))}
-              </div>
-
-              <div className="space-y-3 rounded-[1.5rem] border border-[#E8E1DF] bg-[#FAF6F1] p-4">
-                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#A0724A]">สี</p>
-                <div className="flex flex-wrap gap-3">
-                  {[
-                    { color: '#3D2B1F', label: 'เข้ม' },
-                    { color: '#A0764B', label: 'น้ำตาล' },
-                    { color: '#E7D6C6', label: 'ครีม' },
-                    { color: '#F4EFE7', label: 'ขาว' },
-                  ].map((item) => (
-                    <button
-                      type="button"
-                      key={item.label}
-                      onClick={() => toggleItem(item.color, selectedColors, setSelectedColors)}
-                      className={`flex h-10 w-10 items-center justify-center rounded-full border ${selectedColors.includes(item.color) ? 'border-[#A0724A]' : 'border-[#E8E1DF]'}`}
-                      style={{ backgroundColor: item.color }}
-                      aria-label={item.label}
-                    />
+              {availableSizes.length > 0 && (
+                <div className="space-y-3 rounded-[1.5rem] border border-[#E8E1DF] bg-[#FAF6F1] p-4">
+                  <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#A0724A]">ขนาด</p>
+                  {availableSizes.map((size) => (
+                    <label key={size} className="flex cursor-pointer items-center gap-3 rounded-2xl border border-transparent px-3 py-3 transition hover:border-[#A0724A]/30">
+                      <input
+                        type="checkbox"
+                        checked={selectedSizes.includes(size)}
+                        onChange={() => toggleItem(size, selectedSizes, setSelectedSizes)}
+                        className="h-4 w-4 accent-[#A0724A]"
+                      />
+                      <span className="text-sm text-[#3D2B1F]">{size}</span>
+                    </label>
                   ))}
                 </div>
-              </div>
+              )}
 
-              <div className="space-y-3 rounded-[1.5rem] border border-[#E8E1DF] bg-[#FAF6F1] p-4">
-                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#A0724A]">วัสดุ</p>
-                {['ไม้โอ๊ค', 'ไม้เมเปิล', 'โครงเหล็กพ่นสี'].map((material) => (
-                  <label key={material} className="flex cursor-pointer items-center gap-3 rounded-2xl border border-transparent px-3 py-3 transition hover:border-[#A0724A]/30">
-                    <input
-                      type="checkbox"
-                      checked={selectedMaterials.includes(material)}
-                      onChange={() => toggleItem(material, selectedMaterials, setSelectedMaterials)}
-                      className="h-4 w-4 accent-[#A0724A]"
-                    />
-                    <span className="text-sm text-[#3D2B1F]">{material}</span>
-                  </label>
-                ))}
-              </div>
+              {availableColors.length > 0 && (
+                <div className="space-y-3 rounded-[1.5rem] border border-[#E8E1DF] bg-[#FAF6F1] p-4">
+                  <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#A0724A]">สี</p>
+                  <div className="flex flex-wrap gap-3">
+                    {availableColors.map((color) => (
+                      <button
+                        type="button"
+                        key={color}
+                        onClick={() => toggleItem(color, selectedColors, setSelectedColors)}
+                        className={`flex h-10 w-10 items-center justify-center rounded-full border ${selectedColors.includes(color) ? 'border-[#A0724A] scale-110 shadow-md' : 'border-[#E8E1DF] hover:scale-105'}`}
+                        style={{ backgroundColor: color }}
+                        title={color}
+                        aria-label={color}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {availableMaterials.length > 0 && (
+                <div className="space-y-3 rounded-[1.5rem] border border-[#E8E1DF] bg-[#FAF6F1] p-4">
+                  <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#A0724A]">วัสดุ</p>
+                  {availableMaterials.map((material) => (
+                    <label key={material} className="flex cursor-pointer items-center gap-3 rounded-2xl border border-transparent px-3 py-3 transition hover:border-[#A0724A]/30">
+                      <input
+                        type="checkbox"
+                        checked={selectedMaterials.includes(material)}
+                        onChange={() => toggleItem(material, selectedMaterials, setSelectedMaterials)}
+                        className="h-4 w-4 accent-[#A0724A]"
+                      />
+                      <span className="text-sm text-[#3D2B1F]">{material}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
             </motion.aside>
 
             <div className="space-y-6">
@@ -332,7 +346,7 @@ const CategoriesPage = () => {
                         navigate(`/product-detail/${product.id}`)
                       }
                     }}
-                    className="group overflow-hidden rounded-[2rem] bg-white shadow-[0_12px_30px_rgba(61,43,31,0.08)] transition-all duration-500 hover:-translate-y-1"
+                    className="group flex flex-col h-full overflow-hidden rounded-[2rem] bg-white shadow-[0_12px_30px_rgba(61,43,31,0.08)] transition-all duration-500 hover:-translate-y-1"
                     initial={reduceMotion ? false : { opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ ...transition, delay: 0.16 + index * 0.04 }}
@@ -349,29 +363,32 @@ const CategoriesPage = () => {
                         className="h-72 w-full object-cover transition duration-500 group-hover:scale-105"
                       />
                     </div>
-                    <div className="space-y-4 p-6">
-                      <div className="flex items-center justify-between gap-4">
-                        <div>
+                    <div className="flex flex-col flex-grow justify-between p-6">
+                      <div>
+                        <div className="flex items-start justify-between gap-4">
                           <p className="text-xs uppercase tracking-[0.24em] text-[#A0724A]">{product.subtitle}</p>
-                          <h3 className="mt-2 text-xl font-semibold text-[#3D2B1F]">{product.title}</h3>
+                          {product.soldOut && (
+                            <span className="shrink-0 rounded-full bg-[#F2EBE2] px-2.5 py-0.5 text-[10px] font-semibold text-[#5a4e46]">
+                              สินค้าหมด
+                            </span>
+                          )}
                         </div>
-                        {product.soldOut && (
-                          <span className="rounded-full bg-[#F2EBE2] px-3 py-1 text-xs font-semibold text-[#5a4e46]">
-                            สินค้าหมด
-                          </span>
-                        )}
+                        <h3 className="mt-2 text-base font-semibold text-[#3D2B1F] line-clamp-3 h-[4.5rem] overflow-hidden leading-relaxed">
+                          {product.title}
+                        </h3>
                       </div>
-                      <div className="flex items-end justify-between gap-4">
+                      
+                      <div className="flex items-end justify-between gap-4 mt-6 pt-4 border-t border-[#FAF6F1]">
                         <div>
-                          <p className="text-2xl font-semibold text-[#3D2B1F]">{formatPrice(product.price)}</p>
+                          <p className="text-2xl font-bold text-[#3D2B1F]">{formatPrice(product.price)}</p>
                           {product.originalPrice && (
-                            <p className="text-sm text-[#5a4e46] line-through">{formatPrice(product.originalPrice)}</p>
+                            <p className="text-xs text-[#81756E] line-through">{formatPrice(product.originalPrice)}</p>
                           )}
                         </div>
                         <ClickSparkButton
                           as="link"
                           to="/cart"
-                          className={`rounded-full px-4 py-3 text-sm font-semibold text-white transition ${product.soldOut ? 'bg-[#C8C2BB] pointer-events-none' : 'bg-[#3D2B1F] hover:bg-[#1f1913]'}`}
+                          className={`rounded-full px-5 py-2.5 text-xs font-semibold text-white transition ${product.soldOut ? 'bg-[#C8C2BB] pointer-events-none' : 'bg-[#3D2B1F] hover:bg-[#1f1913]'}`}
                         >
                           เพิ่มในตะกร้า
                         </ClickSparkButton>
