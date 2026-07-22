@@ -159,6 +159,11 @@ const GLOBAL_STYLES = `
 .access-denied h2{font-size:22px;font-weight:600;color:var(--tx)}
 .access-denied p{font-size:14px;color:var(--tm)}
 .access-denied .btn-login{background:var(--pr);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:500;cursor:pointer}
+
+/* Role Badge */
+.role-badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;letter-spacing:.04em}
+.role-badge.manager{background:rgba(74,124,89,0.3);color:#8FD3A8}
+.role-badge.admin{background:rgba(44,111,172,0.3);color:#7EC6F5}
 `;
 
 const PAGE_TITLES = {
@@ -172,19 +177,40 @@ const PAGE_TITLES = {
 
 const NAV_ITEMS = [
   { id: 'dashboard', icon: 'ti-layout-dashboard', label: 'Dashboard', group: 'OVERVIEW' },
-  { id: 'products', icon: 'ti-package', label: 'Products', group: 'OVERVIEW' },
-  { id: 'orders', icon: 'ti-shopping-cart', label: 'Orders', group: 'OVERVIEW' },
-  { id: 'customers', icon: 'ti-users', label: 'Customers', group: 'INSIGHTS' },
-  { id: 'analytics', icon: 'ti-chart-line', label: 'Analytics', group: 'INSIGHTS' },
-  { id: 'settings', icon: 'ti-settings', label: 'Settings', group: 'SYSTEM' },
+  { id: 'products',  icon: 'ti-package',          label: 'Products',  group: 'OVERVIEW' },
+  { id: 'orders',    icon: 'ti-shopping-cart',    label: 'Orders',    group: 'OVERVIEW' },
+  { id: 'customers', icon: 'ti-users',            label: 'Customers', group: 'INSIGHTS' },
+  { id: 'analytics', icon: 'ti-chart-line',       label: 'Analytics', group: 'INSIGHTS' },
+  { id: 'settings',  icon: 'ti-settings',         label: 'Settings',  group: 'INSIGHTS' },
 ];
 
+// ── Role access map ───────────────────────────────────────────────────────────
+// Only roles listed here can enter the dashboard; value = allowed page IDs
+const ROLE_PERMISSIONS = {
+  MANAGER: ['dashboard', 'products', 'orders'],
+  ADMIN:   ['customers', 'analytics', 'settings'],
+};
+
+// Default landing page per role
+const ROLE_DEFAULT_PAGE = {
+  MANAGER: 'dashboard',
+  ADMIN:   'customers',
+};
+
+// Display label & CSS class for role badge
+const ROLE_META = {
+  MANAGER: { label: 'Manager', cls: 'manager' },
+  ADMIN:   { label: 'Admin',   cls: 'admin'   },
+};
+
 export default function AdminLayout() {
-  const [activePage, setActivePage] = useState('dashboard');
   const { user, isLoading, logout } = useAuth();
   const navigate = useNavigate();
 
-  // ── Route Guard ──────────────────────────────────────────────────────────
+  // activePage tracks what the user clicked; null means "use role default"
+  const [activePage, setActivePage] = useState(null);
+
+  // ── 1. Loading state ──────────────────────────────────────────────────────
   if (isLoading) {
     return (
       <div className="udee-wrap-root">
@@ -197,6 +223,7 @@ export default function AdminLayout() {
     );
   }
 
+  // ── 2. Not logged in ──────────────────────────────────────────────────────
   if (!user) {
     return (
       <div className="udee-wrap-root">
@@ -213,14 +240,20 @@ export default function AdminLayout() {
     );
   }
 
-  if (user.role !== 'ADMIN') {
+  // ── 3. Resolve role — strictly AFTER user is confirmed loaded ─────────────
+  const roleKey      = user.role?.toUpperCase();      // 'ADMIN' | 'MANAGER' | other
+  const allowedPages = ROLE_PERMISSIONS[roleKey];     // undefined → not permitted
+  const roleMeta     = ROLE_META[roleKey] ?? { label: roleKey, cls: 'admin' };
+
+  // ── 4. Role not permitted ─────────────────────────────────────────────────
+  if (!allowedPages) {
     return (
       <div className="udee-wrap-root">
         <style>{GLOBAL_STYLES}</style>
         <div className="access-denied">
           <i className="ti ti-shield-off" style={{ fontSize: 48, color: '#B94040' }} aria-hidden="true" />
           <h2>ไม่มีสิทธิ์เข้าถึง</h2>
-          <p>หน้านี้สำหรับผู้ดูแลระบบ (Admin) เท่านั้น</p>
+          <p>หน้านี้สำหรับ Manager หรือ Admin เท่านั้น</p>
           <button className="btn-login" onClick={() => navigate('/')}>
             กลับหน้าหลัก
           </button>
@@ -228,48 +261,64 @@ export default function AdminLayout() {
       </div>
     );
   }
-  // ─────────────────────────────────────────────────────────────────────────
+
+  // ── 5. Derive currentPage: use activePage only if allowed, else role default
+  const defaultPage = ROLE_DEFAULT_PAGE[roleKey];
+  const currentPage = activePage && allowedPages.includes(activePage)
+    ? activePage
+    : defaultPage;
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
+  const handleNav = (pageId) => {
+    if (allowedPages.includes(pageId)) setActivePage(pageId);
+  };
+
   return (
     <div className="udee-wrap-root">
       <style>{GLOBAL_STYLES}</style>
       <div className="wrap">
-        {/* ── Sidebar ── */}
+
+        {/* ── Sidebar ────────────────────────────────────────────────────── */}
         <div className="side">
           <div className="side-logo">
             U<span>D</span>EE
-            <span className="admin-badge">Admin</span>
+            <span className={`role-badge ${roleMeta.cls}`}>{roleMeta.label}</span>
           </div>
 
-          {/* Nav groups */}
-          {['OVERVIEW', 'INSIGHTS', 'SYSTEM'].map((group) => (
-            <div key={group}>
-              <div style={{
-                padding: '10px 16px 4px',
-                fontSize: 10,
-                color: 'rgba(255,255,255,0.35)',
-                letterSpacing: '0.08em',
-                fontWeight: 600,
-              }}>
-                {group}
-              </div>
-              {NAV_ITEMS.filter((item) => item.group === group).map((item) => (
-                <div
-                  key={item.id}
-                  className={`nav-item${activePage === item.id ? ' active' : ''}`}
-                  onClick={() => setActivePage(item.id)}
-                >
-                  <i className={`ti ${item.icon}`} aria-hidden="true" />
-                  {item.label}
+          {/* Render only groups that have ≥1 page allowed for this role */}
+          {['OVERVIEW', 'INSIGHTS'].map((group) => {
+            const visibleItems = NAV_ITEMS.filter(
+              (item) => item.group === group && allowedPages.includes(item.id)
+            );
+            if (visibleItems.length === 0) return null;
+            return (
+              <div key={group}>
+                <div style={{
+                  padding: '10px 16px 4px',
+                  fontSize: 10,
+                  color: 'rgba(255,255,255,0.35)',
+                  letterSpacing: '0.08em',
+                  fontWeight: 600,
+                }}>
+                  {group}
                 </div>
-              ))}
-            </div>
-          ))}
+                {visibleItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className={`nav-item${currentPage === item.id ? ' active' : ''}`}
+                    onClick={() => handleNav(item.id)}
+                  >
+                    <i className={`ti ${item.icon}`} aria-hidden="true" />
+                    {item.label}
+                  </div>
+                ))}
+              </div>
+            );
+          })}
 
           <div className="side-bottom">
             <div className="nav-item" onClick={() => navigate('/')}>
@@ -281,42 +330,57 @@ export default function AdminLayout() {
           </div>
         </div>
 
-        {/* ── Main Content ── */}
+        {/* ── Main Content ────────────────────────────────────────────────── */}
         <div className="main">
           <div className="topbar">
             <div>
-              <div className="topbar-breadcrumb">Admin › {PAGE_TITLES[activePage] || activePage}</div>
-              <div className="topbar-title">{PAGE_TITLES[activePage] || activePage}</div>
+              <div className="topbar-breadcrumb">{roleMeta.label} › {PAGE_TITLES[currentPage] || currentPage}</div>
+              <div className="topbar-title">{PAGE_TITLES[currentPage] || currentPage}</div>
             </div>
             <div className="topbar-right">
               <div className="admin-user-info">
                 <div className="avatar">{user.name?.charAt(0)?.toUpperCase() || 'A'}</div>
                 <div className="name">{user.name}</div>
+                <span className={`role-badge ${roleMeta.cls}`}>{roleMeta.label}</span>
               </div>
             </div>
           </div>
 
           <div className="content">
-            <div className={`page${activePage === 'dashboard' ? ' active' : ''}`}>
-              <Dashboard />
-            </div>
-            <div className={`page${activePage === 'products' ? ' active' : ''}`}>
-              <Products />
-            </div>
-            <div className={`page${activePage === 'orders' ? ' active' : ''}`}>
-              <Orders />
-            </div>
-            <div className={`page${activePage === 'customers' ? ' active' : ''}`}>
-              <Customers />
-            </div>
-            <div className={`page${activePage === 'analytics' ? ' active' : ''}`}>
-              <Analytics />
-            </div>
-            <div className={`page${activePage === 'settings' ? ' active' : ''}`}>
-              <Settings />
-            </div>
+            {/* Only render pages this role is allowed to access — others never mount */}
+            {allowedPages.includes('dashboard') && (
+              <div className={`page${currentPage === 'dashboard' ? ' active' : ''}`}>
+                <Dashboard />
+              </div>
+            )}
+            {allowedPages.includes('products') && (
+              <div className={`page${currentPage === 'products' ? ' active' : ''}`}>
+                <Products />
+              </div>
+            )}
+            {allowedPages.includes('orders') && (
+              <div className={`page${currentPage === 'orders' ? ' active' : ''}`}>
+                <Orders />
+              </div>
+            )}
+            {allowedPages.includes('customers') && (
+              <div className={`page${currentPage === 'customers' ? ' active' : ''}`}>
+                <Customers />
+              </div>
+            )}
+            {allowedPages.includes('analytics') && (
+              <div className={`page${currentPage === 'analytics' ? ' active' : ''}`}>
+                <Analytics />
+              </div>
+            )}
+            {allowedPages.includes('settings') && (
+              <div className={`page${currentPage === 'settings' ? ' active' : ''}`}>
+                <Settings />
+              </div>
+            )}
           </div>
         </div>
+
       </div>
     </div>
   );

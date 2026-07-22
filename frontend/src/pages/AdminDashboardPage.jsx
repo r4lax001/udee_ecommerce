@@ -5,6 +5,7 @@ import { Customers, Analytics } from './admin/AdminPages'
 import Settings from './admin/AdminSettings'
 import AdminProductsPage from './AdminProductsPage'
 import AdminOrdersPage from './AdminOrdersPage'
+import { useAuth } from '../contexts'
 
 // ─── Scoped CSS สำหรับ sub-page components (AdminPages + AdminSettings) ──────
 const ADMIN_SUB_STYLES = `
@@ -178,15 +179,27 @@ const TOP_PRODUCTS = [
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function AdminDashboardPage() {
+  const { user } = useAuth()
   const reduceMotion = useReducedMotion()
-  const [activePage, setActivePage] = useState('dashboard')
+
+  const roleKey = user?.role?.toUpperCase() || 'MANAGER'
+  const ROLE_PERMISSIONS = {
+    MANAGER: ['dashboard', 'products', 'orders'],
+    ADMIN:   ['customers', 'analytics', 'settings'],
+  }
+  const allowedPages = ROLE_PERMISSIONS[roleKey] || []
+  const defaultPage = roleKey === 'ADMIN' ? 'customers' : 'dashboard'
+
+  const [activePage, setActivePage] = useState(defaultPage)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  const currentPage = allowedPages.includes(activePage) ? activePage : defaultPage
 
   const transition = { duration: reduceMotion ? 0 : 0.22, ease: [0.22, 1, 0.36, 1] }
 
   // ── Sidebar NavItem ──────────────────────────────────────────────────────
   function NavItem({ item }) {
-    const isActive = activePage === item.id
+    const isActive = currentPage === item.id
     const cls = `flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all cursor-pointer ${
       isActive
         ? 'bg-[#3D2B1F] text-white shadow-sm'
@@ -224,21 +237,23 @@ export default function AdminDashboardPage() {
 
   // ── Content renderer ──────────────────────────────────────────────────────
   function renderContent() {
-    if (activePage === 'dashboard') {
+    if (!allowedPages.includes(currentPage)) return null;
+
+    if (currentPage === 'dashboard') {
       return <DashboardView reduceMotion={reduceMotion} transition={transition} onNavigate={setActivePage} />
     }
-    if (activePage === 'products') {
+    if (currentPage === 'products') {
       return <AdminProductsPage reduceMotion={reduceMotion} transition={transition} />
     }
-    if (activePage === 'orders') {
+    if (currentPage === 'orders') {
       return <AdminOrdersPage reduceMotion={reduceMotion} transition={transition} />
     }
     return (
       <div className="udee-wrap-root">
         <style>{ADMIN_SUB_STYLES}</style>
-        {activePage === 'customers' && <Customers />}
-        {activePage === 'analytics' && <Analytics />}
-        {activePage === 'settings'  && <Settings />}
+        {currentPage === 'customers' && <Customers />}
+        {currentPage === 'analytics' && <Analytics />}
+        {currentPage === 'settings'  && <Settings />}
       </div>
     )
   }
@@ -272,8 +287,12 @@ export default function AdminDashboardPage() {
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-lg font-bold text-[#3D2B1F]">UDEE</span>
-              <span className="text-[10px] font-semibold text-[#A0724A] bg-[#FEF4EA] px-1.5 py-0.5 rounded-md border border-[#F3D9B8]">
-                Admin
+              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-md border ${
+                roleKey === 'ADMIN' 
+                  ? 'text-[#B94040] bg-[#FCEBEB] border-[#F5C6C6]' 
+                  : 'text-[#C17B2A] bg-[#FEF4EA] border-[#F3D9B8]'
+              }`}>
+                {roleKey === 'ADMIN' ? 'Admin' : 'Manager'}
               </span>
             </div>
           </Link>
@@ -287,29 +306,33 @@ export default function AdminDashboardPage() {
 
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto p-4 space-y-5">
-          {NAV_GROUPS.map((group) => (
+          {NAV_GROUPS.map((group) => {
+            const visibleItems = group.items.filter(item => allowedPages.includes(item.id));
+            if (visibleItems.length === 0) return null;
+            return (
             <div key={group.label}>
               <p className="mb-2 px-4 text-[10px] font-bold uppercase tracking-widest text-[#C4C9D4]">
                 {group.label}
               </p>
               <div className="space-y-0.5">
-                {group.items.map((item) => (
+                {visibleItems.map((item) => (
                   <NavItem key={item.id} item={item} />
                 ))}
               </div>
             </div>
-          ))}
+            )
+          })}
         </nav>
 
         {/* User profile */}
         <div className="border-t border-[#E5E7EB] p-4">
           <div className="flex items-center gap-3 rounded-xl bg-[#F9FAFB] p-3 hover:bg-[#F3F4F6] transition cursor-pointer">
             <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#A0724A] to-[#3D2B1F] text-white font-bold text-sm">
-              A
+              {user?.name?.charAt(0)?.toUpperCase() || 'A'}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-[#111827] truncate">Admin User</p>
-              <p className="text-xs text-[#9CA3AF] truncate">admin@udee.co.th</p>
+              <p className="text-sm font-semibold text-[#111827] truncate">{user?.name || 'Admin User'}</p>
+              <p className="text-xs text-[#9CA3AF] truncate">{user?.email || 'admin@udee.co.th'}</p>
             </div>
             <span className="material-symbols-outlined text-[18px] text-[#9CA3AF]">more_vert</span>
           </div>
@@ -331,10 +354,10 @@ export default function AdminDashboardPage() {
             </button>
             {/* Breadcrumb */}
             <div className="flex items-center gap-1.5 text-sm">
-              <span className="text-[#9CA3AF]">Admin</span>
+              <span className="text-[#9CA3AF]">{roleKey === 'ADMIN' ? 'Admin' : 'Manager'}</span>
               <span className="material-symbols-outlined text-[14px] text-[#D1D5DB]">chevron_right</span>
               <span className="font-semibold text-[#111827]">
-                {PAGE_META[activePage]?.title ?? activePage}
+                {PAGE_META[currentPage]?.title ?? currentPage}
               </span>
             </div>
           </div>
@@ -372,17 +395,17 @@ export default function AdminDashboardPage() {
         <div className="flex-shrink-0 border-b border-[#E5E7EB] bg-white px-6 py-4">
           <AnimatePresence mode="wait">
             <motion.div
-              key={activePage + '-header'}
+              key={currentPage + '-header'}
               initial={reduceMotion ? false : { y: 6, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -4, opacity: 0 }}
               transition={{ duration: 0.14 }}
             >
               <h1 className="text-[22px] font-bold text-[#111827] leading-tight">
-                {PAGE_META[activePage]?.title ?? activePage}
+                {PAGE_META[currentPage]?.title ?? currentPage}
               </h1>
               <p className="mt-0.5 text-sm text-[#9CA3AF]">
-                {PAGE_META[activePage]?.subtitle}
+                {PAGE_META[currentPage]?.subtitle}
               </p>
             </motion.div>
           </AnimatePresence>
@@ -392,7 +415,7 @@ export default function AdminDashboardPage() {
         <main className="flex-1 overflow-y-auto p-6">
           <AnimatePresence mode="wait">
             <motion.div
-              key={activePage}
+              key={currentPage}
               initial={reduceMotion ? false : { y: 14, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -8, opacity: 0 }}

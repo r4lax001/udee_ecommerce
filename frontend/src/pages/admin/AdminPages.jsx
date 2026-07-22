@@ -283,6 +283,18 @@ export function Customers() {
     }
   }
 
+  const handleRoleChange = async (userId, newRole) => {
+    if (!window.confirm(`ต้องการเปลี่ยนสิทธิ์เป็น ${newRole} หรือไม่?`)) return
+    try {
+      const data = await updateUserStatus(userId, { role: newRole })
+      if (data.success) {
+        setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u)))
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'เกิดข้อผิดพลาดในการเปลี่ยนสิทธิ์')
+    }
+  }
+
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
       (user.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -373,7 +385,27 @@ export function Customers() {
                     </div>
                   </td>
                   <td style={{ padding: 10, color: 'var(--tm)', fontSize: 12 }}>{c.email}</td>
-                  <td style={{ padding: 10 }}><span className={`tag ${c.role === 'ADMIN' ? 'vip' : 'reg'}`}>{c.role}</span></td>
+                  <td style={{ padding: 10 }}>
+                    <select
+                      value={c.role}
+                      onChange={(e) => handleRoleChange(c.id, e.target.value)}
+                      style={{
+                        padding: '4px 8px',
+                        borderRadius: '20px',
+                        fontSize: '11px',
+                        fontWeight: '500',
+                        border: '1px solid ' + (c.role === 'ADMIN' ? '#F5C6C6' : c.role === 'MANAGER' ? '#F3D9B8' : '#B6D4F0'),
+                        background: c.role === 'ADMIN' ? '#FCEBEB' : c.role === 'MANAGER' ? '#FEF4EA' : '#E6F1FB',
+                        color: c.role === 'ADMIN' ? '#B94040' : c.role === 'MANAGER' ? '#C17B2A' : '#185FA5',
+                        outline: 'none',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <option value="CUSTOMER">CUSTOMER</option>
+                      <option value="MANAGER">MANAGER</option>
+                      <option value="ADMIN">ADMIN</option>
+                    </select>
+                  </td>
                   <td style={{ padding: 10, textAlign: 'center' }}>
                     <span className={`badge ${c.isVerified ? 'done' : 'pending'}`}>{c.isVerified ? 'Verified' : 'Unverified'}</span>
                   </td>

@@ -84,14 +84,31 @@ const Navbar = () => {
           </motion.div>
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
+              {/* Dashboard button — visible to ADMIN & MANAGER only */}
+
+
               <MotionLink
-                to={user?.role === 'ADMIN' ? '/admin-dashboard' : '/profile'}
+                to={['ADMIN', 'MANAGER'].includes(user?.role) ? '/admin-dashboard' : '/profile'}
                 className="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold text-[#3D2B1F] hover:text-[#A0724A] transition"
                 whileHover={{ y: -1 }}
               >
                 <span className="material-symbols-outlined text-[20px]">account_circle</span>
                 <span>{user?.name || 'บัญชี'}</span>
               </MotionLink>
+              {['ADMIN', 'MANAGER'].includes(user?.role) && (
+                <MotionLink
+                  to="/admin-dashboard"
+                  whileHover={{ y: -2, scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  className="hidden md:inline-flex items-center gap-1.5 rounded-lg bg-[#3D2B1F] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#A0724A] transition-all duration-200"
+                >
+                  <span className="material-symbols-outlined text-[18px]">dashboard</span>
+                  Dashboard
+                  <span className={`ml-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-medium leading-none text-white ${user?.role === 'ADMIN' ? 'bg-red-500' : 'bg-orange-500'}`}>
+                    {user?.role === 'ADMIN' ? 'Admin' : 'Manager'}
+                  </span>
+                </MotionLink>
+              )}
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -101,6 +118,7 @@ const Navbar = () => {
                 Logout
               </motion.button>
             </div>
+
           ) : (
             <motion.div whileHover={{ y: -2, scale: 1.04 }} whileTap={{ scale: 0.96 }}>
               <ClickSparkButton

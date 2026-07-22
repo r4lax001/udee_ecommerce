@@ -53,10 +53,12 @@ function LoadingFallback() {
   );
 }
 
+const DASHBOARD_ROLES = ['ADMIN', 'MANAGER'];
+
 function AdminRoute({ children }) {
   const { user, isLoading } = useAuth();
   if (isLoading) return <LoadingFallback />;
-  return user?.role === 'ADMIN' ? children : <Navigate to="/login" replace />;
+  return DASHBOARD_ROLES.includes(user?.role) ? children : <Navigate to="/login" replace />;
 }
 
 function App() {
