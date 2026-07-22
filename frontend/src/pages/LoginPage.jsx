@@ -14,7 +14,7 @@ const Toast = ({ message, type = 'success', onClose }) => (
     transition={{ type: 'spring', stiffness: 300, damping: 25 }}
     className={`fixed top-6 right-6 z-[100] flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg text-sm font-medium max-w-sm border ${
       type === 'success'
-        ? 'bg-white text-[#111111] border-[#EAEAEA]'
+        ? 'bg-white text-[#3D2B1F] border-[#EAEAEA]'
         : 'bg-[#FEF2F2] text-[#991B1B] border-[#FCA5A5]'
     }`}
   >
@@ -22,7 +22,7 @@ const Toast = ({ message, type = 'success', onClose }) => (
       {type === 'success' ? 'check_circle' : 'error'}
     </span>
     <span className="flex-1">{message}</span>
-    <button onClick={onClose} className="ml-2 text-[#888888] hover:text-[#111111] transition-colors focus-visible:outline-none">
+    <button onClick={onClose} className="ml-2 text-[#888888] hover:text-[#3D2B1F] transition-colors focus-visible:outline-none">
       <span className="material-symbols-outlined text-base">close</span>
     </button>
   </motion.div>
@@ -60,7 +60,7 @@ const LoginPage = () => {
     setError('')
 
     if (!formData.email || !formData.password) {
-      setError('Please fill in all fields')
+      setError('กรุณากรอกข้อมูลให้ครบถ้วน')
       return
     }
 
@@ -69,21 +69,21 @@ const LoginPage = () => {
       const data = await authService.login(formData)
       if (data.requiresVerification) {
         setNeedsVerification(true)
-        showToast('Please check your email for the verification code')
+        showToast('กรุณาตรวจสอบอีเมลของคุณเพื่อรับรหัสยืนยัน')
       } else if (data.success && data.user) {
         login(data.user)
-        showToast('Welcome back!')
+        showToast('ยินดีต้อนรับกลับมา!')
         setTimeout(() => navigate('/profile'), 1500)
       } else {
-        setError(data.message || 'Invalid credentials')
+        setError(data.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง')
       }
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || 'Failed to sign in. Please try again.'
+      const msg = err.response?.data?.message || err.message || 'เข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง'
       if (err.response?.status === 403 && msg.includes('verify')) {
         setNeedsVerification(true)
-        showToast('Account not verified. Please verify your email.')
+        showToast('บัญชียังไม่ได้รับการยืนยัน กรุณายืนยันอีเมล')
       } else {
-        setError(msg)
+        setError(msg === 'Invalid credentials' ? 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' : msg)
       }
     } finally {
       setLoading(false)
@@ -110,7 +110,7 @@ const LoginPage = () => {
     e.preventDefault()
     const code = otp.join('')
     if (code.length !== 6) {
-      setError('Please enter a 6-digit code')
+      setError('กรุณากรอกรหัส 6 หลัก')
       return
     }
     setError('')
@@ -119,13 +119,13 @@ const LoginPage = () => {
       const data = await authService.verifyEmail(formData.email, code)
       if (data.success && data.user) {
         login(data.user)
-        showToast('Email verified successfully!')
+        showToast('ยืนยันอีเมลสำเร็จ!')
         setTimeout(() => navigate('/profile'), 1500)
       } else {
-        setError(data.error || 'Verification failed')
+        setError(data.error || 'การยืนยันล้มเหลว')
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Verification failed. Please try again.')
+      setError(err.response?.data?.error || 'การยืนยันล้มเหลว กรุณาลองใหม่อีกครั้ง')
     } finally {
       setVerifying(false)
     }
@@ -137,24 +137,24 @@ const LoginPage = () => {
     try {
       const data = await authService.resendVerification(formData.email)
       if (data.success) {
-        showToast('A new code has been sent to your email')
+        showToast('ส่งรหัสใหม่ไปยังอีเมลของคุณแล้ว')
         setOtp(['', '', '', '', '', ''])
         document.getElementById('otp-0')?.focus()
       } else {
-        setError(data.error || 'Failed to resend code')
+        setError(data.error || 'ไม่สามารถส่งรหัสใหม่ได้')
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to resend code. Please try again.')
+      setError(err.response?.data?.error || 'ไม่สามารถส่งรหัสใหม่ได้ กรุณาลองใหม่อีกครั้ง')
     } finally {
       setResending(false)
     }
   }
 
-  const inputClass = "w-full rounded-lg border border-[#EAEAEA] bg-[#F9F9F9] px-4 py-3 text-sm text-[#111111] outline-none transition-all focus:border-[#111111] focus:bg-white focus:ring-1 focus:ring-[#111111] hover:border-[#CCCCCC]"
-  const labelClass = "mb-2 block text-xs font-semibold uppercase tracking-wider text-[#666666]"
+  const inputClass = "w-full rounded-lg border border-[#EAEAEA] bg-[#F9F9F9] px-4 py-3 text-sm text-[#3D2B1F] outline-none transition-all focus:border-[#A0724A] focus:bg-white focus:ring-1 focus:ring-[#A0724A] hover:border-[#CCCCCC]"
+  const labelClass = "mb-2 block text-xs font-semibold uppercase tracking-wider text-[#5a4e46]"
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[#F9F9F9] px-6 py-20 selection:bg-[#111111] selection:text-white">
+    <main className="min-h-screen flex items-center justify-center bg-[#FAF6F1] px-6 py-20 selection:bg-[#A0724A] selection:text-white" style={{ fontFamily: 'Kanit, Inter, Prompt, Mitr, sans-serif' }}>
       <AnimatePresence>
         {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       </AnimatePresence>
@@ -167,16 +167,29 @@ const LoginPage = () => {
       >
         <div className="p-8 sm:p-10">
           <div className="mb-8 text-center">
-            <Link to="/" className="inline-block text-2xl font-bold tracking-tighter text-[#111111] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] rounded mb-6">
-              udee.
-            </Link>
-            <h1 className="text-2xl font-semibold tracking-tight text-[#111111]">
-              {needsVerification ? 'Verify your email' : 'Sign in to your account'}
+            <div className="flex justify-center mb-6">
+              <Link to="/" className="flex items-center gap-1 cursor-pointer shrink-0 group relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A0724A] rounded-xl p-1">
+                <div className="relative w-12 h-12 bg-[#A0724A] rounded-xl flex items-center justify-center shadow-lg shadow-[#A0724A]/30 overflow-hidden transition-all duration-700 group-hover:scale-110 group-hover:rotate-[10deg] group-hover:shadow-[#A0724A]/50">
+                  <div className="absolute inset-0 animate-shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <span className="relative text-white font-bold text-2xl italic leading-none transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-[10deg]">
+                    U
+                  </span>
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-2xl font-black tracking-tighter text-[#3D2B1F] uppercase transition-all duration-500 group-hover:tracking-widest group-hover:translate-x-1">
+                    dee
+                  </span>
+                  <div className="h-[2px] w-0 bg-[#A0724A] transition-all duration-500 group-hover:w-full rounded-full" />
+                </div>
+              </Link>
+            </div>
+            <h1 className="text-2xl font-semibold tracking-tight text-[#3D2B1F]">
+              {needsVerification ? 'ยืนยันอีเมลของคุณ' : 'เข้าสู่ระบบบัญชีของคุณ'}
             </h1>
-            <p className="mt-2 text-sm text-[#666666]">
+            <p className="mt-2 text-sm text-[#5a4e46]">
               {needsVerification 
-                ? `We sent a 6-digit code to ${formData.email}`
-                : 'Welcome back! Please enter your details.'}
+                ? `เราได้ส่งรหัส 6 หลักไปยัง ${formData.email}`
+                : 'ยินดีต้อนรับกลับมา! กรุณากรอกข้อมูลของคุณ'}
             </p>
           </div>
 
@@ -199,7 +212,7 @@ const LoginPage = () => {
           {!needsVerification ? (
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label htmlFor="email" className={labelClass}>Email Address</label>
+                <label htmlFor="email" className={labelClass}>ที่อยู่อีเมล</label>
                 <input
                   type="email"
                   id="email"
@@ -215,8 +228,8 @@ const LoginPage = () => {
 
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label htmlFor="password" className="text-xs font-semibold uppercase tracking-wider text-[#666666]">Password</label>
-                  <a href="#" className="text-xs font-medium text-[#111111] hover:underline focus-visible:outline-none">Forgot password?</a>
+                  <label htmlFor="password" className="text-xs font-semibold uppercase tracking-wider text-[#5a4e46]">รหัสผ่าน</label>
+                  <a href="#" className="text-xs font-medium text-[#3D2B1F] hover:text-[#A0724A] hover:underline focus-visible:outline-none">ลืมรหัสผ่าน?</a>
                 </div>
                 <div className="relative">
                   <input
@@ -233,8 +246,8 @@ const LoginPage = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#888888] hover:text-[#111111] transition-colors focus-visible:outline-none focus-visible:text-[#111111]"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#888888] hover:text-[#3D2B1F] transition-colors focus-visible:outline-none focus-visible:text-[#3D2B1F]"
+                    aria-label={showPassword ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน'}
                   >
                     <span className="material-symbols-outlined text-[20px]">
                       {showPassword ? 'visibility_off' : 'visibility'}
@@ -247,15 +260,15 @@ const LoginPage = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full rounded-lg bg-[#111111] px-4 py-3.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#333333] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#111111] disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
+                  className="w-full rounded-lg bg-[#3D2B1F] px-4 py-3.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#5a4e46] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#3D2B1F] disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
                 >
                   {loading ? (
                     <>
                       <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
-                      Signing in...
+                      กำลังเข้าสู่ระบบ...
                     </>
                   ) : (
-                    'Sign In'
+                    'เข้าสู่ระบบ'
                   )}
                 </button>
               </div>
@@ -272,7 +285,7 @@ const LoginPage = () => {
                     value={digit}
                     onChange={(e) => handleOtpChange(index, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                    className="h-12 w-12 text-center text-lg font-bold rounded-lg border border-[#EAEAEA] bg-[#F9F9F9] text-[#111111] outline-none transition-all focus:border-[#111111] focus:bg-white focus:ring-1 focus:ring-[#111111]"
+                    className="h-12 w-12 text-center text-lg font-bold rounded-lg border border-[#EAEAEA] bg-[#F9F9F9] text-[#3D2B1F] outline-none transition-all focus:border-[#A0724A] focus:bg-white focus:ring-1 focus:ring-[#A0724A]"
                   />
                 ))}
               </div>
@@ -280,15 +293,15 @@ const LoginPage = () => {
               <button
                 type="submit"
                 disabled={verifying}
-                className="w-full rounded-lg bg-[#111111] px-4 py-3.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#333333] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#111111] disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
+                className="w-full rounded-lg bg-[#3D2B1F] px-4 py-3.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#5a4e46] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#3D2B1F] disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
               >
                 {verifying ? (
                   <>
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
-                    Verifying...
+                    กำลังยืนยัน...
                   </>
                 ) : (
-                  'Verify Email'
+                  'ยืนยันอีเมล'
                 )}
               </button>
 
@@ -297,9 +310,9 @@ const LoginPage = () => {
                   type="button"
                   onClick={handleResendOtp}
                   disabled={resending}
-                  className="text-xs font-medium text-[#666666] hover:text-[#111111] underline focus-visible:outline-none disabled:opacity-50"
+                  className="text-xs font-medium text-[#5a4e46] hover:text-[#3D2B1F] underline focus-visible:outline-none disabled:opacity-50"
                 >
-                  {resending ? 'Sending new code...' : "Didn't receive a code? Resend"}
+                  {resending ? 'กำลังส่งรหัสใหม่...' : "ไม่ได้รับรหัส? ส่งอีกครั้ง"}
                 </button>
               </div>
             </form>
@@ -307,10 +320,10 @@ const LoginPage = () => {
         </div>
 
         <div className="bg-[#F9F9F9] border-t border-[#EAEAEA] p-6 text-center">
-          <p className="text-sm text-[#666666]">
-            Don't have an account?{' '}
-            <Link to="/register" className="font-semibold text-[#111111] hover:underline focus-visible:outline-none">
-              Sign up
+          <p className="text-sm text-[#5a4e46]">
+            ยังไม่มีบัญชี?{' '}
+            <Link to="/register" className="font-semibold text-[#3D2B1F] hover:text-[#A0724A] hover:underline focus-visible:outline-none">
+              สมัครสมาชิก
             </Link>
           </p>
         </div>
