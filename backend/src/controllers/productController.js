@@ -145,10 +145,23 @@ export async function updateProduct(req, res) {
 // DELETE /api/products/:id - ลบสินค้า
 export async function deleteProduct(req, res) {
   try {
-    const { id } = req.params
-    await prisma.product.delete({
-      where: { id: parseInt(id) }
+    const productId = parseInt(req.params.id)
+
+    // 1. Delete associated product images first
+    await prisma.productImage.deleteMany({
+      where: { productId }
     })
+
+    // 2. Delete associated cart items
+    await prisma.cartItem.deleteMany({
+      where: { productId }
+    })
+
+    // 3. Delete the product itself
+    await prisma.product.delete({
+      where: { id: productId }
+    })
+
     res.json({ message: 'ลบสินค้าเรียบร้อย' })
   } catch (error) {
     res.status(500).json({ error: error.message })
