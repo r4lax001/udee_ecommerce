@@ -8,7 +8,7 @@ import {
   updateAddress,
   deleteAddress
 } from '../controllers/addressController.js'
-import { requireAuth } from '../middlewares/auth.js'
+import { requireAuth, adminOnly } from '../middlewares/auth.js'
 
 const router = Router()
 
@@ -17,9 +17,9 @@ router.get('/my', requireAuth, getMyAddresses)
 router.post('/my', requireAuth, createMyAddress)
 
 // Routes ทั่วไป (admin)
-router.get('/', getAddresses)
-router.get('/:id', getAddressById)
-router.post('/', createAddress)
+router.get('/', requireAuth, adminOnly, getAddresses)
+router.get('/:id', requireAuth, getAddressById)
+router.post('/', requireAuth, adminOnly, createAddress)
 router.put('/:id', requireAuth, updateAddress)
 router.delete('/:id', requireAuth, deleteAddress)
 

@@ -3,6 +3,7 @@ import multer from 'multer'
 import path from 'path'
 import fs from 'fs'
 import { fileURLToPath } from 'url'
+import { requireAuth, adminOnly } from '../middlewares/auth.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -25,9 +26,10 @@ const storage = multer.diskStorage({
 })
 
 const fileFilter = (req, file, cb) => {
-  const allowedExts = ['.avif', '.webp', '.png', '.jpg', '.jpeg', '.gif', '.svg']
+  const allowedTypes = new Set(['image/avif', 'image/webp', 'image/png', 'image/jpeg', 'image/gif'])
   const ext = path.extname(file.originalname).toLowerCase()
-  if (allowedExts.includes(ext) || file.mimetype.startsWith('image/')) {
+  const allowedExts = new Set(['.avif', '.webp', '.png', '.jpg', '.jpeg', '.gif'])
+  if (allowedExts.has(ext) && allowedTypes.has(file.mimetype)) {
     cb(null, true)
   } else {
     cb(new Error('รองรับเฉพาะไฟล์รูปภาพ (.avif, .webp, .png, .jpg, .jpeg, .gif, .svg) เท่านั้น'), false)
@@ -42,7 +44,7 @@ const upload = multer({
 
 const router = Router()
 
-router.post('/', upload.single('image'), (req, res) => {
+router.post('/', requireAuth, adminOnly, upload.single('image'), (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ success: false, message: 'กรุณาเลือกไฟล์รูปภาพ' })

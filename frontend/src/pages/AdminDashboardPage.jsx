@@ -225,7 +225,7 @@ export default function AdminDashboardPage() {
   // ── Content renderer ──────────────────────────────────────────────────────
   function renderContent() {
     if (activePage === 'dashboard') {
-      return <DashboardView reduceMotion={reduceMotion} transition={transition} />
+      return <DashboardView reduceMotion={reduceMotion} transition={transition} onNavigate={setActivePage} />
     }
     if (activePage === 'products') {
       return <AdminProductsPage reduceMotion={reduceMotion} transition={transition} />
@@ -408,7 +408,7 @@ export default function AdminDashboardPage() {
 }
 
 // ─── Dashboard main view (improved premium design) ────────────────────────────
-function DashboardView({ reduceMotion, transition }) {
+function DashboardView({ reduceMotion, transition, onNavigate }) {
   const BAR_DATA = [42, 58, 35, 67, 89, 74, 95, 82, 61, 78, 55, 90]
   const MONTHS  = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.']
   const maxVal  = Math.max(...BAR_DATA)
@@ -557,7 +557,7 @@ function DashboardView({ reduceMotion, transition }) {
         <div className="flex items-center justify-between px-5 py-4 border-b border-[#E5E7EB]">
           <h2 className="text-sm font-semibold text-[#111827]">ออเดอร์ล่าสุด</h2>
           <button
-            onClick={() => setActivePage('orders')}
+            onClick={() => onNavigate('orders')}
             className="flex items-center gap-1 text-xs font-medium text-[#A0724A] hover:text-[#3D2B1F] transition"
           >
             ดูทั้งหมด
@@ -610,7 +610,7 @@ function DashboardView({ reduceMotion, transition }) {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-semibold text-[#111827]">สินค้าขายดี</h2>
           <button
-            onClick={() => setActivePage('products')}
+            onClick={() => onNavigate('products')}
             className="flex items-center gap-1 text-xs font-medium text-[#A0724A] hover:text-[#3D2B1F] transition"
           >
             จัดการสินค้า

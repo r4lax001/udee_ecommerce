@@ -8,7 +8,9 @@ import { requireAuth } from '../middlewares/auth.js';
 import { authLimiter, otpLimiter, resendOtpLimiter } from '../middlewares/rateLimiter.js';
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'udee_secret_key_2024';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) throw new Error('JWT_SECRET must be configured before starting the server');
 const OTP_MAX_ATTEMPTS = 5; // จำนวนครั้งสูงสุดที่อนุญาตให้กรอก OTP ผิด
 
 // ──────────────────────────────────────────────────────────────────────────────

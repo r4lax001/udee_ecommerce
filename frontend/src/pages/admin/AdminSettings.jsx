@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const SETTINGS_NAV = [
   { id: 'set-store', icon: 'ti-building-store', label: 'ข้อมูลร้านค้า' },

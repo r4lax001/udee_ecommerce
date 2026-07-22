@@ -1,10 +1,10 @@
 import "./App.css";
 import { lazy, Suspense } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
 import AuthLayout from "./layouts/AuthLayout";
-import { CartProvider, AuthProvider } from "./contexts";
+import { CartProvider, AuthProvider, useAuth } from "./contexts";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
@@ -53,6 +53,12 @@ function LoadingFallback() {
   );
 }
 
+function AdminRoute({ children }) {
+  const { user, isLoading } = useAuth();
+  if (isLoading) return <LoadingFallback />;
+  return user?.role === 'ADMIN' ? children : <Navigate to="/login" replace />;
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -90,10 +96,10 @@ function App() {
               <Route path="cart-v2" element={<CartPage />} />
             </Route>
 
-            <Route path="admin-dashboard" element={<AdminDashboardPage />} />
-            <Route path="admin-products" element={<AdminProductsPage />} />
-            <Route path="admin-orders" element={<AdminOrdersPage />} />
-            <Route path="admin" element={<AdminDashboardPage />} />
+            <Route path="admin-dashboard" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
+            <Route path="admin-products" element={<AdminRoute><AdminProductsPage /></AdminRoute>} />
+            <Route path="admin-orders" element={<AdminRoute><AdminOrdersPage /></AdminRoute>} />
+            <Route path="admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
           </Routes>
           </Suspense>
         </CartProvider>

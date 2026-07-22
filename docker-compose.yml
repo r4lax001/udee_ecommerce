@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # MySQL Database
   db:
@@ -7,7 +5,7 @@ services:
     container_name: udee_db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: udee1234
       MYSQL_DATABASE: udee
     ports:
       - "3307:3306"
@@ -22,14 +20,15 @@ services:
     ports:
       - "5001:5000"
     environment:
-      DATABASE_URL: "mysql://root:password@db:3306/udee"
-      JWT_SECRET: "udee_secret_key_2024"
+      DATABASE_URL: "mysql://root:udee1234@db:3306/udee"
+      JWT_SECRET: "udee1234"
       PORT: 5000
     depends_on:
       - db
     volumes:
       - ./backend:/app
       - /app/node_modules
+      - /app/generated
 
   # Frontend
   frontend:
@@ -40,6 +39,8 @@ services:
       - "5173:5173"
     depends_on:
       - backend
+    environment:
+      VITE_API_URL: http://localhost:5001/api
     volumes:
       - ./frontend:/app
       - /app/node_modules

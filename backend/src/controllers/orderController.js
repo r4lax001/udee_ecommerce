@@ -1,139 +1,104 @@
 import prisma from '../db.js'
 
-// GET /api/orders - ดูออเดอร์ทั้งหมด (admin)
+const orderInclude = {
+  user: { select: { id: true, name: true, email: true } },
+  items: { include: { product: { select: { id: true, name: true, price: true } } } },
+}
+
 export async function getOrders(req, res) {
   try {
-    const orders = await prisma.order.findMany({
-      include: {
-        user: {
-          select: { id: true, name: true, email: true }
-        },
-        items: {
-          include: {
-            product: {
-              select: { id: true, name: true }
-            }
-          }
-        }
-      },
-      orderBy: { createdAt: 'desc' }
-    })
+    const orders = await prisma.order.findMany({ include: orderInclude, orderBy: { createdAt: 'desc' } })
     res.json(orders)
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ error: 'Unable to retrieve orders' })
   }
 }
 
-// GET /api/orders/my - ดูออเดอร์ของ user ที่ login
 export async function getMyOrders(req, res) {
   try {
-    const userId = req.user.id
     const orders = await prisma.order.findMany({
-      where: { userId },
-      include: {
-        items: {
-          include: {
-            product: {
-              select: { id: true, name: true, price: true }
-            }
-          }
-        }
-      },
-      orderBy: { createdAt: 'desc' }
+      where: { userId: req.user.id },
+      include: { items: { include: { product: { select: { id: true, name: true, price: true } } } } },
+      orderBy: { createdAt: 'desc' },
     })
     res.json({ success: true, orders })
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message })
+    res.status(500).json({ success: false, error: 'Unable to retrieve orders' })
   }
 }
 
-
-
-// GET /api/orders/:id - ดูรายละเอียดออเดอร์
 export async function getOrderById(req, res) {
   try {
-    const { id } = req.params
-    const order = await prisma.order.findUnique({
-      where: { id: parseInt(id) },
-      include: {
-        user: {
-          select: { id: true, name: true, email: true }
-        },
-        items: {
-          include: {
-            product: {
-              select: { id: true, name: true, price: true }
-            }
-          }
-        }
-      }
-    })
-    if (!order) {
-      return res.status(404).json({ error: 'ไม่พบออเดอร์' })
+    const orderId = Number.parseInt(req.params.id, 10)
+    if (!Number.isInteger(orderId)) return res.status(400).json({ error: 'Invalid order id' })
+
+    const order = await prisma.order.findUnique({ where: { id: orderId }, include: orderInclude })
+    if (!order) return res.status(404).json({ error: 'Order not found' })
+    if (req.user.role !== 'ADMIN' && order.userId !== req.user.id) {
+      return res.status(403).json({ error: 'You do not have access to this order' })
     }
     res.json(order)
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ error: 'Unable to retrieve order' })
   }
 }
 
-// POST /api/orders - สร้างออเดอร์
 export async function createOrder(req, res) {
   try {
-    const { userId, items, shippingAddress } = req.body
-    
-    if (!userId || !items || !Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ error: 'กรุณาระบุ userId และ items' })
+    const { items } = req.body
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: 'At least one order item is required' })
     }
 
-    const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-
-    const order = await prisma.order.create({
-      data: {
-        userId: parseInt(userId),
-        total,
-        shippingAddress,
-        status: 'PENDING',
-        items: {
-          create: items.map(item => ({
-            productId: item.productId,
-            quantity: item.quantity,
-            price: item.price
-          }))
-        }
-      },
-      include: {
-        items: {
-          include: {
-            product: true
-          }
-        }
+    const requestedItems = new Map()
+    for (const item of items) {
+      const productId = Number.parseInt(item.productId, 10)
+      const quantity = Number.parseInt(item.quantity, 10)
+      if (!Number.isInteger(productId) || !Number.isInteger(quantity) || quantity < 1) {
+        return res.status(400).json({ error: 'Each item must have a valid productId and quantity' })
       }
+      requestedItems.set(productId, (requestedItems.get(productId) || 0) + quantity)
+    }
+
+    const order = await prisma.$transaction(async (tx) => {
+      const productIds = [...requestedItems.keys()]
+      const products = await tx.product.findMany({ where: { id: { in: productIds } } })
+      if (products.length !== productIds.length) throw new Error('One or more products were not found')
+
+      const orderItems = products.map((product) => {
+        const quantity = requestedItems.get(product.id)
+        if (product.stock < quantity) throw new Error(`Insufficient stock for product ${product.id}`)
+        return { productId: product.id, quantity, price: product.price }
+      })
+      const total = orderItems.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0)
+
+      await Promise.all(orderItems.map((item) => tx.product.update({
+        where: { id: item.productId },
+        data: { stock: { decrement: item.quantity }, sold: { increment: item.quantity } },
+      })))
+
+      return tx.order.create({
+        data: { userId: req.user.id, total, status: 'PENDING', items: { create: orderItems } },
+        include: { items: { include: { product: true } } },
+      })
     })
 
     res.status(201).json(order)
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(400).json({ error: error.message })
   }
 }
 
-// PUT /api/orders/:id/status - เปลี่ยนสถานะออเดอร์
 export async function updateOrderStatus(req, res) {
+  const allowedStatuses = new Set(['PENDING', 'CONFIRMED', 'SHIPPED', 'DELIVERED', 'CANCELLED'])
   try {
-    const { id } = req.params
-    const { status } = req.body
-
-    if (!status) {
-      return res.status(400).json({ error: 'กรุณาระบุ status' })
+    const orderId = Number.parseInt(req.params.id, 10)
+    if (!Number.isInteger(orderId) || !allowedStatuses.has(req.body.status)) {
+      return res.status(400).json({ error: 'Invalid order id or status' })
     }
-
-    const order = await prisma.order.update({
-      where: { id: parseInt(id) },
-      data: { status }
-    })
-
+    const order = await prisma.order.update({ where: { id: orderId }, data: { status: req.body.status } })
     res.json(order)
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(error.code === 'P2025' ? 404 : 500).json({ error: error.code === 'P2025' ? 'Order not found' : 'Unable to update order' })
   }
 }
