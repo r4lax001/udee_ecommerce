@@ -6,7 +6,10 @@
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
-    "dev": "nodemon src/app.js"
+    "dev": "npx prisma generate && nodemon src/app.js",
+    "mdev": "npx prisma migrate dev",
+    "mdev6192": "npx prisma@6.19.2 migrate dev",
+    "studio": "npx prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

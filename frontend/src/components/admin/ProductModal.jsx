@@ -73,7 +73,7 @@ export default function ProductModal({ isOpen, onClose, onSave, product = null }
         setFormData(prev => ({ ...prev, categoryId: cat.id }))
       }
     }
-  }, [categories, product])
+  }, [categories, product, formData.categoryId])
 
   const handleFileUpload = async (e) => {
     const file = e.target.files?.[0]

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Dashboard, PagePlaceholder, Customers, Analytics, Products, Orders } from './AdminPages';
+import { Dashboard, Customers, Analytics, Products, Orders } from './AdminPages';
 import Settings from './AdminSettings';
 import { useAuth } from '../../contexts/AuthContext';
 

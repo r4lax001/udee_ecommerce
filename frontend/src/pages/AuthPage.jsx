@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useCallback, useRef } from 'react'
+import { useMemo, useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence, useReducedMotion, useAnimation } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { authPageData } from '../data/authPageData'
