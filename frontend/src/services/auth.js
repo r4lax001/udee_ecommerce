@@ -4,7 +4,23 @@ import api from './api';
  * Register a new customer
  */
 export const register = async (data) => {
-  const response = await api.post('/auth/register', data);
+  const payload = {
+    name: data.name,
+    email: data.email,
+    password: data.password,
+    phone: data.phone,
+    address: {
+      houseNo: data.houseNo,
+      soi: data.soi,
+      road: data.road,
+      subDistrict: data.subDistrict,
+      district: data.district,
+      province: data.province,
+      postalCode: data.postalCode,
+    },
+  };
+
+  const response = await api.post('/auth/register', payload);
   return response.data;
 };
 
@@ -33,7 +49,7 @@ export const resendOtp = async (email) => {
 };
 
 /**
- * Fetch current user profile (includes addresses)
+ * Fetch current user profile includes addresses
  */
 export const getMe = async () => {
   const response = await api.get('/auth/me');
@@ -41,7 +57,7 @@ export const getMe = async () => {
 };
 
 /**
- * Update current user's profile (name, phone)
+ * Update current user's profile name, phone
  */
 export const updateProfile = async (data) => {
   const response = await api.put('/auth/me/profile', data);
