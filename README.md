@@ -80,6 +80,13 @@ Users, Products, Categories, Cart, Orders, OrderItems, ProductImage
 
 **Port Already in Use:** ค้นหาและ kill process ที่ใช้ port
 
+-------------------------------
+
 **CORS Error:** ตรวจสอบ CORS config ใน `app.js`
 
 ---------
+
+## ไฟล์เอกสาร 
+
+https://canva.link/uizfyid6u9s263o
+
